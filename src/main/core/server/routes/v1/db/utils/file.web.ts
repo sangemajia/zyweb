@@ -1,6 +1,6 @@
 // Web 环境下的文件操作工具
 import { join } from 'path';
-import { existsSync, statSync, writeFileSync, readFileSync, unlinkSync, readdirSync, rmSync, mkdirSync } from './fs.web';
+import { existsSync, statSync, writeFileSync, readFileSync as fsReadFileSync, unlinkSync, readdirSync, rmSync, mkdirSync } from './fs.web';
 import { gzip } from './crypto.web';
 
 // 检查文件或目录是否存在
@@ -91,7 +91,7 @@ const saveJsonSync = (filePath: string, content: object): boolean => {
 const readFile = async (filePath: string, crypto: number = 0): Promise<string | false> => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    let content = readFileSync(filePath, 'utf8');
+    let content = fsReadFileSync(filePath, 'utf8');
     if (crypto !== 0) content = gzip.decode(content);
     return content;
   } catch {
@@ -102,7 +102,7 @@ const readFile = async (filePath: string, crypto: number = 0): Promise<string | 
 const readFileSync = (filePath: string, crypto: number = 0): string | false => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    let content = readFileSync(filePath, 'utf8');
+    let content = fsReadFileSync(filePath, 'utf8');
     if (crypto !== 0) content = gzip.decode(content);
     return content;
   } catch {
@@ -113,8 +113,8 @@ const readFileSync = (filePath: string, crypto: number = 0): string | false => {
 // 读取 JSON 文件
 const readJson = async (filePath: string): Promise<any | false> => {
   try {
-    if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    const content = readFileSync(filePath, 'utf8');
+    const content = await readFile(filePath);
+    if (content === false) return false;
     return JSON.parse(content);
   } catch {
     return false;
@@ -123,8 +123,8 @@ const readJson = async (filePath: string): Promise<any | false> => {
 
 const readJsonSync = (filePath: string): any | false => {
   try {
-    if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    const content = readFileSync(filePath, 'utf8');
+    const content = readFileSync(filePath);
+    if (content === false) return false;
     return JSON.parse(content);
   } catch {
     return false;
@@ -230,7 +230,7 @@ const fileSize = async (folderPath: string): Promise<number> => {
         if (entryStatus === 'file') {
           totalSize += statSync(entryPath).size;
         } else if (entryStatus === 'dir') {
-          totalSize += fileSizeSync(entryPath);
+          totalSize += await fileSize(entryPath);
         }
       }
     } else if (status === 'file') {

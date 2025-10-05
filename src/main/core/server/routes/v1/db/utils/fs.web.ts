@@ -18,7 +18,9 @@ const statSync = (filePath: string): { isFile: () => boolean; isDirectory: () =>
   }
   // 模拟目录
   let isDir = false;
-  for (const key of fileStorage.keys()) {
+  const keys = Array.from(fileStorage.keys());
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
     if (key.startsWith(filePath + '/')) {
       isDir = true;
       break;
@@ -49,7 +51,9 @@ const unlinkSync = (filePath: string): void => {
 
 const readdirSync = (dirPath: string): string[] => {
   const files: string[] = [];
-  for (const key of fileStorage.keys()) {
+  const keys = Array.from(fileStorage.keys());
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
     if (key.startsWith(dirPath + '/')) {
       const relativePath = key.substring(dirPath.length + 1);
       const parts = relativePath.split('/');
@@ -62,9 +66,11 @@ const readdirSync = (dirPath: string): string[] => {
 };
 
 const rmSync = (path: string, options?: { recursive?: boolean }): void => {
+  const keys = Array.from(fileStorage.keys());
   if (options?.recursive) {
     // 删除目录及其所有内容
-    for (const key of fileStorage.keys()) {
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
       if (key.startsWith(path)) {
         fileStorage.delete(key);
       }
