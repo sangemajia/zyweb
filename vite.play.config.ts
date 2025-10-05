@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/play',
+    outDir: '../../dist/client/modules/play',
     emptyOutDir: true,
     sourcemap: false,
     minify: false,

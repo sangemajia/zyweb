@@ -87,6 +87,7 @@ WebBridge API 是 ZyWeb 项目的后端组件，用于处理 Web 环境中无法
 - [x] 测试 WebBridge API 端点
 - [x] 测试 IPC 消息处理端点
 - [x] 测试文件操作端点
+- [x] 完成大型组件拆分工作
 - [ ] 检查 UI 渲染是否正确
 - [ ] 性能优化
 - [ ] 兼容性测试
@@ -197,6 +198,50 @@ WebBridge API 是 ZyWeb 项目的后端组件，用于处理 Web 环境中无法
 3. IPC 消息处理端点能够正确处理消息
 4. 文件操作端点能够正确处理文件操作请求
 
+## 大型组件拆分工作
+
+为了优化构建性能和减少内存使用，我们对项目中的大型组件进行了拆分：
+
+### 1. Film 组件拆分
+- 将 `src/renderer/src/pages/film/index.vue` 拆分为多个模块：
+  - `filmSetup.ts`：整合所有功能的主设置模块
+  - `filmUtils.ts`：包含获取分类、获取资源等工具函数
+  - `playUtils.ts`：包含播放相关的工具函数
+  - `searchUtils.ts`：包含搜索相关的工具函数
+- 创建了独立的组件文件：
+  - `FilmHeader.vue`：处理分类导航
+  - `FilmFilter.vue`：处理筛选条件
+  - `FilmList.vue`：处理影片列表展示
+  - `FilmCard.vue`：处理单个影片卡片展示
+
+### 2. IPTV 组件拆分
+- 将 `src/renderer/src/pages/iptv/index.vue` 拆分为多个模块：
+  - `iptvSetup.ts`：整合所有功能的主设置模块
+  - `iptvUtils.ts`：包含获取配置、获取直播列表等工具函数
+  - `playUtils.ts`：包含播放相关的工具函数
+  - `queueUtils.ts`：包含队列处理相关的工具函数
+- 创建了独立的组件文件：
+  - `IptvHeader.vue`：处理分类导航
+  - `IptvList.vue`：处理频道列表展示
+  - `IptvCard.vue`：处理单个频道卡片展示
+
+### 3. Drive 组件拆分
+- 将 `src/renderer/src/pages/drive/index.vue` 拆分为多个模块：
+  - `driveSetup.ts`：整合所有功能的主设置模块
+  - `driveUtils.ts`：包含获取配置、初始化云盘等工具函数
+  - `playUtils.ts`：包含播放相关的工具函数
+- 创建了独立的组件文件：
+  - `DriveHeader.vue`：处理面包屑导航
+  - `DriveList.vue`：处理文件列表展示
+  - `DriveCard.vue`：处理单个文件卡片展示
+
+### 4. 构建配置优化
+- 为每个拆分后的组件创建了独立的 Vite 配置文件：
+  - `vite.film.config.ts`
+  - `vite.iptv.config.ts`
+  - `vite.drive.config.ts`
+- 优化了构建配置以减少内存使用
+
 ## 下一步工作
 
 ### 1. 依赖安装
@@ -236,6 +281,7 @@ WebBridge API 是 ZyWeb 项目的后端组件，用于处理 Web 环境中无法
 - [x] 实现按功能模块分割的构建方案
 - [x] 实现轻量级组件构建方法
 - [x] 实现代码复用机制
+- [x] 完成大型组件拆分工作
 - [ ] 优化构建输出（由于内存限制问题，完整构建过程尚未完成）
 
 ## 当前状态
@@ -243,4 +289,6 @@ WebBridge API 是 ZyWeb 项目的后端组件，用于处理 Web 环境中无法
 
 我们已经实现了 IPC 通信和文件操作的 HTTP API 替代方案，创建了 Web 桥接 API 路由，包括 IPC 消息处理端点、文件管理 API 端点、FFmpeg 相关 API 端点、媒体嗅探 API 端点、会话管理 API 端点和老板键管理 API 端点。
 
-通过功能测试，我们验证了所有核心功能都能正常工作，包括 WebBridge API 端点、IPC 消息处理端点和文件操作端点。下一步是进行更全面的功能测试，检查 UI 渲染是否正确，并根据需要调整 Vite 配置和优化构建输出。
+通过功能测试，我们验证了所有核心功能都能正常工作，包括 WebBridge API 端点、IPC 消息处理端点和文件操作端点。我们还成功完成了大型组件的拆分工作，将film、iptv和drive三个大型组件拆分为多个模块化的工具函数和独立组件，以优化构建性能和减少内存使用。
+
+下一步是在资源更充足的环境中进行构建测试，解决由于内存限制导致的构建问题。

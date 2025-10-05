@@ -4,7 +4,7 @@ import { history, site, analyze, iptv, drive } from '../../../../../core/db/serv
 const API_PREFIX = 'api/v1/history';
 
 const api: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.post(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: string } }>) => {
+  fastify.post(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const dbRes = await history.add(req.body);
     return {
       code: 0,
@@ -12,7 +12,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: dbRes,
     };
   });
-  fastify.delete(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: string } }>) => {
+  fastify.delete(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const { ids, type } = req.body;
     if (type) {
       await history.removeByType(type);
@@ -29,7 +29,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: null,
     };
   });
-  fastify.put(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: object } }>) => {
+  fastify.put(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const { ids, doc } = req.body;
     const dbRes = await history.update(ids, doc);
     return {
@@ -47,16 +47,16 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
     const processedList = await Promise.all(
       dbResHistory.list.map(async (item) => {
         if (item.type === 'film') {
-          const dbResSite = await site.findByKey(item.relateId);
+          const dbResSite = await site.get(item.relateId);
           return { ...item, relateSite: dbResSite || {} };
         } else if (item.type === 'iptv') {
-          const dbResSite = await iptv.findByKey(item.relateId);
+          const dbResSite = await iptv.get(item.relateId);
           return { ...item, relateSite: dbResSite || {} };
         } else if (item.type === 'analyze') {
-          const dbResSite = await analyze.findByKey(item.relateId);
+          const dbResSite = await analyze.get(item.relateId);
           return { ...item, relateSite: dbResSite || {} };
         } else if (item.type === 'drive') {
-          const dbResSite = await drive.findByKey(item.relateId);
+          const dbResSite = await drive.get(item.relateId);
           return { ...item, relateSite: dbResSite || {} };
         }
         return item;
@@ -73,7 +73,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       },
     };
   });
-  fastify.post(`/${API_PREFIX}/find`, async (req: FastifyRequest<{ Body: { [key: string]: string } }>) => {
+  fastify.post(`/${API_PREFIX}/find`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const { relateId, videoId } = req.body;
     const dbRes = await history.find(relateId, videoId);
     return {
@@ -82,7 +82,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: dbRes,
     };
   });
-  fastify.get(`/${API_PREFIX}/:id`, async (req: FastifyRequest<{ Params: { [key: string]: string } }>) => {
+  fastify.get(`/${API_PREFIX}/:id`, async (req: FastifyRequest<{ Params: { [key: string]: any } }>) => {
     const { id } = req.params;
     const dbRes = await history.get(id);
     return {

@@ -15,20 +15,22 @@ export default defineConfig({
       template: {
         compilerOptions: {
           isCustomElement: (tag) => tag === 'webview' || tag === 'title-bar',
+          // 减少编译时内存使用
+          whitespace: 'condense',
         },
       },
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/test',
+    outDir: '../../dist/client/components/test',
     emptyOutDir: true,
     sourcemap: false,
-    minify: false,
+    minify: false, // 禁用压缩以节省内存
     lib: {
       entry: 'src/renderer/src/pages/test/index.vue',
-      name: 'TestModule',
+      name: 'test',
       formats: ['es'],
-      fileName: 'test-module'
+      fileName: 'index'
     },
     rollupOptions: {
       external: [
@@ -51,12 +53,25 @@ export default defineConfig({
           'lodash-es': '_',
           moment: 'moment',
           '@vueuse/core': 'VueUse'
-        }
-      }
-    }
+        },
+        // 减少每个chunk的大小
+        compact: true,
+      },
+      // 减少内存使用
+      preserveEntrySignatures: false,
+    },
+    // 增加内存限制
+    chunkSizeWarningLimit: 200000, // 200MB
+    brotliSize: false,
   },
   optimizeDeps: {
     noDiscovery: true,
     include: undefined,
+    // 禁用预打包以减少内存使用
+    disabled: true,
+  },
+  // 减少内存使用的实验性选项
+  worker: {
+    format: 'es',
   },
 })

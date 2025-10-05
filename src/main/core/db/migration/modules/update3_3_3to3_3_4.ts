@@ -47,7 +47,7 @@ const update = async () => {
     key: 'playerMode',
     value: {
       data: {
-        type: old_broadcasterType?.[0]?.['value']?.['data'] || 'xgplayer',
+        type: ['xgplayer', 'artplayer', 'oplayer'].includes(old_broadcasterType?.[0]?.['value']?.['data']) ? 'zwplayer' : (old_broadcasterType?.[0]?.['value']?.['data'] || 'zwplayer'),
         external: old_externalPlayer?.[0]?.['value']?.['data'] || '',
       },
     },

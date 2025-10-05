@@ -23,7 +23,7 @@ const parseCustomUrl = (url: string) => {
           .map(word => word.charAt(0).toUpperCase() + word.slice(1))
           .join('-');
 
-        const value = rawValue.replaceAll('$*&', '=');
+        const value = rawValue.replace(/\$*&/g, '=');
         acc[key] = value;
       }
 

@@ -5,7 +5,7 @@ import { drive, setting } from './db.service.web';
 const API_PREFIX = 'api/v1/drive';
 
 const api: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.post(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: string } }>) => {
+  fastify.post(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const dbRes = await drive.add(req.body);
     return {
       code: 0,
@@ -13,7 +13,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: dbRes,
     };
   });
-  fastify.delete(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: string } }>) => {
+  fastify.delete(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const { ids } = req.body;
     if (!ids || ids.length === 0) {
       await drive.clear();
@@ -26,7 +26,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: null,
     };
   });
-  fastify.put(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: object } }>) => {
+  fastify.put(`/${API_PREFIX}`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>) => {
     const { ids, doc } = req.body;
     const dbRes = await drive.update(ids, doc);
     return {
@@ -35,7 +35,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: dbRes,
     };
   });
-  fastify.get(`/${API_PREFIX}/page`, async (req: FastifyRequest<{ Querystring: { [key: string]: string } }>) => {
+  fastify.get(`/${API_PREFIX}/page`, async (req: FastifyRequest<{ Querystring: { [key: string]: any } }>) => {
     const { page, pageSize, kw } = req.query;
     const dbResPage = await drive.page(parseInt(page), parseInt(pageSize), kw);
     const dbResDefault = await setting.get('defaultDrive');
@@ -53,7 +53,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.get(`/${API_PREFIX}/active`, async () => {
     const dbResAll = await drive.active();
     const dbResDefaultId = await setting.get('defaultDrive');
-    const dbResDefault = await drive.get(dbResDefaultId);
+    const dbResDefault = await drive.get(dbResDefaultId as string);
 
     const res = {
       data: dbResAll,
@@ -65,7 +65,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: res,
     };
   });
-  fastify.put(`/${API_PREFIX}/default/:id`, async (req: FastifyRequest<{ Params: { [key: string]: string } }>) => {
+  fastify.put(`/${API_PREFIX}/default/:id`, async (req: FastifyRequest<{ Params: { [key: string]: any } }>) => {
     const { id } = req.params;
     await setting.update(['defaultDrive'], id);
 
@@ -75,7 +75,7 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       data: true,
     };
   });
-  fastify.get(`/${API_PREFIX}/:id`, async (req: FastifyRequest<{ Params: { [key: string]: string } }>) => {
+  fastify.get(`/${API_PREFIX}/:id`, async (req: FastifyRequest<{ Params: { [key: string]: any } }>) => {
     const { id } = req.params;
     const dbRes = await drive.get(id);
 

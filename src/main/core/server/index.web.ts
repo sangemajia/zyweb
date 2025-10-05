@@ -1,7 +1,6 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyMultipart from '@fastify/multipart';
-import fastifyPlugin from 'fastify-plugin';
 
 import { JsonDB, Config } from 'node-json-db';
 import { join } from 'path';
@@ -9,55 +8,43 @@ import logger from './logger.web';
 import { APP_TMP_PATH, APP_LOG_PATH } from './path.web';
 import routesV1Modules from './routes/v1/index.web';
 
-async function jsonDbPlugin(fastify: FastifyInstance): Promise<void> {
-  const db = new JsonDB(new Config(join(APP_TMP_PATH, 'cache.json'), true, true, '/'));
-  fastify.decorate('db', db);
-};
+// 数据库初始化
+const db = new JsonDB(new Config(join(APP_LOG_PATH, 'server.json'), true, false, '/'));
 
-const wrappedJsonDbPlugin = fastifyPlugin(jsonDbPlugin, {
-  fastify: '5.x',
-  name: 'json-db-plugin',
+const server = fastify();
+
+// 注册 CORS
+server.register(fastifyCors, {
+  origin: '*', // 允许所有来源
 });
 
-const setup = async () => {
-  const server = fastify({
-    logger: {
-      level: 'info', // 日志级别（可选：trace, debug, info, warn, error, fatal）
-      file: join(APP_LOG_PATH, 'fastify.log') // 日志文件路径
-    }, // 日志
-    forceCloseConnections: true, // 强制关闭连接
-    ignoreTrailingSlash: true, // 忽略斜杠
-    maxParamLength: 10240, // 参数长度限制
-    bodyLimit: 1024 * 1024 * 3, // 限制请求体大小为 3MB
-  });
+// 注册 multipart
+server.register(fastifyMultipart, {
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB
+  },
+});
 
+// 注册路由
+server.register(routesV1Modules, { prefix: '' });
+
+// 错误处理
+server.setErrorHandler((error, request, reply) => {
+  console.error('服务错误:', error);
+  reply.status(500).send({ error: '服务器内部错误' });
+});
+
+// 启动服务器
+const start = async () => {
   try {
-    server.setErrorHandler((err, _request, reply) => {
-      server.log.error(err);
-
-      reply.status(500).send({
-        code: -1,
-        msg: `Internal Server Error - ${err.name}`,
-        data: err.message,
-      });
-    });
-
-    server.register(wrappedJsonDbPlugin);
-    server.register(fastifyMultipart);
-    server.register(fastifyCors);
-
-    // 注册 v1 路由
-    Object.keys(routesV1Modules).forEach((key: string) => {
-      server.register(routesV1Modules[key]);
-    });
-
-    await server.ready();
-    await server.listen({ port: 9978, host: '0.0.0.0' });
-    logger.info('[server][init] listen: http://0.0.0.0:9978');
+    await server.listen({ port: 3000, host: '0.0.0.0' });
+    console.log('服务器启动成功，监听端口 3000');
   } catch (err) {
-    server.log.error(err);
+    console.error('服务器启动失败:', err);
     process.exit(1);
   }
 };
 
-export default setup;
+start();
+
+export default server;

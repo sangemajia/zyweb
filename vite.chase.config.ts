@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/chase',
+    outDir: '../../dist/client/modules/chase',
     emptyOutDir: true,
     sourcemap: false,
     minify: false,

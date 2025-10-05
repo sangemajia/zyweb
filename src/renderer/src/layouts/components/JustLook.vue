@@ -23,7 +23,7 @@ import '@/style/player/veplayer.css';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { DvdIcon, RefreshIcon } from 'tdesign-icons-vue-next';
 import { ref, reactive } from 'vue';
-import Player from 'xgplayer';
+import { ZwPlayer } from '@/components/player';
 
 import { fetchSettingDetail } from '@/api/setting';
 import { prefix } from '@/config/global';
@@ -35,36 +35,14 @@ const isVisible = reactive({
 const api = ref();
 const player = ref();
 const config = ref({
-  id: 'mse',
+  container: 'mse',
   url: '',
   autoplay: true,
-  rotate: {
-    clockwise: false,
-    innerRotate: true,
-    index: 1
-  },
-  keyboard: {
-    keyCodeMap: {
-      'up': {
-        action: function () {
-          console.log('[justlook][keyboard]up fresh video')
-          change();
-        }
-      },
-      'down': {
-        action: function () {
-          console.log('[justlook][keyboard]down fresh video')
-          change();
-        }
-      }
-    }
-  },
-  dynamicBg: {
-    disable: false
-  },
-  ignores: ['cssFullscreen', 'playbackRate'],
-  height: '100%',
-  width: '100%'
+  isLive: false,
+  volume: 1,
+  muted: false,
+  playbackRate: 1,
+  startTime: 0
 })
 
 const fetchDataAndSetPlayerConfig = async () => {
@@ -80,7 +58,10 @@ const fetchDataAndSetPlayerConfig = async () => {
 }
 
 const initializePlayer = () => {
-  player.value = new Player(config.value);
+  if (player.value) {
+    player.value.destroy();
+  }
+  player.value = new ZwPlayer(config.value);
 }
 
 const toggleDrawerAndHandlePlayer = async () => {
@@ -106,7 +87,9 @@ const close = () => {
 
 const change = () => {
   if (player.value) {
-    player.value.src = api.value;
+    player.value.destroy();
+    config.value.url = api.value;
+    player.value = new ZwPlayer(config.value);
   }
 }
 </script>

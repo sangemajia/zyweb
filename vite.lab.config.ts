@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/lab',
+    outDir: '../../dist/client/modules/lab',
     emptyOutDir: true,
     sourcemap: false,
     minify: false,

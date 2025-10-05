@@ -65,17 +65,24 @@ const history = {
   remove: async (ids: string[]) => {
     console.log('[DB] Removing history data with ids:', ids);
   },
+  removeByType: async (type: string) => {
+    console.log('[DB] Removing history data by type:', type);
+  },
   update: async (ids: string[], doc: any) => {
     console.log('[DB] Updating history data with ids:', ids, 'and data:', doc);
     return { ids, ...doc };
   },
-  page: async (page: number, pageSize: number, kw?: string) => {
-    console.log('[DB] Getting history data page:', page, 'pageSize:', pageSize, 'keyword:', kw);
+  page: async (page: number, pageSize: number, type: string | string[], kw?: string) => {
+    console.log('[DB] Getting history data page:', page, 'pageSize:', pageSize, 'type:', type, 'keyword:', kw);
     return { list: [], total: 0 };
   },
   get: async (id: string) => {
     console.log('[DB] Getting history data with id:', id);
     return { id };
+  },
+  find: async (relateId: string, videoId: string) => {
+    console.log('[DB] Finding history data with relateId:', relateId, 'videoId:', videoId);
+    return null;
   }
 };
 
@@ -166,6 +173,10 @@ const iptv = {
   get: async (id: string) => {
     console.log('[DB] Getting iptv data with id:', id);
     return { id };
+  },
+  findByKey: async (key: string) => {
+    console.log('[DB] Finding iptv data with key:', key);
+    return null;
   }
 };
 
@@ -196,6 +207,10 @@ const channel = {
   get: async (id: string) => {
     console.log('[DB] Getting channel data with id:', id);
     return { id };
+  },
+  findByKey: async (key: string) => {
+    console.log('[DB] Finding channel data with key:', key);
+    return null;
   }
 };
 

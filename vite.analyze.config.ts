@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/analyze',
+    outDir: '../../dist/client/modules/analyze',
     emptyOutDir: true,
     sourcemap: false,
     minify: false,

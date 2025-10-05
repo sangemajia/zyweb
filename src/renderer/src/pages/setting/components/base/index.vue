@@ -234,7 +234,7 @@ const formData = ref({
   analyzeFlag: [ 'youku', 'qq', 'iqiyi', 'qiyi', 'letv', 'sohu', 'tudou', 'pptv', 'mgtv' ],
   defaultDrive: '',
   defaultViewCasual: '',
-  playerMode: { type: 'artplayer', external: '' },
+  playerMode: { type: 'zwplayer', external: '' },
   snifferMode: { type: 'pie', url: '' },
   barrage: { url: '', id: '', key: '', support: [], start: '', mode: '', color: '', content: '' },
   softSolution: false,
@@ -257,11 +257,7 @@ const MODE_OPTIONS = computed(() => [
 ]);
 
 const PLAYER_OPTIONS = computed(() => [
-  { label: t('pages.setting.base.xgplayer'), value: 'xgplayer' },
-  // { label: t('pages.setting.base.dplayer'), value: 'dplayer' },
-  { label: t('pages.setting.base.artplayer'), value: 'artplayer' },
-  // { label: t('pages.setting.base.nplayer'), value: 'nplayer' },
-  { label: t('pages.setting.base.oplayer'), value: 'oplayer' },
+  { label: t('pages.setting.base.zwplayer'), value: 'zwplayer' },
   { label: t('pages.setting.base.custom'), value: 'custom' }
 ]);
 

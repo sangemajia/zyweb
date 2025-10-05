@@ -32,44 +32,37 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist/web',
+    outDir: '../../dist/client/web',
     emptyOutDir: true,
-    // 构建优化选项
+    // 构建优化选项 - 进一步减少内存使用
     rollupOptions: {
       output: {
-        // 分割代码
+        // 分割代码 - 减少每个chunk的大小
         manualChunks: {
-          // 将第三方库单独打包
-          vendor: ['vue', 'vue-router', 'pinia'],
+          // 将核心框架库单独打包
+          framework: ['vue', 'vue-router', 'pinia'],
           // 将 UI 组件库单独打包
           ui: ['tdesign-vue-next'],
-          // 将工具库单独打包
-          utils: ['axios', 'lodash-es', 'moment'],
+          // 将工具库进一步细分打包
+          utils: ['axios', 'lodash-es'],
+          date: ['moment'],
+          vueuse: ['@vueuse/core'],
         },
       },
     },
     // 启用 CSS 代码分割
     cssCodeSplit: true,
-    // 启用 CSS 预处理器的 source map
-    cssMinify: true,
-    // 启用压缩
-    minify: 'terser',
-    // Terser 选项
-    terserOptions: {
-      compress: {
-        // 删除 console 语句
-        drop_console: true,
-        // 删除 debugger 语句
-        drop_debugger: true,
-      },
-    },
-    // 启用 brotli 压缩
-    brotliSize: true,
-    // 启用 chunk 大小警告限制
-    chunkSizeWarningLimit: 1000,
+    // 禁用 CSS 压缩以减少内存使用
+    cssMinify: false,
+    // 禁用压缩以减少内存使用
+    minify: false,
+    // 禁用 brotli 压缩以减少内存使用
+    brotliSize: false,
+    // 降低 chunk 大小警告限制
+    chunkSizeWarningLimit: 500,
     // 减少内存使用
     sourcemap: false,
-    // 启用实验性选项以减少内存使用
+    // 禁用实验性选项以减少内存使用
     modulePreload: false,
   },
   // 减少内存使用
@@ -78,6 +71,8 @@ export default defineConfig({
     noDiscovery: true,
     // 不包含任何依赖
     include: undefined,
+    // 禁用预打包以减少内存使用
+    disabled: true,
   },
   // 实验性选项
   experimental: {

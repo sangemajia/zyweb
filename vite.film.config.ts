@@ -40,23 +40,7 @@ export default defineConfig({
         'lodash-es',
         'moment',
         '@vueuse/core'
-      ],
-      output: {
-        globals: {
-          vue: 'Vue',
-          'vue-router': 'VueRouter',
-          pinia: 'Pinia',
-          'tdesign-vue-next': 'TDesign',
-          axios: 'axios',
-          'lodash-es': '_',
-          moment: 'moment',
-          '@vueuse/core': 'VueUse'
-        }
-      }
+      ]
     }
-  },
-  optimizeDeps: {
-    noDiscovery: true,
-    include: undefined,
-  },
+  }
 })

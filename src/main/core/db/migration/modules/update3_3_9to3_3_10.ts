@@ -21,8 +21,8 @@ const update = async () => {
   const old_playerMode = await db.select().from(schema.setting).where(eq(schema.setting.key, 'playerMode'));
   if (old_playerMode.length > 0) {
     const old_playerModeValue: any = old_playerMode[0].value;
-    if (['dplayer', 'nplayer'].includes(old_playerModeValue.data.type)) {
-      old_playerModeValue.data.type = 'artplayer';
+    if (['dplayer', 'nplayer', 'artplayer', 'xgplayer', 'oplayer'].includes(old_playerModeValue.data.type)) {
+      old_playerModeValue.data.type = 'zwplayer';
       await db.update(schema.setting).set({ value: old_playerModeValue }).where(eq(schema.setting.key, 'playerMode'));
     }
   }

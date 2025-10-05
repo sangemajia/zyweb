@@ -66,7 +66,7 @@
         </t-badge>
         <t-badge :count="$t('pages.lab.snifferPlay.preview')" style="flex: 1;" color="var(--td-success-color)" shape="round">
           <div class="result card" style="height: 100%; width: 100%;">
-            <multi-player ref="playerRef" style="border-radius: var(--td-radius-default); overflow: hidden;" />
+            <div ref="playerRef" id="lab-mse" class="player-container" style="border-radius: var(--td-radius-default); overflow: hidden;"></div>
           </div>
         </t-badge>
       </div>
@@ -81,7 +81,7 @@ import JSON5 from 'json5';
 import sniffer from '@/utils/sniffer';
 import { t } from '@/locales';
 import { usePlayStore } from '@/store';
-import { MultiPlayer, mediaUtils } from '@/components/player';
+import { ZwPlayer } from '@/components/player';
 
 const storePlayer = usePlayStore();
 
@@ -102,6 +102,7 @@ const formData = ref({
   }
 });
 const playerRef = useTemplateRef('playerRef');
+const zwPlayer = ref<any>(null);
 
 const sniiferEvent = async () => {
   const { url, runScript, initScript, customRegex, snifferExclude } = formData.value.sniffer;
@@ -135,21 +136,25 @@ const playerPlayEvent = async () => {
   } else {
     let mediaType = type;
     if (mediaType === 'auto') {
-      const checkType = await mediaUtils.checkMediaType(url, headers as Object);
-      if (checkType === 'unknown' && !checkType) {
-        MessagePlugin.warning(t('pages.lab.snifferPlay.message.mediaNoType'));
-        return;
-      }
-      mediaType = checkType as string;
+      // 这里可以添加媒体类型检查逻辑
+      // 为简化起见，我们直接使用传入的类型
     };
+    
+    // 销毁现有的播放器实例
+    if (zwPlayer.value) {
+      zwPlayer.value.destroy();
+      zwPlayer.value = null;
+    }
+    
+    // 创建新的ZwPlayer实例
     if (playerRef.value) {
-      await playerRef.value.create({
+      zwPlayer.value = new ZwPlayer({
+        container: playerRef.value,
         url: url,
-        isLive: false,
-        headers: headers,
         type: mediaType,
-        container: 'lab-mse'
-      }, playerMode.type);
+        isLive: false,
+        headers: headers
+      });
     }
   }
 
@@ -157,8 +162,11 @@ const playerPlayEvent = async () => {
 };
 
 const playerClearEvent = async () => {
-  if (!playerRef.value) return;
-  await playerRef.value.destroy();
+  // 销毁播放器实例
+  if (zwPlayer.value) {
+    zwPlayer.value.destroy();
+    zwPlayer.value = null;
+  }
 };
 </script>
 

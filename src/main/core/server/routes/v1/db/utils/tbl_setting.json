@@ -110,7 +110,7 @@
   {
     "key": "playerMode",
     "value": {
-      "type": "artplayer",
+      "type": "zwplayer",
       "external": ""
     }
   },

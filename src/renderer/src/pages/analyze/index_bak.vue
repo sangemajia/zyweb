@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="player-content">
-            <multi-player ref="playerRef" />
+            <div ref="playerRef" id="analyze-mse" class="player-container"></div>
           </div>
         </div>
         <div class="analyze-setting">
@@ -71,7 +71,7 @@ import { putHistory, addHistory, findHistory } from '@/api/history';
 import { fetchAnalyzeHelper } from '@/utils/common/film';
 import emitter from '@/utils/emitter';
 
-import { MultiPlayer } from '@/components/player';
+import { ZwPlayer } from '@/components/player';
 import DialogHistoryView from './components/DialogHistory.vue';
 import DialogIframemView from './components/DialogIframe.vue';
 import DialogSearchView from './components/DialogSearch.vue';
@@ -83,6 +83,7 @@ const searchText = ref('');
 const urlTitle = ref(''); // 播放地址的标题
 const analyzeUrl = ref<string>(''); // 输入需要解析地址
 const playerRef = useTemplateRef('playerRef');
+const zwPlayer = ref<any>(null);
 const shareFromData = ref({
   name: '',
   url: '',
@@ -185,9 +186,22 @@ const getVideoInfo = async (url: string, title: string) => {
   if (playerMode.type === 'custom') {
     window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: playFormData.value.url });
   } else {
+    // 销毁现有的播放器实例
+    if (zwPlayer.value) {
+      zwPlayer.value.destroy();
+      zwPlayer.value = null;
+    }
+    
+    // 创建新的ZwPlayer实例
     if (playerRef.value) {
-      await playerRef.value.create(playFormData.value, playerMode.type);
-    };
+      zwPlayer.value = new ZwPlayer({
+        container: playerRef.value,
+        url: playFormData.value.url,
+        type: playFormData.value.type,
+        isLive: playFormData.value.isLive,
+        headers: playFormData.value.headers
+      });
+    }
   }
 
   // 5.记录播放记录
@@ -281,7 +295,11 @@ const defaultPlay = async () => {
 const clearContent = async ()=> {
   defaultPlay();
   analyzeUrl.value = '';
-  if (playerRef.value) await playerRef.value.destroy();
+  // 销毁播放器实例
+  if (zwPlayer.value) {
+    zwPlayer.value.destroy();
+    zwPlayer.value = null;
+  }
 };
 
 const defaultConf = ()=>{

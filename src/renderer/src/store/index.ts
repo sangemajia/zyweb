@@ -1,15 +1,10 @@
 import { createPinia } from 'pinia';
-import { createPersistedState } from 'pinia-plugin-persistedstate';
 
-import { createSyncPlugin } from './plugins/pinia-plugin-sync';
+// 创建store实例
+export const store = createPinia();
 
-const store = createPinia();
-store.use(createPersistedState());
-store.use(createSyncPlugin());
-
-export { store };
-
-export * from './modules/play';
-export * from './modules/setting';
+// 导出各个store模块
+export { usePlayStore } from './modules/play';
+export { useSettingStore } from './modules/setting';
 
 export default store;

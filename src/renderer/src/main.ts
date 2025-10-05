@@ -1,8 +1,5 @@
 import { createApp } from 'vue';
 
-// 引入 Web 适配层
-import '../../web-adaptor/index';
-
 import App from './App.vue';
 import router from './router';
 import { store } from './store';

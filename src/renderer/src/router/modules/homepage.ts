@@ -77,6 +77,7 @@ export default [
     path: '/play',
     name: 'play',
     redirect: '/play/index',
+    component: Layout,
     meta: {
       title: {
         zh_CN: '播放',

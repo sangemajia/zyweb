@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist/web/modules/setting',
+    outDir: '../../dist/client/modules/setting',
     emptyOutDir: true,
     sourcemap: false,
     minify: false,

@@ -1,8 +1,8 @@
 import { defineComponent, onUnmounted, ref, shallowRef, toRaw } from 'vue';
 import type { SetupContext } from 'vue';
-import { ArtPlayerAdapter, XgPlayerAdapter, OPlayerAdapter,  } from './core';
-// import { ArtPlayerAdapter, DPlayerAdapter, NPlayerAdapter, XgPlayerAdapter, OPlayerAdapter } from './core';
+import { loadAdapter } from './core';
 import { singleton, mediaUtils } from './utils/tool';
+import { ZwPlayer } from './core/zwplayer/zwplayer';
 import './assets/css/index.less';
 
 const MultiPlayer = defineComponent({
@@ -10,21 +10,48 @@ const MultiPlayer = defineComponent({
   emits: ['updateTime'],
   setup(_props, ctx: SetupContext) {
     const adapter = shallowRef<any>();
+    const zwPlayer = shallowRef<any>();
     const mseRef = ref<HTMLDivElement | null>();
-    const adapterRelation = {
-      artplayer: ArtPlayerAdapter,
-      // dplayer: DPlayerAdapter,
-      // nplayer: NPlayerAdapter,
-      xgplayer: XgPlayerAdapter,
-      oplayer: OPlayerAdapter,
-    };
 
-    const create = async (doc: { [key: string]: any }, type: string = 'artplayer') => {
+    const create = async (doc: { [key: string]: any }, type: string = 'zwplayer') => {
       if (!doc?.url) return;
-      if (!Object.keys(adapterRelation).includes(type)) return;
+
+      // 如果是使用自定义播放器zwplayer
+      if (type === 'zwplayer') {
+        if (zwPlayer.value) await destroy();
+        if (mseRef.value) mseRef.value.id = doc.container;
+        
+        // 创建ZwPlayer实例
+        zwPlayer.value = new ZwPlayer({
+          container: mseRef.value || doc.container,
+          url: doc.url,
+          type: doc.type,
+          isLive: doc.isLive,
+          headers: doc.headers,
+          autoplay: true,
+          volume: 1,
+          muted: false,
+          playbackRate: 1,
+          startTime: 0
+        });
+        
+        // 监听时间更新事件
+        zwPlayer.value.on('timeupdate', ({ currentTime, duration }) => {
+          ctx.emit('updateTime', { currentTime, duration });
+        });
+        
+        return zwPlayer.value;
+      }
+
+      // 按需加载适配器（保持原有逻辑）
+      const AdapterClass = await loadAdapter(type);
+      if (!AdapterClass) {
+        console.error(`Adapter ${type} not found`);
+        return;
+      }
 
       if (adapter.value) await destroy();
-      const singleAdapter = singleton(adapterRelation?.[type]);
+      const singleAdapter = singleton(AdapterClass);
       adapter.value = new singleAdapter();
 
       if (mseRef.value) mseRef.value.id = doc.container;
@@ -46,31 +73,53 @@ const MultiPlayer = defineComponent({
     };
 
     const destroy = async () => {
-      if (!adapter.value) return;
-      await adapter.value.destroy();
-      adapter.value = null;
+      // 销毁ZwPlayer实例
+      if (zwPlayer.value) {
+        zwPlayer.value.destroy();
+        zwPlayer.value = null;
+      }
+      
+      // 销毁适配器实例
+      if (adapter.value) {
+        await adapter.value.destroy();
+        adapter.value = null;
+      }
     };
 
     const play = async () => {
-      if (!adapter.value) return;
-      await adapter.value.play();
+      if (zwPlayer.value) {
+        await zwPlayer.value.play();
+      } else if (adapter.value) {
+        await adapter.value.play();
+      }
     };
 
     const pause = async () => {
-      if (!adapter.value) return;
-      await adapter.value.pause();
+      if (zwPlayer.value) {
+        await zwPlayer.value.pause();
+      } else if (adapter.value) {
+        await adapter.value.pause();
+      }
     };
 
     const barrage = async (comments: string[], url: string, id: string) => {
-      if (!adapter.value) return;
-      await adapter.value.barrage(toRaw(comments), url, id);
+      if (zwPlayer.value) {
+        // ZwPlayer的弹幕功能实现
+        // 这里可以根据需要实现弹幕功能
+      } else if (adapter.value) {
+        await adapter.value.barrage(toRaw(comments), url, id);
+      }
     };
 
     const onTimeUpdate = async () => {
-      if (!adapter.value) return;
-      await adapter.value.onTimeUpdate(({ currentTime, duration }) => {
-        ctx.emit('updateTime', { currentTime, duration });
-      });
+      if (zwPlayer.value) {
+        // ZwPlayer已经自动监听了时间更新事件
+        // 这里可以添加额外的处理逻辑
+      } else if (adapter.value) {
+        await adapter.value.onTimeUpdate(({ currentTime, duration }) => {
+          ctx.emit('updateTime', { currentTime, duration });
+        });
+      }
     };
 
     onUnmounted(() => {

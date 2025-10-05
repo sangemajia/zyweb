@@ -2,7 +2,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { drizzle } from 'drizzle-orm/pglite';
 // import { migrate } from 'drizzle-orm/pglite/migrator';
 import * as schema from './schema';
-import { APP_DB_PATH } from '../../../utils/hiker/path.web';
+import { APP_DB_PATH } from '@main/utils/hiker/path.web';
 
 const DB_PATH = APP_DB_PATH;
 
@@ -21,8 +21,8 @@ const db = drizzle({ client, schema });
 // migrateAfterClientReady();
 
 const server = async () => {
-  // 在Web环境中不启动服务器
-  console.log('[DB] Web environment, no server started');
+  // 在Web环境中，我们不启动服务器
+  console.log('Web environment: PGlite server not started');
 };
 
 export { client, db, server };
