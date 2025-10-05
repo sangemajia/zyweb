@@ -232,7 +232,7 @@ const html = {
               .replace(/</g, '<')
               .replace(/>/g, '>')
               .replace(/"/g, '"')
-              .replace(/'/g, '\\\'');
+              .replace(/'/g, '\\'');
   },
   decode: (val: string) => {
     // 简单实现 HTML 解码
@@ -288,4 +288,16 @@ const hex = {
   },
 };
 
-export { base64, crypto, hash, hmac, html, unicode, url, hex };
+// 添加gzip对象
+const gzip = {
+  encode: (val: string) => {
+    // 在Web环境中，我们不实现实际的gzip压缩，只是返回原始值
+    return val;
+  },
+  decode: (val: string) => {
+    // 在Web环境中，我们不实现实际的gzip解压缩，只是返回原始值
+    return val;
+  },
+};
+
+export { base64, crypto, hash, hmac, html, unicode, url, hex, gzip };

@@ -1,7 +1,7 @@
 import { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { service, magrite } from './db.service.web';
 import webdev from './webdev.web';
-import { importData } from './utils/data';
+import { importData } from './utils/data.web';
 
 // 解构 service 对象
 const { history, setting, star, site, iptv, channel, analyze, drive, db } = service;

@@ -4,7 +4,18 @@ import { resolve } from 'url';
 import request from './request.web';
 import { readFile } from './file.web';
 import { base64 } from './crypto.web';
-import initSettingData from './tbl_setting.json';
+
+// 在Web环境中模拟initSettingData
+const initSettingData = [
+  // 这里可以添加一些默认的设置项
+  { key: 'defaultSite', value: '' },
+  { key: 'defaultIptv', value: '' },
+  { key: 'defaultAnalyze', value: '' },
+  { key: 'defaultDrive', value: '' },
+  { key: 'theme', value: 'light' },
+  { key: 'language', value: 'zh-CN' },
+  { key: 'autoCheckUpdate', value: true },
+];
 
 const easy2catvod = (config, url) => {
   let data = {};

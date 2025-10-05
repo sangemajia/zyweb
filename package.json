@@ -25,6 +25,10 @@
     "dev:web": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite",
     "build:web": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build",
     "build:web:simple": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.simple.config.ts",
+    "build:web:modules": "/workspace/cleanup.sh && ./build-modules.sh",
+    "build:web:modular": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.modular.config.ts",
+    "build:web:minimal": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.minimal.config.ts",
+    "dev:web:modular": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite --config vite.modular.config.ts",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
     "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
     "dev:test-server": "npx ts-node --transpile-only test-webbridge.ts"

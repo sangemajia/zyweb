@@ -1,13 +1,13 @@
 // Web 环境下的文件操作工具
-import fs from 'fs';
 import { join } from 'path';
+import { existsSync, statSync, writeFileSync, readFileSync, unlinkSync, readdirSync, rmSync, mkdirSync } from './fs.web';
 import { gzip } from './crypto.web';
 
 // 检查文件或目录是否存在
 const fileExist = async (filePath: string): Promise<boolean> => {
   if (!filePath) return false;
   try {
-    return fs.existsSync(filePath);
+    return existsSync(filePath);
   } catch {
     return false;
   }
@@ -16,7 +16,7 @@ const fileExist = async (filePath: string): Promise<boolean> => {
 const fileExistSync = (filePath: string): boolean => {
   if (!filePath) return false;
   try {
-    return fs.existsSync(filePath);
+    return existsSync(filePath);
   } catch {
     return false;
   }
@@ -25,7 +25,7 @@ const fileExistSync = (filePath: string): boolean => {
 // 获取文件或目录的状态
 const fileState = async (filePath: string): Promise<'file' | 'dir' | 'unknown'> => {
   try {
-    const state = fs.statSync(filePath);
+    const state = statSync(filePath);
     return state.isFile() ? 'file' : state.isDirectory() ? 'dir' : 'unknown';
   } catch {
     return 'unknown';
@@ -34,7 +34,7 @@ const fileState = async (filePath: string): Promise<'file' | 'dir' | 'unknown'> 
 
 const fileStateSync = (filePath: string): 'file' | 'dir' | 'unknown' => {
   try {
-    const state = fs.statSync(filePath);
+    const state = statSync(filePath);
     return state.isFile() ? 'file' : state.isDirectory() ? 'dir' : 'unknown';
   } catch {
     return 'unknown';
@@ -46,7 +46,7 @@ const saveFile = async (filePath: string, content: string, crypto: number = 0): 
   try {
     if (!filePath) return false;
     if (crypto !== 0) content = gzip.encode(content);
-    fs.writeFileSync(filePath, content, 'utf8');
+    writeFileSync(filePath, content, 'utf8');
     return true;
   } catch {
     return false;
@@ -58,7 +58,7 @@ const saveFileSync = (filePath: string, content: string, crypto: number = 0): bo
   try {
     if (!filePath) return false;
     if (crypto !== 0) content = gzip.encode(content);
-    fs.writeFileSync(filePath, content, 'utf8');
+    writeFileSync(filePath, content, 'utf8');
     return true;
   } catch {
     return false;
@@ -69,7 +69,7 @@ const saveFileSync = (filePath: string, content: string, crypto: number = 0): bo
 const saveJson = async (filePath: string, content: object): Promise<boolean> => {
   try {
     if (!filePath) return false;
-    fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
+    writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
     return true;
   } catch {
     return false;
@@ -80,7 +80,7 @@ const saveJson = async (filePath: string, content: object): Promise<boolean> => 
 const saveJsonSync = (filePath: string, content: object): boolean => {
   try {
     if (!filePath) return false;
-    fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
+    writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
     return true;
   } catch {
     return false;
@@ -91,7 +91,7 @@ const saveJsonSync = (filePath: string, content: object): boolean => {
 const readFile = async (filePath: string, crypto: number = 0): Promise<string | false> => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = readFileSync(filePath, 'utf8');
     if (crypto !== 0) content = gzip.decode(content);
     return content;
   } catch {
@@ -102,7 +102,7 @@ const readFile = async (filePath: string, crypto: number = 0): Promise<string | 
 const readFileSync = (filePath: string, crypto: number = 0): string | false => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = readFileSync(filePath, 'utf8');
     if (crypto !== 0) content = gzip.decode(content);
     return content;
   } catch {
@@ -114,7 +114,7 @@ const readFileSync = (filePath: string, crypto: number = 0): string | false => {
 const readJson = async (filePath: string): Promise<any | false> => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSync(filePath, 'utf8');
     return JSON.parse(content);
   } catch {
     return false;
@@ -124,7 +124,7 @@ const readJson = async (filePath: string): Promise<any | false> => {
 const readJsonSync = (filePath: string): any | false => {
   try {
     if (!fileExistSync(filePath) || fileStateSync(filePath) !== 'file') return false;
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSync(filePath, 'utf8');
     return JSON.parse(content);
   } catch {
     return false;
@@ -134,7 +134,7 @@ const readJsonSync = (filePath: string): any | false => {
 // 删除文件
 const deleteFile = async (filePath: string): Promise<boolean> => {
   try {
-    fs.unlinkSync(filePath);
+    unlinkSync(filePath);
     return true;
   } catch {
     return false;
@@ -143,7 +143,7 @@ const deleteFile = async (filePath: string): Promise<boolean> => {
 
 const deleteFileSync = (filePath: string): boolean => {
   try {
-    fs.unlinkSync(filePath);
+    unlinkSync(filePath);
     return true;
   } catch {
     return false;
@@ -155,7 +155,7 @@ const readDir = async (dirPath: string): Promise<string[] | false> => {
   try {
     if (!dirPath) return false;
     if (!fileExistSync(dirPath) || fileStateSync(dirPath) !== 'dir') return false;
-    return fs.readdirSync(dirPath);
+    return readdirSync(dirPath);
   } catch {
     return false;
   }
@@ -165,7 +165,7 @@ const readDirSync = (dirPath: string): string[] | false => {
   try {
     if (!dirPath) return false;
     if (!fileExistSync(dirPath) || fileStateSync(dirPath) !== 'dir') return false;
-    return fs.readdirSync(dirPath);
+    return readdirSync(dirPath);
   } catch {
     return false;
   }
@@ -174,7 +174,7 @@ const readDirSync = (dirPath: string): string[] | false => {
 // 删除目录
 const deleteDir = async (dirPath: string): Promise<boolean> => {
   try {
-    fs.rmSync(dirPath, { recursive: true });
+    rmSync(dirPath, { recursive: true });
     return true;
   } catch {
     return false;
@@ -183,7 +183,7 @@ const deleteDir = async (dirPath: string): Promise<boolean> => {
 
 const deleteDirSync = (dirPath: string): boolean => {
   try {
-    fs.rmSync(dirPath, { recursive: true });
+    rmSync(dirPath, { recursive: true });
     return true;
   } catch {
     return false;
@@ -194,7 +194,7 @@ const deleteDirSync = (dirPath: string): boolean => {
 const createDir = async (dirPath: string): Promise<boolean> => {
   try {
     if (!dirPath) return false;
-    fs.mkdirSync(dirPath, { recursive: true });
+    mkdirSync(dirPath, { recursive: true });
     return true;
   } catch {
     return false;
@@ -204,7 +204,7 @@ const createDir = async (dirPath: string): Promise<boolean> => {
 const createDirSync = (dirPath: string): boolean => {
   try {
     if (!dirPath) return false;
-    fs.mkdirSync(dirPath, { recursive: true });
+    mkdirSync(dirPath, { recursive: true });
     return true;
   } catch {
     return false;
@@ -228,13 +228,13 @@ const fileSize = async (folderPath: string): Promise<number> => {
         const entryStatus = fileStateSync(entryPath);
 
         if (entryStatus === 'file') {
-          totalSize += fs.statSync(entryPath).size;
+          totalSize += statSync(entryPath).size;
         } else if (entryStatus === 'dir') {
           totalSize += fileSizeSync(entryPath);
         }
       }
     } else if (status === 'file') {
-      return fs.statSync(folderPath).size;
+      return statSync(folderPath).size;
     }
 
     return totalSize;
@@ -258,13 +258,13 @@ const fileSizeSync = (folderPath: string): number => {
         const entryStatus = fileStateSync(entryPath);
 
         if (entryStatus === 'file') {
-          totalSize += fs.statSync(entryPath).size;
+          totalSize += statSync(entryPath).size;
         } else if (entryStatus === 'dir') {
           totalSize += fileSizeSync(entryPath);
         }
       }
     } else if (status === 'file') {
-      return fs.statSync(folderPath).size;
+      return statSync(folderPath).size;
     }
 
     return totalSize;
