@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment files
+.env*
+
+# Temporary files
+tmp/
+temp/
+
+# Cache
+.cache/
+
+# npm
+npm-debug.log*
+.npm/
+
+# yarn
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Vite
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Local storage files
+*.db
+*.db-journal

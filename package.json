@@ -1,0 +1,67 @@
+{
+  "name": "zyweb",
+  "version": "3.4.1-beta20250602",
+  "description": "Web version of zyfun client",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hiram-Wong/ZyPlayer.git"
+  },
+  "keywords": [
+    "zyplayer",
+    "zyfun",
+    "web-app",
+    "video"
+  ],
+  "author": {
+    "name": "Hiram-Wong",
+    "email": "admin@catni.cn"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hiram-Wong/ZyPlayer/issues"
+  },
+  "homepage": "https://github.com/Hiram-Wong/ZyPlayer#readme",
+  "scripts": {
+    "dev:web": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite",
+    "build:web": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite build",
+    "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
+    "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
+    "dev:test-server": "npx ts-node --transpile-only test-webbridge.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.10",
+    "@fastify/cors": "^11.1.0",
+    "@fastify/multipart": "^9.2.1",
+    "@vueuse/core": "^13.9.0",
+    "axios": "^1.9.0",
+    "cheerio": "^1.1.2",
+    "crypto-js": "^4.2.0",
+    "drizzle-orm": "^0.44.6",
+    "fastify": "^5.6.1",
+    "iconv-lite": "^0.7.0",
+    "is-ip": "^5.0.1",
+    "json5": "^2.2.3",
+    "jsonpath-plus": "^10.3.0",
+    "lodash-es": "^4.17.21",
+    "moment": "^2.30.1",
+    "node-json-db": "^2.3.1",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "tdesign-icons-vue-next": "^0.4.1",
+    "tdesign-vue-next": "^1.17.0",
+    "tsconfig-paths": "^4.2.0",
+    "uuid": "^13.0.0",
+    "vue": "^3.5.16",
+    "vue-i18n": "^11.1.12",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": "20 || >= 22"
+  }
+}

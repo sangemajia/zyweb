@@ -1,0 +1,46 @@
+{
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@main/*": [
+        "src/main/*"
+      ],
+      "@preload/*": [
+        "src/preload/*"
+      ],
+      "@main/core/db/service": [
+        "src/main/core/db/service/index.web"
+      ],
+      "@main/utils/tool": [
+        "src/main/utils/tool/index.web"
+      ],
+      "@main/utils/lrucache": [
+        "src/main/utils/lrucache/index.web"
+      ],
+      "@main/utils/hiker/file": [
+        "src/main/utils/hiker/file.web"
+      ],
+      "@main/utils/hiker/htmlParser": [
+        "src/main/utils/hiker/htmlParser.web"
+      ],
+      "@main/utils/hiker/path": [
+        "src/main/utils/hiker/path.web"
+      ],
+      "@main/core/db/common/client": [
+        "src/main/core/db/common/client.web"
+      ],
+      "@main/core/db/common": [
+        "src/main/core/db/common/index.web"
+      ]
+    },
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
