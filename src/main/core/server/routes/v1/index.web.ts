@@ -1,4 +1,4 @@
-import { db } from './db';
+import db from './db/db.web';
 import { db as driveDb, work as driveWork } from './drive/index.web';
 import { work as fileWork } from './file/index.web';
 import { work as historyWork } from './history/index.web';
