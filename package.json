@@ -40,6 +40,7 @@
     "build:web:all-modules": "/workspace/cleanup.sh && ./build-all-modules.sh",
     "build:web:module-loader": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.module-loader.config.ts",
     "build:web:simple-test": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.simple-test.config.ts",
+    "build:web:example-module": "/workspace/cleanup.sh && node --max-old-space-size=50 --no-warnings ./node_modules/.bin/vite build --config vite.example-module.config.ts",
     "dev:web:modular": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite --config vite.modular.config.ts",
     "dev:web:module-loader": "/workspace/cleanup.sh && node --max-old-space-size=300 ./node_modules/.bin/vite --config vite.module-loader.config.ts",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",

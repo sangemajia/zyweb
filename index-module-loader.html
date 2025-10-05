@@ -44,11 +44,13 @@
     <div id="app"></div>
     <script type="module">
       // 导入模块加载器
-      import { app, loadModule, preloadModules } from '/src/renderer/src/main-module-loader.ts';
+      import { app, loadModule, preloadModules, loadSharedComponent, loadSharedUtils } from '/src/renderer/src/main-module-loader.ts';
       
       // 将加载函数挂载到全局对象上，以便在应用中使用
       window.loadModule = loadModule;
       window.preloadModules = preloadModules;
+      window.loadSharedComponent = loadSharedComponent;
+      window.loadSharedUtils = loadSharedUtils;
       
       // 隐藏加载界面
       window.removeLoading = () => {
@@ -63,6 +65,17 @@
         console.log('常用模块预加载完成');
       }).catch((error) => {
         console.error('模块预加载失败:', error);
+      });
+      
+      // 预加载共享组件和工具函数
+      Promise.all([
+        loadSharedComponent('button'),
+        loadSharedComponent('card'),
+        loadSharedUtils()
+      ]).then(() => {
+        console.log('共享组件和工具函数预加载完成');
+      }).catch((error) => {
+        console.error('共享组件和工具函数预加载失败:', error);
       });
     </script>
   </body>

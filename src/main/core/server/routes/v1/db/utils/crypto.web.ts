@@ -232,7 +232,7 @@ const html = {
               .replace(/</g, '<')
               .replace(/>/g, '>')
               .replace(/"/g, '"')
-              .replace(/'/g, '\\'');
+              .replace(/'/g, '\'');
   },
   decode: (val: string) => {
     // 简单实现 HTML 解码
