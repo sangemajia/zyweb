@@ -32,9 +32,9 @@ class ZwPlayerCore extends EventEmitter {
       playbackRate: 1,
       startTime: 0,
       isLive: false,
-      ...options
+      ...options,
     };
-    
+
     this.storage = new PlayerStorage('zwplayer');
     this.initContainer();
     this.initVideoElement();
@@ -51,7 +51,7 @@ class ZwPlayerCore extends EventEmitter {
     } else {
       this.container = this.options.container as HTMLElement;
     }
-    
+
     // 确保容器有相对定位
     if (getComputedStyle(this.container).position === 'static') {
       this.container.style.position = 'relative';
@@ -63,19 +63,19 @@ class ZwPlayerCore extends EventEmitter {
     this.videoElement.style.width = '100%';
     this.videoElement.style.height = '100%';
     this.videoElement.style.objectFit = 'contain';
-    
+
     // 设置初始属性
     this.videoElement.volume = this.options.volume!;
     this.videoElement.muted = this.options.muted!;
     this.videoElement.playbackRate = this.options.playbackRate!;
-    
+
     this.container.appendChild(this.videoElement);
-    
+
     // 设置视频源
     if (this.options.url) {
       this.videoElement.src = this.options.url;
     }
-    
+
     // 自动播放
     if (this.options.autoplay) {
       this.play().catch(console.error);
@@ -87,41 +87,41 @@ class ZwPlayerCore extends EventEmitter {
       this.isPlaying = true;
       this.emit('play');
     });
-    
+
     this.videoElement.addEventListener('pause', () => {
       this.isPlaying = false;
       this.emit('pause');
     });
-    
+
     this.videoElement.addEventListener('ended', () => {
       this.isPlaying = false;
       this.emit('ended');
     });
-    
+
     this.videoElement.addEventListener('timeupdate', () => {
       this.emit('timeupdate', {
         currentTime: this.videoElement.currentTime,
-        duration: this.videoElement.duration || 0
+        duration: this.videoElement.duration || 0,
       });
     });
-    
+
     this.videoElement.addEventListener('volumechange', () => {
       this.emit('volumechange', {
         volume: this.videoElement.volume,
-        muted: this.videoElement.muted
+        muted: this.videoElement.muted,
       });
     });
-    
+
     this.videoElement.addEventListener('ratechange', () => {
       this.emit('ratechange', {
-        playbackRate: this.videoElement.playbackRate
+        playbackRate: this.videoElement.playbackRate,
       });
     });
-    
+
     this.videoElement.addEventListener('loadedmetadata', () => {
       this.emit('ready');
     });
-    
+
     this.videoElement.addEventListener('error', (e) => {
       this.emit('error', e);
     });

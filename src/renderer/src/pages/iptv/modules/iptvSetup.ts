@@ -8,7 +8,15 @@ import { putIptvDefault } from '@/api/iptv';
 // 工具函数
 import { getSetting, getChannel } from './iptvUtils';
 import { playEvent } from './playUtils';
-import { delayQueue, ipversionQueue, thumbnailQueue, checkChannelDelay, checkChannelIp, generateThumbnail, clearQueue } from './queueUtils';
+import {
+  delayQueue,
+  ipversionQueue,
+  thumbnailQueue,
+  checkChannelDelay,
+  checkChannelIp,
+  generateThumbnail,
+  clearQueue,
+} from './queueUtils';
 
 // 初始化配置
 export const useIptvSetup = () => {
@@ -20,7 +28,7 @@ export const useIptvSetup = () => {
   const isVisible = reactive({
     contentMenu: false,
     lazyload: false,
-    loading: false
+    loading: false,
   });
   const searchTxt = ref('');
   const infiniteId = ref(+new Date());
@@ -35,20 +43,20 @@ export const useIptvSetup = () => {
     default: {},
     data: [],
     ext: {
-      epg: "https://epg.112114.eu.org/?ch={name}&date={date}",
-      logo: "https://epg.112114.eu.org/logo/{name}.png",
+      epg: 'https://epg.112114.eu.org/?ch={name}&date={date}',
+      logo: 'https://epg.112114.eu.org/logo/{name}.png',
       markIp: true,
       delay: false,
-      thumbnail: false
+      thumbnail: false,
     },
-    ua: ""
-  })
+    ua: '',
+  });
 
   const active = ref({
     nav: '',
     class: '全部',
     infiniteType: 'loading',
-  })
+  });
 
   const channelList = ref<any[]>([]);
   const classList = ref<any[]>([]);
@@ -141,15 +149,15 @@ export const useIptvSetup = () => {
       if (active.value.infiniteType === 'noData') {
         $state.complete();
         return;
-      };
+      }
 
       const result = await getChannel(
-        pagination.value, 
-        searchTxt.value, 
-        active.value, 
-        channelList.value, 
-        classList.value, 
-        iptvConfig.value
+        pagination.value,
+        searchTxt.value,
+        active.value,
+        channelList.value,
+        classList.value,
+        iptvConfig.value,
       );
 
       channelList.value = result.channelList;
@@ -158,17 +166,29 @@ export const useIptvSetup = () => {
 
       // 处理延迟检查
       if (iptvConfig.value.ext.delay) {
-        channelList.value = await checkChannelDelay(pagination.value.pageIndex - 1, pagination.value.pageSize, channelList.value);
+        channelList.value = await checkChannelDelay(
+          pagination.value.pageIndex - 1,
+          pagination.value.pageSize,
+          channelList.value,
+        );
       }
-      
+
       // 处理缩略图生成
       if (iptvConfig.value.ext.thumbnail) {
-        channelList.value = await generateThumbnail(pagination.value.pageIndex - 1, pagination.value.pageSize, channelList.value);
+        channelList.value = await generateThumbnail(
+          pagination.value.pageIndex - 1,
+          pagination.value.pageSize,
+          channelList.value,
+        );
       }
-      
+
       // 处理IP检查
       if (iptvConfig.value.ext.markIp) {
-        channelList.value = await checkChannelIp(pagination.value.pageIndex - 1, pagination.value.pageSize, channelList.value);
+        channelList.value = await checkChannelIp(
+          pagination.value.pageIndex - 1,
+          pagination.value.pageSize,
+          channelList.value,
+        );
       }
 
       if (result.length === 0) $state.complete();
@@ -209,6 +229,6 @@ export const useIptvSetup = () => {
     changeClassEvent,
     load,
     playEvent,
-    clearQueue
+    clearQueue,
   };
 };

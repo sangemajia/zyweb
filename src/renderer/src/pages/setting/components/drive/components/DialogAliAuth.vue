@@ -6,7 +6,8 @@
     <div class="auth-webview">
       <webview
         src="https://openapi.alipan.com/oauth/authorize?client_id=d1af8f792c15469b9c3b35cba10dad3b&redirect_uri=oob&scope=user:base,file:all:read&code_challenge=11111&code_challenge_method=plain"
-        disablewebsecurity></webview>
+        disablewebsecurity
+      ></webview>
     </div>
   </t-dialog>
 </template>
@@ -35,14 +36,14 @@ const formData = reactive({
   search: false,
   headers: null,
   params: null,
-  isActive: true
+  isActive: true,
 });
 const ali = reactive({
   qrCodeUrl: '',
   sid: '',
   status: '',
-  authCode: ''
-})
+  authCode: '',
+});
 const onSubmit = () => {
   addEvent();
   formVisible.value = false;
@@ -98,16 +99,13 @@ const getQrCode = async () => {
   //   "width": 430,
   //   "height": 430
   // });
-
   // console.log(data);
   // ali.qrCodeUrl = data.qrCodeUrl;
   // ali.sid = data.sid;
-
   // const checkStatus = async () => {
   //   const { data } = await axios.get(`https://openapi.alipan.com/oauth/qrcode/${ali.sid}/status`);
   //   ali.status = data.status;
   //   console.log(data);
-
   //   if (data.status === 'QRCodeExpired') {
   //     // Call getQrCode again after a delay if QRCodeExpired
   //     setTimeout(getQrCode, 1000);
@@ -126,11 +124,9 @@ const getQrCode = async () => {
   //     setTimeout(checkStatus, 1000);
   //   }
   // };
-
   // // Initial check for status after getting QR code
   // setTimeout(checkStatus, 1000);
 };
-
 </script>
 <style lang="less" scoped>
 .input-item,

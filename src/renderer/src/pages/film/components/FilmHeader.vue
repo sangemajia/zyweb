@@ -17,20 +17,20 @@ import TitleMenu from '@/components/title-menu/index.vue';
 defineProps({
   classConfig: {
     type: Object,
-    required: true
+    required: true,
   },
   active: {
     type: Object,
-    required: true
+    required: true,
   },
   filterData: {
     type: Object,
-    required: true
+    required: true,
   },
   isVisible: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // 定义事件发射器

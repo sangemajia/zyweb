@@ -86,8 +86,9 @@ class AdapterHandler {
 
   private async init() {
     // 初始化插件目录
-    if (!await fileExist(this.baseDir)) await createDir(this.baseDir);
-    if (!await fileExist(this.pluginPath) || await fileState(this.pluginPath) !== 'file') await saveJson(this.pluginPath, { plugin: [] });
+    if (!(await fileExist(this.baseDir))) await createDir(this.baseDir);
+    if (!(await fileExist(this.pluginPath)) || (await fileState(this.pluginPath)) !== 'file')
+      await saveJson(this.pluginPath, { plugin: [] });
 
     // 初始化插件列表
     this.db = new JsonDB(new Config(this.pluginPath, true, true, '/'));
@@ -196,11 +197,11 @@ class AdapterHandler {
       try {
         // 1.判断项目存在
         const pluginBasePath = join(this.baseDir, plugin);
-        if (!await fileExist(pluginBasePath) || await fileState(pluginBasePath) !== 'dir') continue;
+        if (!(await fileExist(pluginBasePath)) || (await fileState(pluginBasePath)) !== 'dir') continue;
 
         // 2.设置默认参数
         const pkgPath = join(pluginBasePath, 'package.json');
-        if (!await fileExist(pkgPath) || await fileState(pkgPath) !== 'file') continue;
+        if (!(await fileExist(pkgPath)) || (await fileState(pkgPath)) !== 'file') continue;
         const pkgInfo = await this.readJsonFile(pkgPath);
         if (!pkgInfo || typeof pkgInfo !== 'object') continue;
 
@@ -211,7 +212,8 @@ class AdapterHandler {
         // 2.1 readme
         const readmePath = join(pluginBasePath, 'README.md');
         info.readme = `### empty`;
-        if (await fileExist(readmePath) && await fileState(readmePath) === 'file') info.readme = (await readFile(readmePath)) || '';
+        if ((await fileExist(readmePath)) && (await fileState(readmePath)) === 'file')
+          info.readme = (await readFile(readmePath)) || '';
         // 2.2 main
         if (info.type === 'ui') {
           info.main = info?.main ? pathToFileURL(resolve(pluginBasePath, info.main)).toString() : 'about:blank';
@@ -230,11 +232,14 @@ class AdapterHandler {
         if (await fileExist(pluginPkgLockPath)) await deleteFile(pluginPkgLockPath);
 
         // 4.安装插件
-        const execRes = await this.execCommand('install', {
+        const execRes = await this.execCommand(
+          'install',
+          {
             prefix: pluginBasePath,
             registry: this.registry,
             save: true,
-          }, []
+          },
+          [],
         );
         if (execRes.code === -1) continue;
 
@@ -285,7 +290,7 @@ class AdapterHandler {
 
         // 2.判断项目存在
         const pluginBasePath = join(this.baseDir, pluginInfo.pathName);
-        if (!await fileExist(pluginBasePath) || await fileState(pluginBasePath) !== 'dir') {
+        if (!(await fileExist(pluginBasePath)) || (await fileState(pluginBasePath)) !== 'dir') {
           if (index > -1) await this.db.delete(`${this.dbTable}[${index}]`);
           continue;
         }
@@ -295,9 +300,11 @@ class AdapterHandler {
 
         // 4.删除必要依赖
         const pluginNodeModulesPath = join(pluginBasePath, 'node_modules');
-        if (await fileExist(pluginNodeModulesPath) && await fileState(pluginBasePath) === 'dir') await deleteDir(pluginNodeModulesPath);
+        if ((await fileExist(pluginNodeModulesPath)) && (await fileState(pluginBasePath)) === 'dir')
+          await deleteDir(pluginNodeModulesPath);
         const pluginPkgLockPath = join(pluginBasePath, 'package-lock.json');
-        if (await fileExist(pluginPkgLockPath) && await fileState(pluginPkgLockPath) === 'file') await deleteFile(pluginPkgLockPath);
+        if ((await fileExist(pluginPkgLockPath)) && (await fileState(pluginPkgLockPath)) === 'file')
+          await deleteFile(pluginPkgLockPath);
 
         // 5.插件参数
         await this.db.delete(`${this.dbTable}[${index}]`);
@@ -328,14 +335,14 @@ class AdapterHandler {
 
         // 2.判断项目存在
         const pluginBasePath = join(this.baseDir, pluginInfo.pathName);
-        if (!await fileExist(pluginBasePath) || await fileState(pluginBasePath) !== 'dir') {
+        if (!(await fileExist(pluginBasePath)) || (await fileState(pluginBasePath)) !== 'dir') {
           if (index > -1) await this.db.delete(`${this.dbTable}[${index}]`);
           continue;
         }
 
         // 3.获取pkg参数
         const pkgPath = join(pluginBasePath, 'package.json');
-        if (!await fileExist(pkgPath) || await fileState(pkgPath) !== 'file') continue;
+        if (!(await fileExist(pkgPath)) || (await fileState(pkgPath)) !== 'file') continue;
         const pkgInfo = await this.readJsonFile(pkgPath);
         if (!pkgInfo || typeof pkgInfo !== 'object') continue;
 
@@ -369,7 +376,7 @@ class AdapterHandler {
 
         // 2.判断项目存在
         const pluginBasePath = join(this.baseDir, pluginInfo.pathName);
-        if (!await fileExist(pluginBasePath) || await fileState(pluginBasePath) !== 'dir') {
+        if (!(await fileExist(pluginBasePath)) || (await fileState(pluginBasePath)) !== 'dir') {
           if (index > -1) await this.db.delete(`${this.dbTable}[${index}]`);
           continue;
         }
@@ -430,7 +437,7 @@ class AdapterHandler {
 
         // 2.判断项目存在
         const pluginBasePath = join(this.baseDir, pluginInfo.pathName);
-        if (!await fileExist(pluginBasePath) || await fileState(pluginBasePath) !== 'dir') {
+        if (!(await fileExist(pluginBasePath)) || (await fileState(pluginBasePath)) !== 'dir') {
           if (index > -1) await this.db.delete(`${this.dbTable}[${index}]`);
           continue;
         }
@@ -475,7 +482,7 @@ class AdapterHandler {
   private async execCommand(
     cmd: string,
     options: { [key: string]: any } = {},
-    args: string[] = []
+    args: string[] = [],
   ): Promise<{ code: number; msg: string; data: any }> {
     // 定义日志监听器
     const logListener = (message: any) => {

@@ -16,7 +16,7 @@ if (is.dev) {
     },
   });
   autoUpdater.updateConfigPath = resolve(__dirname, '../../dev-app-update.yml');
-};
+}
 
 autoUpdater.autoDownload = false; // 关闭自动下载
 autoUpdater.autoInstallOnAppQuit = false; // 关闭自动安装
@@ -66,7 +66,11 @@ export default () => {
 
   autoUpdater.on('update-not-available', () => {
     logger.info('[update] not available');
-    sendUpdateMessage('update-not-available', { code: 0, msg: 'ok', data: { version: app.getVersion(), releaseNotes: '', available: false } });
+    sendUpdateMessage('update-not-available', {
+      code: 0,
+      msg: 'ok',
+      data: { version: app.getVersion(), releaseNotes: '', available: false },
+    });
   });
 
   autoUpdater.on('error', (err: any) => {

@@ -69,8 +69,6 @@ export default defineConfig({
   optimizeDeps: {
     noDiscovery: true,
     include: undefined,
-    // 禁用预打包以减少内存使用
-    disabled: true,
   },
   // 减少内存使用的实验性选项
   worker: {

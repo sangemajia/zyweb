@@ -22,8 +22,8 @@ const findBestMatch = (mainString, targetStrings) => {
   for (let i = 0; i < targetStrings.length; i++) {
     const currentTargetString = targetStrings[i],
       currentRating = compareTwoStrings(mainString, currentTargetString);
-    ratings.push({ target: currentTargetString, rating: currentRating }),
-      currentRating > ratings[bestMatchIndex].rating && (bestMatchIndex = i);
+    (ratings.push({ target: currentTargetString, rating: currentRating }),
+      currentRating > ratings[bestMatchIndex].rating && (bestMatchIndex = i));
   }
   return { ratings: ratings, bestMatch: ratings[bestMatchIndex], bestMatchIndex: bestMatchIndex };
 };
@@ -65,8 +65,8 @@ const findBestLCS = (mainString, targetStrings) => {
   for (let i = 0; i < targetStrings.length; i++) {
     const currentTargetString = targetStrings[i],
       currentLCS = lcs(mainString, currentTargetString);
-    results.push({ target: currentTargetString, lcs: currentLCS }),
-      currentLCS.length > results[bestMatchIndex].lcs.length && (bestMatchIndex = i);
+    (results.push({ target: currentTargetString, lcs: currentLCS }),
+      currentLCS.length > results[bestMatchIndex].lcs.length && (bestMatchIndex = i));
   }
   return { allLCS: results, bestMatch: results[bestMatchIndex], bestMatchIndex: bestMatchIndex };
 };

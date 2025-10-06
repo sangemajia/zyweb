@@ -4,15 +4,15 @@ import { fetchDriveActive, putAlistInit, fetchAlistDir, fetchAlistFile } from '@
 export const getSetting = async (driveConfig, active) => {
   try {
     const data = await fetchDriveActive();
-    if (data.hasOwnProperty('default') && Object.keys(data["default"]).length > 0) {
-      driveConfig.default = data["default"];
-      active.nav = data["default"]["id"];
+    if (data.hasOwnProperty('default') && Object.keys(data['default']).length > 0) {
+      driveConfig.default = data['default'];
+      active.nav = data['default']['id'];
       driveConfig.default.startPage = driveConfig.default.startPage ? driveConfig.default.startPage : '/';
     } else {
       active.infiniteType = 'noData';
     }
     if (Array.isArray(data['data']) && data['data'].length > 0) {
-      driveConfig.data = data["data"];
+      driveConfig.data = data['data'];
     } else {
       active.infiniteType = 'noData';
     }
@@ -28,7 +28,7 @@ export const initCloud = async (driveConfig, isVisible, getCloudFolder) => {
   try {
     const { startPage, id } = driveConfig.default;
     await putAlistInit({ sourceId: id });
-    await getCloudFolder({ path: startPage});
+    await getCloudFolder({ path: startPage });
   } finally {
     isVisible.lazyload = false;
   }
@@ -66,7 +66,7 @@ export const formatBreadcrumb = (path: string) => {
 
   // 返回构建的路径数组
   return pathsArray;
-}
+};
 
 // 获取云文件
 export const getCloudFile = async (item, driveConfig, isVisible, breadcrumb) => {

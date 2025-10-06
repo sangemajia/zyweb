@@ -84,11 +84,11 @@ class PlatformUtils {
     if (!this.supportsNotifications()) {
       return 'denied';
     }
-    
+
     if (Notification.permission === 'granted') {
       return 'granted';
     }
-    
+
     return await Notification.requestPermission();
   }
 
@@ -104,7 +104,7 @@ class PlatformUtils {
         reject(new Error('Geolocation is not supported'));
         return;
       }
-      
+
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
   }
@@ -119,7 +119,7 @@ class PlatformUtils {
     if (!this.supportsMediaDevices()) {
       return [];
     }
-    
+
     try {
       return await navigator.mediaDevices.enumerateDevices();
     } catch (error) {
@@ -143,7 +143,7 @@ class PlatformUtils {
     if (!this.supportsFullscreen()) {
       throw new Error('Fullscreen is not supported');
     }
-    
+
     try {
       if (element.requestFullscreen) {
         await element.requestFullscreen();

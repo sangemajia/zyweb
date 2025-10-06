@@ -9,8 +9,7 @@
         </t-breadcrumb>
       </div>
     </div>
-    <div class="actions">
-    </div>
+    <div class="actions"></div>
   </header>
 </template>
 
@@ -18,8 +17,8 @@
 defineProps({
   breadcrumb: {
     type: Array,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['gotoBreadcrumbPath']);

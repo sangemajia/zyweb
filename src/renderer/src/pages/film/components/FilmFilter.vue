@@ -4,9 +4,15 @@
       <div v-for="filterItem in filterData[active.class]" :key="filterItem.key" class="tags-list">
         <div class="item title">{{ filterItem.name }}</div>
         <div class="wp">
-          <div v-for="item in filterItem.value" :key="item" class="item"
-            :class="{ active: active.filter[filterItem.key] === item.v }" :label="item.n" :value="item.v"
-            @click="changeFilterEvent(filterItem.key, item.v)">
+          <div
+            v-for="item in filterItem.value"
+            :key="item"
+            class="item"
+            :class="{ active: active.filter[filterItem.key] === item.v }"
+            :label="item.n"
+            :value="item.v"
+            @click="changeFilterEvent(filterItem.key, item.v)"
+          >
             {{ item.n }}
           </div>
         </div>
@@ -20,16 +26,16 @@
 defineProps({
   filterData: {
     type: Object,
-    required: true
+    required: true,
   },
   active: {
     type: Object,
-    required: true
+    required: true,
   },
   isVisible: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // 定义事件发射器

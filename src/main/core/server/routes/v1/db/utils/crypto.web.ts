@@ -228,19 +228,11 @@ const hmac = {
 const html = {
   encode: (val: string) => {
     // 简单实现 HTML 编码
-    return val.replace(/&/g, '&')
-              .replace(/</g, '<')
-              .replace(/>/g, '>')
-              .replace(/"/g, '"')
-              .replace(/'/g, '\'');
+    return val.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, "'");
   },
   decode: (val: string) => {
     // 简单实现 HTML 解码
-    return val.replace(/</g, '<')
-              .replace(/>/g, '>')
-              .replace(/"/g, '"')
-              .replace(/'/g, "'")
-              .replace(/&/g, '&');
+    return val.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, "'").replace(/&/g, '&');
   },
 };
 

@@ -49,8 +49,10 @@ class AdapterHandler {
   private async init() {
     // 初始化插件目录
     if (await !fileExist(this.baseDir)) await createDir(this.baseDir);
-    if (await !fileExist(this.pkgPath) || await fileState(this.pkgPath) !== 'file') await saveJson(this.pkgPath, { dependencies: {} });
-    if (await !fileExist(this.pluginPath) || await fileState(this.pluginPath) !== 'file') await saveJson(this.pluginPath, { plugin: [] });
+    if ((await !fileExist(this.pkgPath)) || (await fileState(this.pkgPath)) !== 'file')
+      await saveJson(this.pkgPath, { dependencies: {} });
+    if ((await !fileExist(this.pluginPath)) || (await fileState(this.pluginPath)) !== 'file')
+      await saveJson(this.pluginPath, { plugin: [] });
 
     // 初始化插件列表
     this.db = new JsonDB(new Config(this.pluginPath, true, true, '/'));
@@ -159,7 +161,7 @@ class AdapterHandler {
 
         // 3.安装插件
         const module = resolve(this.baseDir, 'modules', plugin.pluginName);
-        if (!await fileExist(module) || await fileState(module) !== 'dir') continue;
+        if (!(await fileExist(module)) || (await fileState(module)) !== 'dir') continue;
         const cmd = plugin.isDev ? 'link' : 'install';
         await this.execCommand(cmd, [module]);
 
@@ -168,7 +170,8 @@ class AdapterHandler {
           const pluginPath = join(this.baseDir, 'node_modules', plugin.name);
           const pluginInfo = await this.readJsonFile(join(pluginPath, 'package.json'));
           const readmePath = join(this.baseDir, 'node_modules', plugin.name, 'README.md');
-          if (await fileExist(readmePath) && await fileState(readmePath) === 'file') plugin.readme = (await readFile(readmePath));
+          if ((await fileExist(readmePath)) && (await fileState(readmePath)) === 'file')
+            plugin.readme = await readFile(readmePath);
 
           plugin = { ...plugin, ...pluginInfo };
         }
@@ -213,7 +216,7 @@ class AdapterHandler {
 
         // 卸载插件
         const module = join(this.baseDir, 'node_modules', plugin.name);
-        if (!await fileExist(module) || await fileState(module) !== 'dir') continue;
+        if (!(await fileExist(module)) || (await fileState(module)) !== 'dir') continue;
         const cmd = plugin.isDev ? 'unlink' : 'uninstall';
         await this.execCommand(cmd, [module]);
 
@@ -237,7 +240,7 @@ class AdapterHandler {
     for (const plugin of plugins) {
       try {
         const module = join(this.baseDir, 'node_modules', plugin.name);
-        if (!await fileExist(module) || await fileState(module) !== 'dir') continue;
+        if (!(await fileExist(module)) || (await fileState(module)) !== 'dir') continue;
 
         // await this.execCommand('update', [module]);
 
@@ -279,7 +282,7 @@ class AdapterHandler {
   async start(plugins: any[]) {
     for (const plugin of plugins) {
       const module = join(this.baseDir, 'node_modules', plugin.name);
-      if (!await fileExist(module) || await fileState(module) !== 'dir') continue;
+      if (!(await fileExist(module)) || (await fileState(module)) !== 'dir') continue;
 
       const index = await this.db.getIndex(`${this.dbTable}`, plugin.name, 'name');
       if (index === -1) continue;
@@ -320,7 +323,7 @@ class AdapterHandler {
   async stop(plugins: any[]) {
     for (const plugin of plugins) {
       const module = join(this.baseDir, 'node_modules', plugin.name);
-      if (!await fileExist(module) || await fileState(module) !== 'dir') continue;
+      if (!(await fileExist(module)) || (await fileState(module)) !== 'dir') continue;
 
       const index = await this.db.getIndex(`${this.dbTable}`, plugin.name, 'name');
       if (index === -1) continue;

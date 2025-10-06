@@ -6,33 +6,33 @@
       :active="active.nav"
       search
       @change-key="changeConf"
-   />
+    />
 
     <div class="content">
-      <FilmHeader 
-        :class-config="classConfig" 
-        :active="active" 
-        :filter-data="filterData" 
-        :is-visible="isVisible" 
-        @change-class-event="changeClassEvent" 
+      <FilmHeader
+        :class-config="classConfig"
+        :active="active"
+        :filter-data="filterData"
+        :is-visible="isVisible"
+        @change-class-event="changeClassEvent"
       />
 
-      <FilmFilter 
-        :filter-data="filterData" 
-        :active="active" 
-        :is-visible="isVisible" 
-        @change-filter-event="changeFilterEvent" 
+      <FilmFilter
+        :filter-data="filterData"
+        :active="active"
+        :is-visible="isVisible"
+        @change-filter-event="changeFilterEvent"
       />
 
-      <FilmList 
-        :film-data="filmData" 
-        :active="active" 
-        :is-visible="isVisible" 
-        :infinite-id="infiniteId" 
-        :render-loading="renderLoading" 
-        :render-error="renderError" 
-        @load="load" 
-        @play-event="playEvent" 
+      <FilmList
+        :film-data="filmData"
+        :active="active"
+        :is-visible="isVisible"
+        :infinite-id="infiniteId"
+        :render-loading="renderLoading"
+        :render-error="renderError"
+        @load="load"
+        @play-event="playEvent"
       />
     </div>
 
@@ -44,7 +44,6 @@
 
 <script setup lang="tsx">
 import 'v3-infinite-loading/lib/style.css';
-import lazyImg from '@/assets/lazy.png';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 import { RootListIcon } from 'tdesign-icons-vue-next';
@@ -95,22 +94,17 @@ const {
   getClassList,
   getFilmList,
   getSearchList,
-  playEvent
+  playEvent,
 } = useFilmSetup();
 
+import { renderErrorWithHeight, renderLoadingWithHeight } from '@/utils/common/renderUtils';
+
 const renderError = () => {
-  return (
-    <div class="renderIcon" style="height: 100%">
-      <img src={lazyImg} style="height: 100%; object-fit: cover;" />
-    </div>
-  );
+  return renderErrorWithHeight('100%');
 };
+
 const renderLoading = () => {
-  return (
-    <div class="renderIcon" style="height: 100%">
-      <img src={lazyImg} style="height: 100%; object-fit: cover;" />
-    </div>
-  );
+  return renderLoadingWithHeight('100%');
 };
 
 onActivated(() => {
@@ -137,7 +131,7 @@ emitter.on('searchFilm', (data: any) => {
   if (siteConfig.value.searchGroup.length === 0) {
     MessagePlugin.warning(t('pages.film.message.notSelectSourceBeforeSearch'));
     return;
-  };
+  }
 
   searchEvent();
 });

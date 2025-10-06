@@ -21,12 +21,7 @@ const keysToLowerCase = (obj: object): object => {
   if (Array.isArray(obj)) {
     return obj.map(keysToLowerCase);
   } else if (obj && typeof obj === 'object') {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
-        key.toLowerCase(),
-        keysToLowerCase(value),
-      ])
-    );
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key.toLowerCase(), keysToLowerCase(value)]));
   }
   return obj;
 };
@@ -103,9 +98,7 @@ const resolve = (from: string, to: string): string => {
   const base = new URL(from, 'resolve://');
   const resolved = new URL(to, base);
 
-  return resolved.protocol === 'resolve:'
-    ? `${resolved.pathname}${resolved.search}${resolved.hash}`
-    : resolved.href;
+  return resolved.protocol === 'resolve:' ? `${resolved.pathname}${resolved.search}${resolved.hash}` : resolved.href;
 };
 
 /**

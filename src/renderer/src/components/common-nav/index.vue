@@ -30,13 +30,21 @@
               type: 'virtual',
               bufferSize: 10,
               rowHeight: 42,
-              threshold: 12
+              threshold: 12,
             }"
             class="nav-menu"
           >
-            <t-list-item v-for="(item, index) in listData" :key="index" :class="[activeData === item.id ? 'is-active' : '']">
+            <t-list-item
+              v-for="(item, index) in listData"
+              :key="index"
+              :class="[activeData === item.id ? 'is-active' : '']"
+            >
               <t-tooltip :content="item.name" destroy-on-close>
-                <t-list-item-meta :description="item.name" @click="handleItemClick(item.id)" @contextmenu="conButtonClick(item, $event)" />
+                <t-list-item-meta
+                  :description="item.name"
+                  @click="handleItemClick(item.id)"
+                  @contextmenu="conButtonClick(item, $event)"
+                />
               </t-tooltip>
             </t-list-item>
           </t-list>
@@ -57,7 +65,7 @@
                   width: '100%',
                   height: '80px',
                   borderRadius: 'var(--td-radius-default)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }"
                 @click="handleOpenUrl(item.url)"
               />
@@ -101,7 +109,6 @@ import { useSettingStore } from '@/store';
 import spAdImg from '@/assets/ad/sp.png';
 import rainCloudAdImg from '@/assets/ad/raincloud.png';
 
-
 const storeSetting = useSettingStore();
 
 const AD_LIST = [
@@ -114,30 +121,33 @@ const AD_LIST = [
     id: 'sp',
     url: 'https://www.sourcepower.top',
     img: spAdImg,
-  }
+  },
 ];
 
-const props = withDefaults(defineProps<{
-  title: string;
-  search?: boolean;
-  active: any;
-  list: Array<{
-    id: string | number;
-    name: string;
-  }>;
-  contextMenuItems?: Array<{
-    type: 'item' | 'separator' | 'group';
-    label?: string;
-    handler?: () => void;
-    children?: Array<{
-      type: 'item' | 'separator';
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    search?: boolean;
+    active: any;
+    list: Array<{
+      id: string | number;
+      name: string;
+    }>;
+    contextMenuItems?: Array<{
+      type: 'item' | 'separator' | 'group';
       label?: string;
       handler?: () => void;
+      children?: Array<{
+        type: 'item' | 'separator';
+        label?: string;
+        handler?: () => void;
+      }>;
     }>;
-  }>;
-}>(), {
-  search: false
-});
+  }>(),
+  {
+    search: false,
+  },
+);
 
 const activeData = ref(props.active);
 const listData = ref(props.list);
@@ -148,7 +158,7 @@ const searchText = ref('');
 const active = ref({
   contentMenu: false,
   search: false,
-  show: true
+  show: true,
 });
 const mode = computed(() => {
   return storeSetting.displayMode;
@@ -190,11 +200,10 @@ onActivated(() => {
   handleScroll();
 });
 
-
 if (props.search) {
   onClickOutside(headerOutsideRef, () => {
     active.value.search = false;
-  })
+  });
 }
 
 const conButtonClick = (item: any, { x, y }: any) => {
@@ -209,7 +218,7 @@ const handleItemClick = (key: string | number) => {
 };
 
 const handleSearch = () => {
-  listData.value = props.list.filter(item => item.name.toLowerCase().includes(searchText.value.toLowerCase()));
+  listData.value = props.list.filter((item) => item.name.toLowerCase().includes(searchText.value.toLowerCase()));
 };
 
 const handleScroll = () => {
@@ -236,7 +245,7 @@ const handleOpenUrl = (url: string) => {
   height: 100%;
   width: fit-content;
   position: relative;
-  transition: padding .2s ease-in-out;
+  transition: padding 0.2s ease-in-out;
 
   .nav-sub {
     height: 100%;
@@ -310,7 +319,7 @@ const handleOpenUrl = (url: string) => {
             width: 146px;
             cursor: pointer;
             padding: 0;
-            transition: background-color .3s ease;
+            transition: background-color 0.3s ease;
             border-radius: var(--td-radius-medium);
 
             &:not(:first-child) {
@@ -357,7 +366,7 @@ const handleOpenUrl = (url: string) => {
           overflow: hidden;
 
           :deep(.t-swiper__navigation-bars) {
-            .t-swiper__navigation-item{
+            .t-swiper__navigation-item {
               padding: var(--td-comp-paddingTB-xxs) 0;
             }
           }
@@ -378,7 +387,7 @@ const handleOpenUrl = (url: string) => {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     .nav-sub-tab-line-0 {
       width: 4px;
@@ -389,7 +398,7 @@ const handleOpenUrl = (url: string) => {
       left: 4px;
       top: 0;
       position: absolute;
-      transition: all .2s ease;
+      transition: all 0.2s ease;
       transform-origin: 50% 0;
     }
 
@@ -402,7 +411,7 @@ const handleOpenUrl = (url: string) => {
       left: 4px;
       bottom: 0;
       position: absolute;
-      transition: all .2s ease;
+      transition: all 0.2s ease;
       transform-origin: 50% 100%;
     }
 
@@ -441,7 +450,7 @@ const handleOpenUrl = (url: string) => {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     .nav-sub-tab-line-0 {
       width: 4px;
@@ -452,7 +461,7 @@ const handleOpenUrl = (url: string) => {
       left: 4px;
       top: 0;
       position: absolute;
-      transition: all .2s ease;
+      transition: all 0.2s ease;
       transform-origin: 50% 0;
     }
 
@@ -465,7 +474,7 @@ const handleOpenUrl = (url: string) => {
       left: 4px;
       bottom: 0;
       position: absolute;
-      transition: all .2s ease;
+      transition: all 0.2s ease;
       transform-origin: 50% 100%;
     }
 

@@ -7,7 +7,7 @@
     width="50%"
     destroy-on-close
     :footer="false"
-    :confirm-btn=null
+    :confirm-btn="null"
     :cancel-btn="$t('pages.md.customPlayer.confirm')"
   >
     <template #title>
@@ -45,7 +45,7 @@ const label = computed(() => {
     lang: t('pages.md.label.lang'),
     copySuccess: t('pages.md.label.copySuccess'),
     copyError: t('pages.md.label.copyError'),
-  }
+  };
 });
 const emits = defineEmits(['update:visible']);
 

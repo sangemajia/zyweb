@@ -27,7 +27,7 @@ const service: AxiosInstance = axios.create({
   baseURL,
   timeout: TIMEOUT,
   headers: {
-    "Content-Type": "application/json;charset=utf-8",
+    'Content-Type': 'application/json;charset=utf-8',
   },
   withCredentials: false,
 });
@@ -40,7 +40,7 @@ service.interceptors.request.use(
   (error: AxiosError) => {
     return Promise.reject(error);
   },
-)
+);
 
 service.interceptors.response.use(
   (response: AxiosResponse) => {

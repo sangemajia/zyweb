@@ -25,23 +25,35 @@
         </t-tag>
       </template>
       <template #isActive="{ row }">
-        <t-switch v-model="row.isActive" :disabled="row.key === 'debug'"  @change="handleOpDefault(row.id)" />
+        <t-switch v-model="row.isActive" :disabled="row.key === 'debug'" @change="handleOpDefault(row.id)" />
       </template>
       <template #ext="{ row }">
         <span v-for="item in row.ext" :key="item.id">{{ item }}</span>
       </template>
       <template #op="slotProps">
         <t-space>
-          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{ $t('pages.setting.table.default') }}</t-link>
-          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{ $t('pages.setting.table.edit') }}</t-link>
-          <t-popconfirm :content="$t('pages.setting.table.deleteTip')" @confirm="handleOpChange('delete', [slotProps.row.id])">
+          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{
+            $t('pages.setting.table.default')
+          }}</t-link>
+          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{
+            $t('pages.setting.table.edit')
+          }}</t-link>
+          <t-popconfirm
+            :content="$t('pages.setting.table.deleteTip')"
+            @confirm="handleOpChange('delete', [slotProps.row.id])"
+          >
             <t-link theme="danger">{{ $t('pages.setting.table.delete') }}</t-link>
           </t-popconfirm>
         </t-space>
       </template>
     </common-setting>
 
-    <dialog-form-view v-model:visible="active.dialogForm" :data="formData" :type="active.formType" @submit="handleDialogUpdate" />
+    <dialog-form-view
+      v-model:visible="active.dialogForm"
+      :data="formData"
+      :type="active.formType"
+      @submit="handleDialogUpdate"
+    />
     <dialog-flag-view v-model:visible="active.dialogFlag" :data="tableConfig.flag" @submit="handleDialogUpdate" />
   </div>
 </template>
@@ -61,38 +73,37 @@ import DialogFlagView from './components/DialogFlag.vue';
 import DialogFormView from './components/DialogForm.vue';
 import CommonSetting from '@/components/common-setting/table/index.vue';
 
-
 const op = computed(() => {
-  return[
+  return [
     {
       label: t('pages.setting.header.add'),
-      value: 'add'
+      value: 'add',
     },
     {
       label: t('pages.setting.header.enable'),
-      value: 'enable'
+      value: 'enable',
     },
     {
       label: t('pages.setting.header.disable'),
-      value: 'disable'
+      value: 'disable',
     },
     {
       label: t('pages.setting.header.delete'),
-      value: 'delete'
+      value: 'delete',
     },
     {
       label: t('pages.setting.header.flag'),
-      value: 'flag'
-    }
-  ]
+      value: 'flag',
+    },
+  ];
 });
 
 const active = reactive({
   dialogForm: false,
   dialogFlag: false,
   formType: 'add',
-  opId: ''
-})
+  opId: '',
+});
 const formData = ref({});
 const searchValue = ref<string>('');
 const pagination = reactive({
@@ -101,7 +112,7 @@ const pagination = reactive({
   defaultCurrent: 1,
   pageSize: 20,
   current: 1,
-  theme: "simple"
+  theme: 'simple',
 });
 const tableConfig = ref({
   data: [],
@@ -113,7 +124,7 @@ const tableConfig = ref({
   select: [],
   default: '',
   group: [],
-  flag: []
+  flag: [],
 });
 
 onMounted(() => {
@@ -122,11 +133,12 @@ onMounted(() => {
 
 onActivated(() => {
   const isListenedRefreshTableData = emitter.all.get('refreshAnalyzeTable');
-  if (!isListenedRefreshTableData) emitter.on('refreshAnalyzeTable', () => {
-    console.log('[setting][analyze][bus][refresh]');
-    defaultSet();
-    refreshTable();
-  });
+  if (!isListenedRefreshTableData)
+    emitter.on('refreshAnalyzeTable', () => {
+      console.log('[setting][analyze][bus][refresh]');
+      defaultSet();
+      refreshTable();
+    });
 });
 
 const defaultSet = () => {
@@ -146,7 +158,7 @@ const defaultSet = () => {
     select: [],
     default: '',
     group: [],
-    flag: []
+    flag: [],
   };
 };
 
@@ -157,19 +169,21 @@ const refreshTable = () => {
 const reqFetch = async (page, pageSize, kw) => {
   try {
     const res = await fetchAnalyzePage({
-      kw, page, pageSize,
+      kw,
+      page,
+      pageSize,
     });
-    if (res?.["default"]) {
+    if (res?.['default']) {
       tableConfig.value.default = res.default;
     }
-    if (res?.["data"]) {
+    if (res?.['data']) {
       tableConfig.value.data = res.data;
       tableConfig.value.rawData = res.data;
     }
-    if (res?.["total"]) {
+    if (res?.['total']) {
       pagination.total = res.total;
     }
-    if (res?.["flag"]) {
+    if (res?.['flag']) {
       tableConfig.value.flag = res.flag;
     }
   } catch (err: any) {
@@ -210,7 +224,7 @@ const reqDefault = async (key) => {
 
 const reqDefaultFlag = async (doc) => {
   try {
-    await putSetting({ key: "analyzeFlag", doc: doc });
+    await putSetting({ key: 'analyzeFlag', doc: doc });
     MessagePlugin.success(`${t('pages.setting.form.success')}`);
   } catch (err: any) {
     console.log('[setting][analyze][defaultEvent][error]', err);
@@ -237,7 +251,7 @@ const handleOpChange = async (type, doc) => {
   if (doc.length === 0 && ['enable', 'disable', 'delete'].includes(type)) {
     MessagePlugin.warning(t('pages.setting.message.noSelectData'));
     return;
-  };
+  }
 
   if (type === 'add') {
     active.formType = 'add';
@@ -246,7 +260,7 @@ const handleOpChange = async (type, doc) => {
       key: '',
       type: 0,
       isActive: true,
-      url: ''
+      url: '',
     };
     active.dialogForm = true;
   } else if (type === 'enable') {
@@ -256,11 +270,11 @@ const handleOpChange = async (type, doc) => {
   } else if (type === 'delete') {
     await reqDel(doc);
   } else if (type === 'default') {
-    const activeItem: any = tableConfig.value.data.find((item:any) => item.id === doc)
+    const activeItem: any = tableConfig.value.data.find((item: any) => item.id === doc);
     if (!activeItem || !activeItem.isActive) {
       MessagePlugin.warning(t('pages.setting.message.defaultDisable'));
       return;
-    };
+    }
     await reqDefault(doc);
   } else if (type === 'flag') {
     active.dialogFlag = true;
@@ -270,12 +284,12 @@ const handleOpChange = async (type, doc) => {
     delete doc.id;
     formData.value = doc;
     active.dialogForm = true;
-  };
+  }
 
   if (['enable', 'disable', 'delete', 'default'].includes(type)) {
     refreshTable();
     emitter.emit('refreshAnalyzeConfig');
-  };
+  }
 };
 
 const handleDialogUpdate = async (type: string, doc: object) => {
@@ -284,10 +298,10 @@ const handleDialogUpdate = async (type: string, doc: object) => {
       await reqAdd(doc);
     } else {
       await reqPut([active.opId], doc);
-    };
+    }
   } else if (type === 'flag') {
     await reqDefaultFlag(doc);
-  };
+  }
 
   refreshTable();
   emitter.emit('refreshAnalyzeConfig');

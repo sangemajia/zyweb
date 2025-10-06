@@ -12,7 +12,11 @@
     <template #body>
       <t-form ref="formRef" :data="formData.data" :rules="RULES" :label-width="60">
         <t-form-item :label="$t('pages.setting.iptv.name')" name="name">
-          <t-input v-model="formData.data.name" class="input-item" :placeholder="$t('pages.setting.placeholder.general')" />
+          <t-input
+            v-model="formData.data.name"
+            class="input-item"
+            :placeholder="$t('pages.setting.placeholder.general')"
+          />
         </t-form-item>
         <div class="key-group">
           <t-form-item :label="$t('pages.setting.site.key')" name="key" style="flex: 1">
@@ -22,26 +26,50 @@
         </div>
         <t-form-item :label="$t('pages.setting.iptv.config')" name="url">
           <div class="input-vertical-item">
-            <t-radio-group v-model="formData.data.type" variant="default-filled" >
+            <t-radio-group v-model="formData.data.type" variant="default-filled">
               <t-radio-button value="remote">{{ $t('pages.setting.iptv.apiRemote') }}</t-radio-button>
               <t-radio-button value="local">{{ $t('pages.setting.iptv.apiLocal') }}</t-radio-button>
               <t-radio-button value="manual">{{ $t('pages.setting.iptv.apiManual') }}</t-radio-button>
             </t-radio-group>
             <div class="input-horizontal-item">
-              <t-input v-if="formData.data.type !== 'manual'" v-model="formData.data.url" class="input-item" style="flex: 1" :placeholder="$t('pages.setting.placeholder.general')" />
-              <t-button v-if="formData.data.type === 'local'" class="upload-item" theme="default" @click="uploadFileEvent">
+              <t-input
+                v-if="formData.data.type !== 'manual'"
+                v-model="formData.data.url"
+                class="input-item"
+                style="flex: 1"
+                :placeholder="$t('pages.setting.placeholder.general')"
+              />
+              <t-button
+                v-if="formData.data.type === 'local'"
+                class="upload-item"
+                theme="default"
+                @click="uploadFileEvent"
+              >
                 {{ $t('pages.setting.upload') }}
               </t-button>
-              <t-textarea v-if="formData.data.type === 'manual'" v-model="formData.data.url" class="input-item input-textarea"
-                :placeholder="$t('pages.setting.placeholder.manualTip')" :autosize="{ minRows: 7, maxRows: 7 }" />
+              <t-textarea
+                v-if="formData.data.type === 'manual'"
+                v-model="formData.data.url"
+                class="input-item input-textarea"
+                :placeholder="$t('pages.setting.placeholder.manualTip')"
+                :autosize="{ minRows: 7, maxRows: 7 }"
+              />
             </div>
           </div>
         </t-form-item>
         <t-form-item :label="$t('pages.setting.iptv.logo')" name="logo">
-          <t-input v-model="formData.data.logo" class="input-item" :placeholder="$t('pages.setting.placeholder.general')" />
+          <t-input
+            v-model="formData.data.logo"
+            class="input-item"
+            :placeholder="$t('pages.setting.placeholder.general')"
+          />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.iptv.epg')" name="epg">
-          <t-input v-model="formData.data.epg" class="input-item" :placeholder="$t('pages.setting.placeholder.general')" />
+          <t-input
+            v-model="formData.data.epg"
+            class="input-item"
+            :placeholder="$t('pages.setting.placeholder.general')"
+          />
         </t-form-item>
       </t-form>
     </template>
@@ -70,7 +98,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'add'
+    default: 'add',
   },
 });
 const formRef = useTemplateRef<FormInstanceFunctions>('formRef');
@@ -138,11 +166,11 @@ const uploadFileEvent = async () => {
       config: {
         properties: ['openFile', 'showHiddenFiles'],
         filters: [
-          { name: 'M3u Files', extensions: ['m3u', 'm3u8','ts'] },
+          { name: 'M3u Files', extensions: ['m3u', 'm3u8', 'ts'] },
           { name: 'Text Files', extensions: ['txt'] },
-          { name: 'All Files', extensions: ['*'] }
+          { name: 'All Files', extensions: ['*'] },
         ],
-      }
+      },
     });
     if (!res || res.canceled || !res.filePaths.length) return;
 
@@ -167,7 +195,7 @@ const RULES = {
   justify-content: space-between;
   gap: 10px;
   align-items: center;
-};
+}
 
 .input-vertical-item {
   display: flex;

@@ -19,21 +19,23 @@
           v-if="active.check"
           size="small"
           :text="$t('pages.setting.update.checkWait')"
-          style="min-height: 30px;"
+          style="min-height: 30px"
         />
 
         <div v-else class="wrapper top">
           <template v-if="updateInfo.errText">
             <div class="data-item">
               <p class="title-label mg-b">{{ $t('pages.setting.update.errorlog') }}</p>
-              <div style="margin-bottom: var(--td-comp-margin-m);">{{ updateInfo.errText }}</div>
+              <div style="margin-bottom: var(--td-comp-margin-m)">{{ updateInfo.errText }}</div>
               <t-button block @click="handleReCheck">{{ $t('pages.setting.update.reCheck') }}</t-button>
             </div>
           </template>
           <template v-else>
             <template v-if="updateInfo.available">
               <div class="data-item">
-                <p class="title-label mg-b">{{ $t('pages.setting.update.foundNewVersion') }}: {{ updateInfo.version }}</p>
+                <p class="title-label mg-b">
+                  {{ $t('pages.setting.update.foundNewVersion') }}: {{ updateInfo.version }}
+                </p>
               </div>
               <div class="data-item">
                 <p class="title-label mg-b">{{ $t('pages.setting.update.changelog') }}</p>
@@ -53,20 +55,18 @@
                       :disabled="active.download"
                       @click="handleDownStart"
                     >
-                      <span v-if="active.download">{{ $t('pages.setting.update.downloadProcess') }} {{ updateInfo.downProcess }}%</span>
+                      <span v-if="active.download"
+                        >{{ $t('pages.setting.update.downloadProcess') }} {{ updateInfo.downProcess }}%</span
+                      >
                       <span v-else>{{ $t('pages.setting.update.download') }}</span>
                     </t-button>
-                    <t-button
-                      theme="primary"
-                      :disabled="!active.downloaded"
-                      @click="handleInstallAfterDown"
-                    >
-                      {{ $t('pages.setting.update.install')}}
+                    <t-button theme="primary" :disabled="!active.downloaded" @click="handleInstallAfterDown">
+                      {{ $t('pages.setting.update.install') }}
                     </t-button>
                   </template>
                   <template v-else>
                     <t-button theme="primary" @click="handleOpenDownLink">
-                      {{ $t('pages.setting.update.download')}}
+                      {{ $t('pages.setting.update.download') }}
                     </t-button>
                   </template>
                 </div>
@@ -114,11 +114,17 @@ const active = ref({
   downloaded: false,
 });
 
-watch(() => formVisible.value, (val) => emit('update:visible', val));
-watch(() => props.visible, (val) => {
-  formVisible.value = val;
-  if (val) handleReCheck();
-});
+watch(
+  () => formVisible.value,
+  (val) => emit('update:visible', val),
+);
+watch(
+  () => props.visible,
+  (val) => {
+    formVisible.value = val;
+    if (val) handleReCheck();
+  },
+);
 
 const resetConf = () => {
   updateInfo.value = {
@@ -170,7 +176,7 @@ const setupUpdateListeners = () => {
       available: res.data.available,
       version: res.data.version,
       releaseNotes: res.data.releaseNotes,
-    }
+    };
     active.value.check = false;
   });
 
@@ -181,7 +187,7 @@ const setupUpdateListeners = () => {
       available: res.data.available,
       version: res.data.version,
       releaseNotes: res.data.releaseNotes,
-    }
+    };
     active.value.check = false;
   });
 
@@ -205,8 +211,8 @@ const onIpcDown = () => {
 
 const offIpcListeners = () => {
   const ipc = window.electron.ipcRenderer;
-  ['update-error', 'update-available', 'update-not-available', 'download-progress', 'update-downloaded'].forEach(event =>
-    ipc.removeAllListeners(event)
+  ['update-error', 'update-available', 'update-not-available', 'download-progress', 'update-downloaded'].forEach(
+    (event) => ipc.removeAllListeners(event),
   );
 };
 </script>

@@ -4,7 +4,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: 'src/renderer/src', // 设置根目录
+  root: '.', // 设置根目录为项目根目录
   base: './', // 设置基础路径
   resolve: {
     alias: {
@@ -23,7 +23,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../../dist/client/web-app', // 输出目录
+    outDir: 'dist/client/web-app', // 输出目录
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存

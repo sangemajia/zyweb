@@ -75,7 +75,7 @@ export function addAiCache(doc) {
   return request({
     url: '/v1/lab/ai/cache',
     method: 'post',
-    data: doc
+    data: doc,
   });
 }
 
@@ -83,7 +83,7 @@ export function putAiCache(doc) {
   return request({
     url: '/v1/lab/ai/cache',
     method: 'put',
-    data: doc
+    data: doc,
   });
 }
 
@@ -91,7 +91,7 @@ export function delAiCache(doc) {
   return request({
     url: '/v1/lab/ai/cache',
     method: 'delete',
-    data: doc
+    data: doc,
   });
 }
 

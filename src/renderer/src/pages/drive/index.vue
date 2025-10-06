@@ -9,18 +9,15 @@
     />
 
     <div class="content">
-      <DriveHeader 
-        :breadcrumb="breadcrumb" 
-        @goto-breadcrumb-path="gotoBreadcrumbPath" 
-      />
+      <DriveHeader :breadcrumb="breadcrumb" @goto-breadcrumb-path="gotoBreadcrumbPath" />
 
-      <DriveList 
-        :drive-content="driveContent" 
-        :active="active" 
-        :is-visible="isVisible" 
-        :render-loading="renderLoading" 
-        :render-error="renderError" 
-        @get-file-or-folder="getFileOrFolder" 
+      <DriveList
+        :drive-content="driveContent"
+        :active="active"
+        :is-visible="isVisible"
+        :render-loading="renderLoading"
+        :render-error="renderError"
+        @get-file-or-folder="getFileOrFolder"
       />
     </div>
 
@@ -78,7 +75,7 @@ const {
   changeConf,
   gotoBreadcrumbPath,
   getFileOrFolder,
-  getCloudFolderHandler
+  getCloudFolderHandler,
 } = useDriveSetup();
 
 const renderError = () => {

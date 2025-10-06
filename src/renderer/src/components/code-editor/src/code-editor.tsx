@@ -11,5 +11,5 @@ export default defineComponent({
   setup(props: CodeEditorProps, ctx: SetupContext) {
     const { editorEl } = useCodeEditor(props, ctx);
     return () => <div ref={editorEl} class="code-editor"></div>;
-  }
+  },
 });

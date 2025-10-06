@@ -45,10 +45,11 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
     const isValidUrl = typeof url === 'string' && /^(https?:\/\/)/.test(url);
     const isValidId = barrageId && ['string', 'number'].includes(typeof barrageId);
     const isValidKey = typeof key === 'string' && key.length > 0;
-    const isValidSupport = (Array.isArray(support) && support.length > 0);
-    const isValidNumbers = [start, mode, color, content].every(value => typeof value === 'number');
+    const isValidSupport = Array.isArray(support) && support.length > 0;
+    const isValidNumbers = [start, mode, color, content].every((value) => typeof value === 'number');
     // 综合判断
-    if (!(isValidUrl && isValidId && isValidKey && isValidSupport && isValidNumbers)) return { code: 0, msg: 'no config', data: [] };
+    if (!(isValidUrl && isValidId && isValidKey && isValidSupport && isValidNumbers))
+      return { code: 0, msg: 'no config', data: [] };
 
     const reqRes = await request({
       url: `${url}${id}`,

@@ -633,13 +633,4 @@ const sm4 = (() => {
   };
 })();
 
-export {
-  rsa,
-  rc4,
-  aes,
-  des,
-  tripleDES,
-  rabbit,
-  rabbitLegacy,
-  sm4,
-}
+export { rsa, rc4, aes, des, tripleDES, rabbit, rabbitLegacy, sm4 };

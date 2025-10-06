@@ -13,7 +13,7 @@ const DEFAULT_HEIGHT_MAIN: number = 640;
 const DEFAULT_WIDTH_PLAY: number = 875;
 const DEFAULT_HEIGHT_PLAY: number = 550;
 
-const createWin = (name: string, options: { [key: string]: any } ) => {
+const createWin = (name: string, options: { [key: string]: any }) => {
   const { debug } = globalThis.variable;
   const args = Object.assign({}, options);
 
@@ -62,11 +62,9 @@ const createWin = (name: string, options: { [key: string]: any } ) => {
         } else if (typeof message === 'object') {
           message = JSON.stringify(message, null, 2);
         }
-        logger[level < 3 ? 'info' : 'error'](
-          `[vue][file: ${file}][line: ${line}]`, message,
-        );
+        logger[level < 3 ? 'info' : 'error'](`[vue][file: ${file}][line: ${line}]`, message);
       });
-    };
+    }
 
     win.webContents.on('context-menu', () => {
       const menu: Array<MenuItemConstructorOptions | MenuItem> = [
@@ -77,8 +75,8 @@ const createWin = (name: string, options: { [key: string]: any } ) => {
         { type: 'separator' },
         { label: '刷新', role: 'reload' },
       ];
-      Menu.buildFromTemplate(menu).popup({ window: win! })
-    })
+      Menu.buildFromTemplate(menu).popup({ window: win! });
+    });
 
     winPool[name] = win.id;
   }
@@ -104,7 +102,7 @@ const getWin = (name: string) => {
 
 const getWinName = (id: number) => {
   if (typeof id !== 'number') return null;
-  return Object.keys(winPool).filter(key => winPool[key] === id)?.[0] || null;
+  return Object.keys(winPool).filter((key) => winPool[key] === id)?.[0] || null;
 };
 
 const getAllWin = () => BrowserWindow.getAllWindows();

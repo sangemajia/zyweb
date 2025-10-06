@@ -65,7 +65,7 @@ class MediaEngine {
     if (url.includes('.mp4') || url.includes('.webm') || url.includes('.ogg')) {
       return 'mp4';
     }
-    
+
     // 默认返回mp4
     return 'mp4';
   }
@@ -73,20 +73,20 @@ class MediaEngine {
   private async loadNative(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.videoElement.src = url;
-      
+
       const onLoaded = () => {
         this.videoElement.removeEventListener('loadedmetadata', onLoaded);
         this.videoElement.removeEventListener('error', onError);
         this.currentType = 'mp4';
         resolve();
       };
-      
+
       const onError = () => {
         this.videoElement.removeEventListener('loadedmetadata', onLoaded);
         this.videoElement.removeEventListener('error', onError);
         reject(new Error('Failed to load native video'));
       };
-      
+
       this.videoElement.addEventListener('loadedmetadata', onLoaded);
       this.videoElement.addEventListener('error', onError);
     });
@@ -127,7 +127,7 @@ class MediaEngine {
         const flvPlayer = flvjs.createPlayer({
           type: 'flv',
           url: url,
-          isLive: this.config.isLive || false
+          isLive: this.config.isLive || false,
         });
         flvPlayer.attachMediaElement(this.videoElement);
         flvPlayer.load();
@@ -167,8 +167,8 @@ class MediaEngine {
       if (WebTorrent.WEBRTC_SUPPORT) {
         const client = new WebTorrent();
         client.add(url, (torrent) => {
-          const file = torrent.files.find((file) => 
-            file.name.endsWith('.mp4') || file.name.endsWith('.mkv') || file.name.endsWith('.webm')
+          const file = torrent.files.find(
+            (file) => file.name.endsWith('.mp4') || file.name.endsWith('.mkv') || file.name.endsWith('.webm'),
           );
           if (file) {
             file.renderTo(this.videoElement, {
@@ -190,27 +190,9 @@ class MediaEngine {
   }
 
   private async loadMpegts(url: string): Promise<void> {
-    try {
-      const { default: Mpegts } = await import('mpegts.js');
-      if (Mpegts.isSupported()) {
-        const player = Mpegts.createPlayer({
-          type: 'mse',
-          url: url,
-          isLive: this.config.isLive || false
-        });
-        player.attachMediaElement(this.videoElement);
-        player.load();
-        player.play();
-        this.currentPlayer = player;
-        this.currentType = 'mpegts';
-        return Promise.resolve();
-      } else {
-        throw new Error('MPEG-TS is not supported');
-      }
-    } catch (error) {
-      console.error('MPEG-TS load failed:', error);
-      throw error;
-    }
+    // 使用原生HTML5视频播放替代mpegts.js
+    console.warn('MPEG-TS support disabled due to dependency issues');
+    return this.loadNative(url);
   }
 
   private async updateSource(url: string, type: MediaType): Promise<void> {

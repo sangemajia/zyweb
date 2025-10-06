@@ -16,7 +16,7 @@ export const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
     title: t('pages.setting.table.header.type'),
     align: 'center',
-    colKey: 'type'
+    colKey: 'type',
   },
   {
     title: t('pages.setting.table.header.status'),

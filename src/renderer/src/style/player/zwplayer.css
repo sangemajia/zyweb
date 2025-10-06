@@ -52,7 +52,7 @@
   margin: 0 10px;
 }
 
-.cp-volume-control input[type="range"] {
+.cp-volume-control input[type='range'] {
   width: 60px;
   margin: 0 5px;
 }
@@ -149,7 +149,7 @@
     height: 36px;
     padding: 0 5px;
   }
-  
+
   .cp-button {
     font-size: 12px;
     padding: 3px;
@@ -157,20 +157,20 @@
     min-width: 24px;
     height: 24px;
   }
-  
+
   .cp-time-display {
     font-size: 10px;
     margin: 0 5px;
   }
-  
+
   .cp-volume-control {
     margin: 0 5px;
   }
-  
-  .cp-volume-control input[type="range"] {
+
+  .cp-volume-control input[type='range'] {
     width: 40px;
   }
-  
+
   .cp-progress-container {
     margin: 0 5px;
   }

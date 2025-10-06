@@ -328,10 +328,10 @@ sudo apt-get install libxss1
         "content": "4" // 弹幕接口返回数据对应的内容的位置
       }, // [3.3.4版本启用]弹幕参数
       "analyzeFlag": ["youku", "qq", "iqiyi", "qiyi", "letv", "leshi", "sohu", "tudou", "pptv", "mgtv", "imgo"], // 解析标识
-      "broadcasterType": "xgplayer", // [3.3.4版本弃用,使用playerMode参数]播放器 xgplayer:西瓜 dplayer:呆呆 custom:自定义结合externalPlayer
+      "broadcasterType": "zwplayer", // [3.3.4版本弃用,使用playerMode参数]播放器 zwplayer:自研播放器 custom:自定义结合externalPlayer
       "externalPlayer": "", // [3.3.4版本弃用,使用playerMode参数]播放器为custom,调用此处系统命令
       "playerMode": {
-        "type": "xgplayer", // 播放器 xgplayer:西瓜 dplayer:呆呆 custom:自定义结合external
+        "type": "zwplayer", // 播放器 zwplayer:自研播放器 custom:自定义结合external
         "external": "" // 播放器为custom,调用此处系统命令
       }, // [3.3.4版本启用]
       "softSolution": false, // 是否使用软解 预留

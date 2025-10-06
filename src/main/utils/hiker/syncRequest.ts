@@ -165,7 +165,7 @@ const fetch = (url: string, options: RequestOptions = {}) => {
     // 仅返回 headers 的场景
     if (onlyHeaders) {
       return toString(resp.headers);
-    };
+    }
 
     // 处理响应体
     const content = toHex ? Buffer.from(resp.getBody()).toString('hex') : resp.getBody(charset);
@@ -173,7 +173,7 @@ const fetch = (url: string, options: RequestOptions = {}) => {
     // 仅返回非 headers 或 statusCode 的场景
     if (!(withHeaders || withStatusCode)) {
       return toString(content);
-    };
+    }
 
     return toString({
       headers: resp.headers,

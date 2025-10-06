@@ -21,13 +21,13 @@ import { t } from '@/locales';
 const attrs = useAttrs();
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 const attrsCustom = computed(() => {
   return {
@@ -35,10 +35,10 @@ const attrsCustom = computed(() => {
     header: false,
     confirmBtn: t('pages.setting.dialog.confirm'),
     cancelBtn: t('pages.setting.dialog.cancel'),
-    placement: "center",
-    width: "480px",
-    ...attrs
-  }
+    placement: 'center',
+    width: '480px',
+    ...attrs,
+  };
 });
 const formVisible = ref(false);
 const emit = defineEmits(['update:visible', 'cancel', 'confirm']);
@@ -58,7 +58,6 @@ watch(
 </script>
 
 <style lang="less" scoped>
-
 .container {
   opacity: 1;
   display: flex;

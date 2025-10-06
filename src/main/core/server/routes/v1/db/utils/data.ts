@@ -33,9 +33,9 @@ const easy2tvbox = async (config, url, type) => {
 
     // 特殊 API 映射
     const apiMap: Record<string, number> = {
-      'csp_XBPQ': 9,
-      'csp_XYQ': 10,
-      'csp_AppYsV2': 11,
+      csp_XBPQ: 9,
+      csp_XYQ: 10,
+      csp_AppYsV2: 11,
     };
 
     if (api in apiMap) return apiMap[api];
@@ -47,7 +47,7 @@ const easy2tvbox = async (config, url, type) => {
       case 1:
         return 1; // cms[json]
       case 3:
-        if (api?.includes('.js')) return 7;  // drpy[js]
+        if (api?.includes('.js')) return 7; // drpy[js]
         if (api?.includes('.py')) return 12; // drpy[py]
         break;
       case 4:
@@ -94,7 +94,7 @@ const easy2tvbox = async (config, url, type) => {
           (item.type === 3 && item.api === 'csp_XBPQ') ||
           (item.type === 3 && item.api === 'csp_XYQ') ||
           (item.type === 3 && item.api.includes('.js')) ||
-          (item.type === 3 && item.api.includes('.py'))
+          (item.type === 3 && item.api.includes('.py')),
       )
       .map((item) => ({
         id: item?.id || uuidv4(),
@@ -114,7 +114,7 @@ const easy2tvbox = async (config, url, type) => {
       }));
   }
   if (content.hasOwnProperty('lives')) {
-    let oldLives = content.lives.find((item) => item.group === 'redirect' );
+    let oldLives = content.lives.find((item) => item.group === 'redirect');
     if (oldLives && !Array.isArray(oldLives)) {
       oldLives = [oldLives];
     }

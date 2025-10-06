@@ -14,5 +14,5 @@ const router = useRouter();
 
 const gotoLab = () => {
   router.push({ name: 'LabIndex' });
-}
+};
 </script>

@@ -25,7 +25,7 @@ const drive = {
   get: async (id: string) => {
     console.log('[DB] Getting drive data with id:', id);
     return { id, name: 'Default Drive' };
-  }
+  },
 };
 
 // Web 环境下的 setting 数据库服务模拟
@@ -50,7 +50,7 @@ const setting = {
   all: async () => {
     console.log('[DB] Getting all settings');
     return [];
-  }
+  },
 };
 
 // Web 环境下的 history 数据库服务模拟
@@ -83,7 +83,7 @@ const history = {
   find: async (relateId: string, videoId: string) => {
     console.log('[DB] Finding history data with relateId:', relateId, 'videoId:', videoId);
     return null;
-  }
+  },
 };
 
 // Web 环境下的 star 数据库服务模拟
@@ -109,7 +109,7 @@ const star = {
   get: async (id: string) => {
     console.log('[DB] Getting star data with id:', id);
     return { id };
-  }
+  },
 };
 
 // Web 环境下的 site 数据库服务模拟
@@ -143,7 +143,7 @@ const site = {
   findByKey: async (key: string) => {
     console.log('[DB] Finding site data with key:', key);
     return null;
-  }
+  },
 };
 
 // Web 环境下的 iptv 数据库服务模拟
@@ -177,7 +177,7 @@ const iptv = {
   findByKey: async (key: string) => {
     console.log('[DB] Finding iptv data with key:', key);
     return null;
-  }
+  },
 };
 
 // Web 环境下的 channel 数据库服务模拟
@@ -211,7 +211,7 @@ const channel = {
   findByKey: async (key: string) => {
     console.log('[DB] Finding channel data with key:', key);
     return null;
-  }
+  },
 };
 
 // Web 环境下的 analyze 数据库服务模拟
@@ -245,7 +245,7 @@ const analyze = {
   findByKey: async (key: string) => {
     console.log('[DB] Finding analyze data with key:', key);
     return null;
-  }
+  },
 };
 
 // Web 环境下的 db 数据库服务模拟
@@ -271,7 +271,7 @@ const db = {
   get: async (id: string) => {
     console.log('[DB] Getting db data with id:', id);
     return { id };
-  }
+  },
 };
 
 export { drive, setting, history, star, site, iptv, channel, analyze, db };

@@ -1,10 +1,12 @@
 import PlayerAdapter from './PlayerAdapter';
+import ZwPlayerAdapter from './zwplayer/adapter';
 
 // 按需导入适配器
 const loadAdapter = async (adapterName: string): Promise<typeof PlayerAdapter | null> => {
   try {
     switch (adapterName) {
-      // 可以在这里添加其他播放器适配器
+      case 'zwplayer':
+        return ZwPlayerAdapter;
       default:
         return null;
     }
@@ -14,4 +16,4 @@ const loadAdapter = async (adapterName: string): Promise<typeof PlayerAdapter | 
   }
 };
 
-export { loadAdapter };
+export { loadAdapter, ZwPlayerAdapter };

@@ -11,9 +11,14 @@
       {{ $t('pages.setting.ua.title') }}
     </template>
     <template #body>
-      <t-form ref="formRef" :data="formData.data" :rules="RULES" :label-width="60"  :requiredMark="false">
+      <t-form ref="formRef" :data="formData.data" :rules="RULES" :label-width="60" :requiredMark="false">
         <t-form-item name="data" :label-width="0">
-          <t-textarea v-model="formData.data.data" :placeholder="$t('pages.setting.placeholder.general')" :autosize="{ minRows: 2, maxRows: 4 }" @change="handleMatchTag" />
+          <t-textarea
+            v-model="formData.data.data"
+            :placeholder="$t('pages.setting.placeholder.general')"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            @change="handleMatchTag"
+          />
         </t-form-item>
         <t-radio-group v-model="select" variant="default-filled" size="small" class="mg-t" @change="handleChangeSelect">
           <t-radio-button v-for="item in LIST" :key="item.name" :value="item.ua">{{ item.name }}</t-radio-button>
@@ -45,13 +50,13 @@ const props = defineProps({
   },
   data: {
     type: Object,
-    default: { data: '',  type: '' },
+    default: { data: '', type: '' },
   },
 });
 const formVisible = ref<Boolean>(false);
 const formData = ref({
-  data: { data: '',  type: '' },
-  raw: { data: '',  type: '' },
+  data: { data: '', type: '' },
+  raw: { data: '', type: '' },
 });
 const formRef = useTemplateRef<FormInstanceFunctions>('formRef');
 const LIST = reactive([...UA_CONFIG]);
@@ -59,9 +64,16 @@ const select = ref('');
 
 const emits = defineEmits(['update:visible', 'submit']);
 
-watch(() => formVisible.value, (val) => emits('update:visible', val));
-watch(() => props.visible, (val) => formVisible.value = val);
-watch(() => props.data,
+watch(
+  () => formVisible.value,
+  (val) => emits('update:visible', val),
+);
+watch(
+  () => props.visible,
+  (val) => (formVisible.value = val),
+);
+watch(
+  () => props.data,
   (val) => {
     formData.value = { data: val, raw: val } as any;
     handleMatchTag(val.data);

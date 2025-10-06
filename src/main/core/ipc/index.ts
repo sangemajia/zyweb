@@ -9,7 +9,16 @@ import { globalShortcut } from '@main/core/shortcut';
 import puppeteerInElectron from '@main/utils/sniffer';
 import { toggleWinVisable } from '@main/utils/tool';
 import { createMain, createPlay, getWin, getAllWin } from '@main/core/winManger';
-import { createDir, deleteDir, deleteFile, saveFile, fileExist, fileSize, fileState, readFile } from '@main/utils/hiker/file';
+import {
+  createDir,
+  deleteDir,
+  deleteFile,
+  saveFile,
+  fileExist,
+  fileSize,
+  fileState,
+  readFile,
+} from '@main/utils/hiker/file';
 import { getAppDefaultPath, APP_STORE_PATH, APP_TMP_PATH } from '@main/utils/hiker/path';
 
 const execAsync = promisify(exec);
@@ -58,61 +67,61 @@ const ipcListen = () => {
   });
 
   // 文件操作
-  ipcMain.handle('manage-file', async (_,  doc) => {
+  ipcMain.handle('manage-file', async (_, doc) => {
     logger.info('[ipcMain][file] args:', JSON.stringify(doc));
 
     const rm = async (config) => {
       const { path } = config;
       const pathExists = await fileExist(path);
       if (!pathExists) return false;
-      if (await fileState(path) === 'file') return await deleteFile(path)
-      else if (await fileState(path) === 'dir') return await deleteDir(path);
+      if ((await fileState(path)) === 'file') return await deleteFile(path);
+      else if ((await fileState(path)) === 'dir') return await deleteDir(path);
       return false;
-    }
+    };
 
     const mk = async (config) => {
       const { path } = config;
       const pathExists = await fileExist(path);
       if (pathExists) return false;
       return await createDir(path);
-    }
+    };
 
     const write = async (config) => {
       const { path, content } = config;
       const pathExists = await fileExist(path);
-      if (pathExists && await fileState(path)!== 'file') return false;
+      if (pathExists && (await fileState(path)) !== 'file') return false;
       return await saveFile(path, content);
-    }
+    };
 
     const read = async (config) => {
       const { path } = config;
       const pathExists = await fileExist(path);
       if (pathExists) {
-        if (await fileState(path) === 'file') return await readFile(path);
-        else if (await fileState(path) === 'dir') return [];
-      };
+        if ((await fileState(path)) === 'file') return await readFile(path);
+        else if ((await fileState(path)) === 'dir') return [];
+      }
       return '';
-    }
+    };
 
     const size = async (config) => {
       const { path } = config;
       const pathExists = await fileExist(path);
       if (!pathExists) return 0;
-      const seize = await fileSize(path) / 1024 / 1024;
+      const seize = (await fileSize(path)) / 1024 / 1024;
       return seize.toFixed(2);
-    }
+    };
 
     const state = async (config) => {
       const { path } = config;
       const pathExists = await fileExist(path);
       if (!pathExists) return 'unknown';
       return await fileState(path);
-    }
+    };
 
     const exist = async (config) => {
       const { path } = config;
       return await fileExist(path);
-    }
+    };
 
     const { action, config } = doc;
     const methodMap = { rm, mk, write, read, size, state, exist };
@@ -177,11 +186,10 @@ const ipcListen = () => {
 
   // 获取嗅探数据
   ipcMain.handle('sniffer-media', async (_, doc) => {
-      const { url, run_script, init_script, custom_regex, sniffer_exclude, headers = {} } = doc;
-      const res = await puppeteerInElectron(url, run_script, init_script, custom_regex, sniffer_exclude, headers);
-      return res;
-    },
-  );
+    const { url, run_script, init_script, custom_regex, sniffer_exclude, headers = {} } = doc;
+    const res = await puppeteerInElectron(url, run_script, init_script, custom_regex, sniffer_exclude, headers);
+    return res;
+  });
 
   // session
   ipcMain.handle('manage-session', async (_, doc) => {
@@ -189,24 +197,24 @@ const ipcListen = () => {
 
     const clearCache = async () => {
       return await session.defaultSession.clearCache();
-    }
+    };
 
     const clearStorage = async () => {
       return await session.defaultSession.clearStorageData();
-    }
+    };
 
     const clearAll = async () => {
       const clearCacheRes = await session.defaultSession.clearCache();
       const clearStorageRes = await session.defaultSession.clearStorageData();
       // @ts-ignore
       return clearCacheRes && clearStorageRes;
-    }
+    };
 
     const getSize = async () => {
-      const size = await session.defaultSession.getCacheSize() / 1024 / 1024;
+      const size = (await session.defaultSession.getCacheSize()) / 1024 / 1024;
       const sizeToMb = size.toFixed(2);
       return sizeToMb;
-    }
+    };
 
     const { action } = doc;
     const methodMap = { clearCache, clearStorage, clearAll, getSize };
@@ -220,18 +228,18 @@ const ipcListen = () => {
 
     const status = ({ win }) => {
       return win?.isAlwaysOnTop();
-    }
+    };
 
     const set = ({ win, status = false }) => {
       win?.setAlwaysOnTop(status);
       return win?.isAlwaysOnTop();
-    }
+    };
 
     const toggle = ({ win }) => {
       const status = win?.isAlwaysOnTop();
       win?.setAlwaysOnTop(!status);
       return !status;
-    }
+    };
 
     const methodMap = { status, set, toggle };
 
@@ -268,7 +276,24 @@ const ipcListen = () => {
   // 获取app路径
   ipcMain.handle('get-app-path', async (_, type) => {
     logger.info(`[ipcMain] read-path: ${type}`);
-    const types = ['home', 'appData', 'userData', 'sessionData', 'temp', 'exe', 'module', 'desktop', 'documents', 'downloads', 'music', 'pictures', 'videos', 'recent', 'logs', 'crashDumps'];
+    const types = [
+      'home',
+      'appData',
+      'userData',
+      'sessionData',
+      'temp',
+      'exe',
+      'module',
+      'desktop',
+      'documents',
+      'downloads',
+      'music',
+      'pictures',
+      'videos',
+      'recent',
+      'logs',
+      'crashDumps',
+    ];
     if (!types.includes(type)) return '';
     const path = getAppDefaultPath(type);
     return path;
@@ -300,15 +325,15 @@ const ipcListen = () => {
     const register = (config) => {
       const { shortcut, name, override } = config;
       return globalShortcut.register({ shortcut, func: toggleWinVisable, name, override });
-    }
+    };
     const unRegister = (config) => {
       const { shortcut, name } = config;
       return globalShortcut.unregister({ shortcut, name });
-    }
+    };
     const isRegistered = (config) => {
       const { shortcut, name } = config;
       return globalShortcut.isRegistered({ shortcut, name });
-    }
+    };
 
     const { action, config } = doc;
     const methodMap = { register, unRegister, isRegistered };
@@ -369,7 +394,7 @@ const ipcListen = () => {
         win.show();
         win.focus();
       }
-    }
+    };
 
     const play = () => {
       const win = getWin('play');
@@ -380,7 +405,7 @@ const ipcListen = () => {
         win.show();
         win.focus();
       }
-    }
+    };
 
     const { action } = doc;
     const methodMap = { main, play };

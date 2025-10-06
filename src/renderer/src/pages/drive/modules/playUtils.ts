@@ -52,7 +52,7 @@ export const playEvent = async (item, driveConfig, storePlayer, isVisible, drive
             remark: res.remark,
             path: breadcrumb?.at(-1)?.path,
           },
-          ext: { files: [...driveContent], site: driveConfig.default }
+          ext: { files: [...driveContent], site: driveConfig.default },
         },
       });
       window.electron.ipcRenderer.send('open-win', { action: 'play' });

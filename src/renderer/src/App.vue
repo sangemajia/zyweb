@@ -2,7 +2,7 @@
   <t-config-provider :global-config="getComponentsLocale">
     <router-view />
     <!-- 需脱离文档流, 不然会影响后面dom渲染问题 -->
-    <disclaimer-view v-model:visible="active.disclaimer" style="position: fixed; z-index: 999;"/>
+    <disclaimer-view v-model:visible="active.disclaimer" style="position: fixed; z-index: 999" />
   </t-config-provider>
 </template>
 
@@ -43,7 +43,7 @@ const active = ref({
 
 watch(
   () => useLocalStorage(localeConfigKey, 'zh_CN').value,
-  (val) => changeLocale(val)
+  (val) => changeLocale(val),
 );
 watch(
   () => [systemDark.value, storeSetting.getStateMode],
@@ -73,14 +73,11 @@ const initConfig = async () => {
 
   storeSetting.updateConfig({
     mode: theme,
-    timeout: timeout || 5000
+    timeout: timeout || 5000,
   });
   active.value.disclaimer = !agreementMask;
 
-  const init = Object.assign(
-    { ...PLAY_CONFIG.setting },
-    { playerMode, barrage }
-  )
+  const init = Object.assign({ ...PLAY_CONFIG.setting }, { playerMode, barrage });
   storePlayer.updateConfig({ setting: init });
 
   if (debug) await pagespySrcipt.load();

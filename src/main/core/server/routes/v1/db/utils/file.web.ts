@@ -1,6 +1,15 @@
 // Web 环境下的文件操作工具
 import { join } from 'path';
-import { existsSync, statSync, writeFileSync, readFileSync as fsReadFileSync, unlinkSync, readdirSync, rmSync, mkdirSync } from './fs.web';
+import {
+  existsSync,
+  statSync,
+  writeFileSync,
+  readFileSync as fsReadFileSync,
+  unlinkSync,
+  readdirSync,
+  rmSync,
+  mkdirSync,
+} from './fs.web';
 import { gzip } from './crypto.web';
 
 // 检查文件或目录是否存在

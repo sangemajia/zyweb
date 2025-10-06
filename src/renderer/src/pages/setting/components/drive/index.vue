@@ -25,20 +25,32 @@
         </t-tag>
       </template>
       <template #isActive="{ row }">
-        <t-switch v-model="row.isActive" :disabled="row.key === 'debug'"  @change="handleOpDefault(row.id)" />
+        <t-switch v-model="row.isActive" :disabled="row.key === 'debug'" @change="handleOpDefault(row.id)" />
       </template>
       <template #op="slotProps">
         <t-space>
-          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{ $t('pages.setting.table.default') }}</t-link>
-          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{ $t('pages.setting.table.edit') }}</t-link>
-          <t-popconfirm :content="$t('pages.setting.table.deleteTip')" @confirm="handleOpChange('delete', [slotProps.row.id])">
+          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{
+            $t('pages.setting.table.default')
+          }}</t-link>
+          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{
+            $t('pages.setting.table.edit')
+          }}</t-link>
+          <t-popconfirm
+            :content="$t('pages.setting.table.deleteTip')"
+            @confirm="handleOpChange('delete', [slotProps.row.id])"
+          >
             <t-link theme="danger">{{ $t('pages.setting.table.delete') }}</t-link>
           </t-popconfirm>
         </t-space>
       </template>
     </common-setting>
 
-    <dialog-form-view v-model:visible="active.dialogForm" :data="formData" :type="active.formType" @submit="handleDialogUpdate" />
+    <dialog-form-view
+      v-model:visible="active.dialogForm"
+      :data="formData"
+      :type="active.formType"
+      @submit="handleDialogUpdate"
+    />
   </div>
 </template>
 
@@ -55,32 +67,31 @@ import { COLUMNS } from './constants';
 import DialogFormView from './components/DialogForm.vue';
 import CommonSetting from '@/components/common-setting/table/index.vue';
 
-
 const op = computed(() => {
-  return[
+  return [
     {
       label: t('pages.setting.header.add'),
-      value: 'add'
+      value: 'add',
     },
     {
       label: t('pages.setting.header.enable'),
-      value: 'enable'
+      value: 'enable',
     },
     {
       label: t('pages.setting.header.disable'),
-      value: 'disable'
+      value: 'disable',
     },
     {
       label: t('pages.setting.header.delete'),
-      value: 'delete'
-    }
-  ]
+      value: 'delete',
+    },
+  ];
 });
 
 const active = reactive({
   dialogForm: false,
   formType: 'add',
-  opId: ''
+  opId: '',
 });
 const formData = ref({});
 const searchValue = ref<string>('');
@@ -90,7 +101,7 @@ const pagination = reactive({
   defaultCurrent: 1,
   pageSize: 20,
   current: 1,
-  theme: "simple"
+  theme: 'simple',
 });
 const tableConfig = ref({
   data: [],
@@ -100,7 +111,7 @@ const tableConfig = ref({
     type: [],
   },
   select: [],
-  default: ''
+  default: '',
 });
 
 onMounted(() => {
@@ -109,11 +120,12 @@ onMounted(() => {
 
 onActivated(() => {
   const isListenedRefreshTableData = emitter.all.get('refreshDriveTable');
-  if (!isListenedRefreshTableData) emitter.on('refreshDriveTable', () => {
-    console.log('[setting][drive][bus][refresh]');
-    defaultSet();
-    refreshTable();
-  });
+  if (!isListenedRefreshTableData)
+    emitter.on('refreshDriveTable', () => {
+      console.log('[setting][drive][bus][refresh]');
+      defaultSet();
+      refreshTable();
+    });
 });
 
 const defaultSet = () => {
@@ -131,7 +143,7 @@ const defaultSet = () => {
       type: [],
     },
     select: [],
-    default: ''
+    default: '',
   };
 };
 
@@ -142,16 +154,18 @@ const refreshTable = () => {
 const reqFetch = async (page, pageSize, kw) => {
   try {
     const res = await fetchDrivePage({
-      kw, page, pageSize,
+      kw,
+      page,
+      pageSize,
     });
-    if (res?.["default"]) {
+    if (res?.['default']) {
       tableConfig.value.default = res.default;
     }
-    if (res?.["data"]) {
+    if (res?.['data']) {
       tableConfig.value.data = res.data;
       tableConfig.value.rawData = res.data;
     }
-    if (res?.["total"]) {
+    if (res?.['total']) {
       pagination.total = res.total;
     }
   } catch (err: any) {
@@ -209,7 +223,7 @@ const handleOpChange = async (type, doc) => {
   if (doc.length === 0 && ['enable', 'disable', 'delete'].includes(type)) {
     MessagePlugin.warning(t('pages.setting.message.noSelectData'));
     return;
-  };
+  }
 
   if (type === 'add') {
     active.formType = 'add';
@@ -222,7 +236,7 @@ const handleOpChange = async (type, doc) => {
       headers: null,
       params: null,
       showAll: false,
-      isActive: true
+      isActive: true,
     };
     active.dialogForm = true;
   } else if (type === 'enable') {
@@ -232,11 +246,11 @@ const handleOpChange = async (type, doc) => {
   } else if (type === 'delete') {
     await reqDel(doc);
   } else if (type === 'default') {
-    const activeItem: any = tableConfig.value.data.find((item:any) => item.id === doc)
+    const activeItem: any = tableConfig.value.data.find((item: any) => item.id === doc);
     if (!activeItem || !activeItem.isActive) {
       MessagePlugin.warning(t('pages.setting.message.defaultDisable'));
       return;
-    };
+    }
     await reqDefault(doc);
   } else if (type === 'edit') {
     active.formType = 'edit';
@@ -244,12 +258,12 @@ const handleOpChange = async (type, doc) => {
     delete doc.id;
     formData.value = doc;
     active.dialogForm = true;
-  };
+  }
 
   if (['enable', 'disable', 'delete', 'default'].includes(type)) {
     refreshTable();
     emitter.emit('refreshDriveConfig');
-  };
+  }
 };
 
 const handleDialogUpdate = async (type: string, doc: object) => {
@@ -258,8 +272,8 @@ const handleDialogUpdate = async (type: string, doc: object) => {
       await reqAdd(doc);
     } else {
       await reqPut([active.opId], doc);
-    };
-  };
+    }
+  }
 
   refreshTable();
   emitter.emit('refreshDriveConfig');

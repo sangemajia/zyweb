@@ -41,7 +41,7 @@ const label = computed(() => {
     lang: t('pages.md.label.lang'),
     copySuccess: t('pages.md.label.copySuccess'),
     copyError: t('pages.md.label.copyError'),
-  }
+  };
 });
 
 const emit = defineEmits(['update:visible']);
@@ -65,7 +65,7 @@ const confirmDisclaimer = () => {
 };
 
 const updateAgreementMask = async (status: Boolean) => {
-  await putSetting({ key: "agreementMask", doc: status });
+  await putSetting({ key: 'agreementMask', doc: status });
 };
 
 const cancelDisclaimer = () => {

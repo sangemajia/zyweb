@@ -4,7 +4,7 @@ import { join } from 'path';
 const getAppPath = (name: string): string => {
   // 在 Web 环境中，我们使用 localStorage 模拟存储路径
   const baseStoragePath = '/web/storage';
-  
+
   switch (name) {
     case 'userData':
       return join(baseStoragePath, 'user-data');

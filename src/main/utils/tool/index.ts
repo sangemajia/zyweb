@@ -35,7 +35,7 @@ const parseCustomUrl = (url: string) => {
       if (rawKey && rawValue) {
         const key = rawKey
           .split('-')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join('-');
 
         const value = rawValue.replaceAll('$*&', '=');
@@ -56,9 +56,28 @@ const isLocalhostRef = (url: string): boolean => `${url}`.includes('//localhost'
 const isUrlScheme = (url: string): boolean => {
   try {
     const parsed = new URL(url);
-    const BROWER = ['http:', 'https:', 'file:', 'data:', 'blob:', 'about:', 'javascript:', 'mailto:', 'tel:', 'sms:', 'ftp:'];
-    const CHROME = ['chrome:', 'chrome-extension:', 'chrome-untrusted:', 'chrome-search:', 'chrome-devtools:', 'devtools:'];
-    const SPECIAL  = ['magnet:', 'webtorrent:'];
+    const BROWER = [
+      'http:',
+      'https:',
+      'file:',
+      'data:',
+      'blob:',
+      'about:',
+      'javascript:',
+      'mailto:',
+      'tel:',
+      'sms:',
+      'ftp:',
+    ];
+    const CHROME = [
+      'chrome:',
+      'chrome-extension:',
+      'chrome-untrusted:',
+      'chrome-search:',
+      'chrome-devtools:',
+      'devtools:',
+    ];
+    const SPECIAL = ['magnet:', 'webtorrent:'];
     const SAFE = [...BROWER, ...CHROME, ...SPECIAL];
     return !SAFE.includes(parsed.protocol);
   } catch (err) {

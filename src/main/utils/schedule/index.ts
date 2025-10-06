@@ -1,4 +1,3 @@
-
 interface RegisterScheduleOption {
   name: string;
   fun: Function;
@@ -8,29 +7,29 @@ interface RegisterScheduleOption {
 
 interface Schedule extends RegisterScheduleOption {
   isRunning?: boolean;
-  instance?: any
+  instance?: any;
 }
 
-const schedules = new Map<string, Schedule>()
+const schedules = new Map<string, Schedule>();
 
 function registerSchedule(schedule: RegisterScheduleOption): Schedule {
   if (hasSchedule(schedule.name)) {
-    const thisSchedule = getSchedule(schedule.name)
+    const thisSchedule = getSchedule(schedule.name);
     if (thisSchedule?.isRunning) {
-      console.warn("has same name schedule and isRunning");
-      return thisSchedule
+      console.warn('has same name schedule and isRunning');
+      return thisSchedule;
     } else {
-      schedules.set(schedule.name, schedule)
-      return schedule
+      schedules.set(schedule.name, schedule);
+      return schedule;
     }
   } else {
-    schedules.set(schedule.name, schedule)
-    return schedule
+    schedules.set(schedule.name, schedule);
+    return schedule;
   }
 }
 
 function hasSchedule(name: string): boolean {
-  return schedules.has(name)
+  return schedules.has(name);
 }
 
 function getSchedule(name: string): Schedule | undefined {
@@ -38,56 +37,56 @@ function getSchedule(name: string): Schedule | undefined {
 }
 
 function isRunningSchedule(name: string): boolean {
-  return schedules.get(name)?.isRunning ? true : false
+  return schedules.get(name)?.isRunning ? true : false;
 }
 
 function runSchedule(name: string, initRun = true): void {
-  const schedule = getSchedule(name)
+  const schedule = getSchedule(name);
   if (!schedule) {
-    console.warn('not register this schedule')
-    return
+    console.warn('not register this schedule');
+    return;
   }
-  const { isRunning, instance, fun, interval } = schedule
+  const { isRunning, instance, fun, interval } = schedule;
   if (isRunning && instance) {
-    instance.clear()
+    instance.clear();
   }
   if (initRun) {
-    fun()
+    fun();
   }
   schedules.set(name, {
     ...schedule,
     instance: EpSetInterval(() => {
-      fun()
+      fun();
     }, interval),
-    isRunning: true
-  })
+    isRunning: true,
+  });
 }
 
 function stopSchedule(name: string): void {
   if (!hasSchedule(name)) {
-    return
+    return;
   } else {
-    const thisSchedule = getSchedule(name)
+    const thisSchedule = getSchedule(name);
     if (thisSchedule?.instance) {
-      thisSchedule.instance.clear()
+      thisSchedule.instance.clear();
       schedules.set(name, {
         ...thisSchedule,
         instance: null,
-        isRunning: false
-      })
+        isRunning: false,
+      });
     }
   }
 }
 
 function clearSchedule(name: string): void {
   if (!hasSchedule(name)) {
-    return
+    return;
   } else {
-    const thisSchedule = getSchedule(name)
+    const thisSchedule = getSchedule(name);
     if (thisSchedule?.instance) {
-      thisSchedule.instance.clear()
+      thisSchedule.instance.clear();
     }
-    schedules.delete(name)
+    schedules.delete(name);
   }
 }
 
@@ -100,18 +99,18 @@ function EpSetInterval(callback: any, delay: number) {
   return {
     clear() {
       clearTimeout(timeoutId);
-    }
+    },
   };
 }
 
 function clearAllSchedule(): void {
   const schedulesArray = Array.from(schedules.values());
-  schedulesArray.forEach(schedule => {
+  schedulesArray.forEach((schedule) => {
     if (schedule.instance) {
       schedule.instance.clear();
     }
-  })
-  schedules.clear()
+  });
+  schedules.clear();
 }
 
 export {
@@ -123,5 +122,5 @@ export {
   getSchedule,
   isRunningSchedule,
   schedules,
-  clearAllSchedule
-}
+  clearAllSchedule,
+};

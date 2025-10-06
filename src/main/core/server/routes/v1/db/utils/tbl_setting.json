@@ -61,19 +61,7 @@
   },
   {
     "key": "analyzeFlag",
-    "value": [
-      "youku",
-      "qq",
-      "iqiyi",
-      "qiyi",
-      "letv",
-      "leshi",
-      "sohu",
-      "tudou",
-      "pptv",
-      "mgtv",
-      "imgo"
-    ]
+    "value": ["youku", "qq", "iqiyi", "qiyi", "letv", "leshi", "sohu", "tudou", "pptv", "mgtv", "imgo"]
   },
   {
     "key": "defaultDrive",
@@ -142,19 +130,7 @@
       "url": "",
       "id": "name",
       "key": "danmuku",
-      "support": [
-        "youku",
-        "qq",
-        "iqiyi",
-        "qiyi",
-        "letv",
-        "leshi",
-        "sohu",
-        "tudou",
-        "pptv",
-        "mgtv",
-        "imgo"
-      ],
+      "support": ["youku", "qq", "iqiyi", "qiyi", "letv", "leshi", "sohu", "tudou", "pptv", "mgtv", "imgo"],
       "start": 0,
       "mode": 1,
       "color": 2,

@@ -28,7 +28,7 @@ export const useFilmSetup = () => {
     detail: false,
     loadClass: false,
     loading: false,
-    lazyload: false
+    lazyload: false,
   });
   const pagination = ref({
     pageIndex: 1,
@@ -42,13 +42,13 @@ export const useFilmSetup = () => {
       id: '',
       type: 0,
       categories: '',
-      ext: ''
+      ext: '',
     },
     search: '',
     filter: false,
     data: [],
     filterOnlySearchData: [],
-    searchGroup: []
+    searchGroup: [],
   });
   const active = ref({
     nav: null,
@@ -56,14 +56,14 @@ export const useFilmSetup = () => {
     tmpClass: '',
     tmpId: '',
     infiniteType: 'loading',
-    filter: {}
+    filter: {},
   });
   const filmData = ref({
     list: [],
     rawList: [],
   });
   const classConfig = ref({
-    data: []
+    data: [],
   });
 
   // 生命周期钩子
@@ -81,21 +81,21 @@ export const useFilmSetup = () => {
     try {
       const data = await fetchSiteActive();
       if (data.hasOwnProperty('default')) {
-        siteConfig.value.default = data["default"];
-        active.value.nav = data["default"]["id"];
+        siteConfig.value.default = data['default'];
+        active.value.nav = data['default']['id'];
         active.value.infiniteType = 'noMore';
       } else {
         active.value.infiniteType = 'noData';
       }
-      if (Array.isArray(data['data']) && data["data"].length > 0) {
-        siteConfig.value.data = data["data"];
-        siteConfig.value.filterOnlySearchData = data["data"].filter((item) => item["search"] !== 2);
+      if (Array.isArray(data['data']) && data['data'].length > 0) {
+        siteConfig.value.data = data['data'];
+        siteConfig.value.filterOnlySearchData = data['data'].filter((item) => item['search'] !== 2);
       }
       if (data.hasOwnProperty('filter')) {
-        siteConfig.value.filter = data["filter"];
+        siteConfig.value.filter = data['filter'];
       }
       if (data.hasOwnProperty('search')) {
-        siteConfig.value.search = data["search"];
+        siteConfig.value.search = data['search'];
       }
     } catch (err) {
       active.value.infiniteType = 'noData';
@@ -135,7 +135,7 @@ export const useFilmSetup = () => {
     try {
       defaultConf();
       active.value.nav = id;
-      siteConfig.value.default = siteConfig.value.data.find(item => item.id === id);
+      siteConfig.value.default = siteConfig.value.data.find((item) => item.id === id);
       active.value.infiniteType = 'noMore';
     } catch (err) {
       active.value.infiniteType = 'noData';
@@ -187,13 +187,13 @@ export const useFilmSetup = () => {
     console.log('[film] loading...');
     try {
       const checkComplete = () => {
-        const stopFlag = ['noData', 'networkError', 'categoryError']
-        return stopFlag.includes(active.value.infiniteType)
-      }
+        const stopFlag = ['noData', 'networkError', 'categoryError'];
+        return stopFlag.includes(active.value.infiniteType);
+      };
       if (checkComplete()) {
         $state.complete();
         return;
-      };
+      }
       const defaultSite = searchTxt.value ? searchCurrentSite.value : siteConfig.value.default;
 
       // setp1: 初始化
@@ -201,7 +201,7 @@ export const useFilmSetup = () => {
         await fetchCmsInit({ sourceId: defaultSite.id });
         active.value.tmpId = defaultSite.id;
         pagination.value.pageIndex = 1;
-      };
+      }
 
       // setp2: 获取分类
       if (classConfig.value.data.length <= 1 && !searchTxt.value) {
@@ -212,8 +212,8 @@ export const useFilmSetup = () => {
         if (checkComplete()) {
           $state.complete();
           return;
-        };
-      };
+        }
+      }
 
       // setp3: 加载数据
       const loadFunction = searchTxt.value ? getSearchList : getFilmList;
@@ -224,7 +224,7 @@ export const useFilmSetup = () => {
         searchCurrentSite.value,
         filmData.value,
         active.value,
-        siteConfig.value.filter
+        siteConfig.value.filter,
       );
 
       filmData.value = result.filmData;
@@ -270,6 +270,6 @@ export const useFilmSetup = () => {
     getClassList,
     getFilmList,
     getSearchList,
-    playEvent
+    playEvent,
   };
 };

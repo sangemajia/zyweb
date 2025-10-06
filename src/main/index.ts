@@ -33,8 +33,8 @@ const setupEnv = () => {
   logger.info(`[v8][version] ${process.versions.v8}`);
 
   // 设置环境变量
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';  // 忽略 TLS 证书错误
-  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';  // 关闭安全警告
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // 忽略 TLS 证书错误
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'; // 关闭安全警告
 };
 
 /**
@@ -73,14 +73,17 @@ const setupApp = async () => {
    * PlatformHEVCDecoderSupport - 视频解码
    * GlobalShortcutsPortal - 全局快捷键
    */
-  app.commandLine.appendSwitch('enable-features', 'PlatformHEVCDecoderSupport, HardwareAccelerationModeDefault, GlobalShortcutsPortal'); // 启用
+  app.commandLine.appendSwitch(
+    'enable-features',
+    'PlatformHEVCDecoderSupport, HardwareAccelerationModeDefault, GlobalShortcutsPortal',
+  ); // 启用
   app.commandLine.appendSwitch('ignore-certificate-errors'); // 忽略证书错误
   app.commandLine.appendSwitch('disable-web-security'); // 禁用安全
   app.commandLine.appendSwitch('disable-renderer-backgrounding'); // 禁用渲染器后台化
   app.commandLine.appendSwitch('disable-site-isolation-trials'); // 禁用站点隔离试验
   app.commandLine.appendSwitch('gpu-memory-buffer-compositor-resources'); // GPU内存缓冲
-  app.commandLine.appendSwitch("ignore-gpu-blacklist"); // 忽略GPU黑名单
-  app.commandLine.appendSwitch("no-sandbox"); // 禁用沙盒
+  app.commandLine.appendSwitch('ignore-gpu-blacklist'); // 忽略GPU黑名单
+  app.commandLine.appendSwitch('no-sandbox'); // 禁用沙盒
   app.commandLine.appendSwitch('proxy-bypass-list', '<local>'); // 代理白名单
   app.commandLine.appendSwitch('wm-window-animations-disabled'); // 禁用窗口动画
   app.commandLine.appendSwitch('disable-http-cache'); // 禁用HTTP缓存-if头
@@ -100,7 +103,7 @@ const setupSession = () => {
   defaultSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
     const { url, id } = details;
     // 取消请求-devtools拦截器
-    if (['devtools-detector', 'disable-devtool'].some(f => url.includes(f))) return callback({ cancel: true });
+    if (['devtools-detector', 'disable-devtool'].some((f) => url.includes(f))) return callback({ cancel: true });
     // 取消请求-urlscheme拦截器
     if (isUrlScheme(url)) return callback({ cancel: false });
     // 不处理-本地地址 但lab/ad除外
@@ -135,14 +138,18 @@ const setupSession = () => {
     requestHeaders['Host'] = requestHeaders['Electron-Host'] || headers['Host'] || requestHeaders['Host'];
     delete requestHeaders['Electron-Host'];
     if (requestHeaders['Host'] && isLocalhostRef(requestHeaders['Host'])) delete requestHeaders['Host'];
-    
+
     // 处理 Referer - 确定跳转来源(完整URL)
     requestHeaders['Referer'] = requestHeaders['Electron-Referer'] || headers['Referer'] || requestHeaders['Referer'];
     delete requestHeaders['Electron-Referer'];
     if (requestHeaders['Referer'] && isLocalhostRef(requestHeaders['Referer'])) delete requestHeaders['Referer'];
 
     // 处理 User-Agent
-    requestHeaders['User-Agent'] = requestHeaders['Electron-User-Agent'] || headers['User-Agent'] || globalThis.variable.ua || requestHeaders['User-Agent'];
+    requestHeaders['User-Agent'] =
+      requestHeaders['Electron-User-Agent'] ||
+      headers['User-Agent'] ||
+      globalThis.variable.ua ||
+      requestHeaders['User-Agent'];
     delete requestHeaders['Electron-User-Agent'];
 
     // 处理 Cookie
@@ -161,14 +168,14 @@ const setupSession = () => {
     const { id, responseHeaders, statusCode } = details;
 
     // iframe 跨域
-    ['X-Frame-Options', 'x-frame-options'].forEach(h => delete responseHeaders?.[h]);
+    ['X-Frame-Options', 'x-frame-options'].forEach((h) => delete responseHeaders?.[h]);
 
     // 携带cookie的拦截问题
     ['set-cookie', 'Set-Cookie'].forEach((key) => {
       if (responseHeaders?.hasOwnProperty(key)) {
         // responseHeaders[key] = responseHeaders[key].map((ck) => `${ck}; SameSite=None; Secure`);
         responseHeaders[key] = responseHeaders[key].map((ck) => `${ck}`);
-      };
+      }
     });
 
     if (reqIdRedirect[id] && statusCode === 302) {
@@ -178,7 +185,7 @@ const setupSession = () => {
         responseHeaders,
         statusLine: 'HTTP/1.1 200 OK',
       });
-    };
+    }
 
     callback({ cancel: false, responseHeaders });
   });
@@ -189,10 +196,10 @@ const setupSession = () => {
  */
 const setupReady = () => {
   app.whenReady().then(() => {
-    registerTitleBarListener();  // 注册标题栏事件监听
-    registerContextMenuListener();  // 注册上下文菜单事件监听
-    electronApp.setAppUserModelId('com.zyfun');  // 设置应用用户模型ID
-    optimizer.registerFramelessWindowIpc();  // 注册无边框窗口IPC
+    registerTitleBarListener(); // 注册标题栏事件监听
+    registerContextMenuListener(); // 注册上下文菜单事件监听
+    electronApp.setAppUserModelId('com.zyfun'); // 设置应用用户模型ID
+    optimizer.registerFramelessWindowIpc(); // 注册无边框窗口IPC
     setupSession(); // 网络请求拦截器
     autoUpdater(); // 检测更新
     ipcListen(); // ipc通讯
@@ -210,14 +217,15 @@ const setupReady = () => {
         secureDnsMode: 'secure',
         secureDnsServers: [globalThis.variable.dns],
       });
-    };
-    if (globalThis.variable.debug) dbServer();  // 初始化数据库服务
-    if (globalThis.variable.recordShortcut) globalShortcut.register({
-      shortcut: globalThis.variable.recordShortcut,
-      func: toggleWinVisable,
-      name: 'boss',
-      override: true,
-    });  // 注册老板键
+    }
+    if (globalThis.variable.debug) dbServer(); // 初始化数据库服务
+    if (globalThis.variable.recordShortcut)
+      globalShortcut.register({
+        shortcut: globalThis.variable.recordShortcut,
+        func: toggleWinVisable,
+        name: 'boss',
+        override: true,
+      }); // 注册老板键
   });
 
   app.on('activate', () => {
@@ -240,12 +248,12 @@ const main = async () => {
   // 锁定单例
   if (!app.requestSingleInstanceLock()) return app.quit();
 
-  setupApp();                                 // 应用启动参数
-  setupEnv();                                 // 环境变量修复
-  await setupCheck();                         // 检查所需路径
-  await dbInit();                             // 初始化数据库
-  await globalVariable();                     // 设置全局变量
-  setupReady();                               // 注册事件监听
+  setupApp(); // 应用启动参数
+  setupEnv(); // 环境变量修复
+  await setupCheck(); // 检查所需路径
+  await dbInit(); // 初始化数据库
+  await globalVariable(); // 设置全局变量
+  setupReady(); // 注册事件监听
 };
 
 main();

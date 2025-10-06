@@ -21,13 +21,18 @@
           <t-button theme="default" @click="randomKeyEvent">{{ $t('pages.setting.random') }}</t-button>
         </div>
         <t-form-item :label="$t('pages.setting.site.type')" name="type">
-          <t-select v-model="formData.data.type" :options="SITE_TYPE" :placeholder="$t('pages.setting.placeholder.general')" @change="changeTypeEvent" />
+          <t-select
+            v-model="formData.data.type"
+            :options="SITE_TYPE"
+            :placeholder="$t('pages.setting.placeholder.general')"
+            @change="changeTypeEvent"
+          />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.site.api')" name="api">
           <t-input v-model="formData.data.api" :placeholder="$t('pages.setting.placeholder.general')" />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.site.search')" name="search">
-          <t-radio-group v-model="formData.data.search" variant="default-filled" >
+          <t-radio-group v-model="formData.data.search" variant="default-filled">
             <t-radio-button :value="0">{{ $t('pages.setting.site.searchClose') }}</t-radio-button>
             <t-radio-button :value="1">{{ $t('pages.setting.site.searchGather') }}</t-radio-button>
             <t-radio-button :value="2">{{ $t('pages.setting.site.searchOnly') }}</t-radio-button>
@@ -37,17 +42,35 @@
           <t-input v-model="formData.data.playUrl" :placeholder="$t('pages.setting.placeholder.general')" />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.site.ext')" name="ext">
-          <t-textarea v-model="formData.data.ext" :placeholder="$t('pages.setting.placeholder.general')"  :autosize="{ minRows: 1, maxRows: 3 }" />
+          <t-textarea
+            v-model="formData.data.ext"
+            :placeholder="$t('pages.setting.placeholder.general')"
+            :autosize="{ minRows: 1, maxRows: 3 }"
+          />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.site.group')" name="group">
-          <t-select v-model="formData.data.group" creatable filterable
-            :placeholder="$t('pages.setting.placeholder.groupTip')" @create="createOptions">
-            <t-option v-for="item in formGroup" :key="item.value" :value="item.value" :label="item.label"
-              class="select-options" />
+          <t-select
+            v-model="formData.data.group"
+            creatable
+            filterable
+            :placeholder="$t('pages.setting.placeholder.groupTip')"
+            @create="createOptions"
+          >
+            <t-option
+              v-for="item in formGroup"
+              :key="item.value"
+              :value="item.value"
+              :label="item.label"
+              class="select-options"
+            />
           </t-select>
         </t-form-item>
         <t-form-item :label="$t('pages.setting.site.category')" name="category">
-          <t-textarea v-model="formData.data.categories" :placeholder="$t('pages.setting.placeholder.categoryTip')" :autosize="{ minRows: 1, maxRows: 3 }" />
+          <t-textarea
+            v-model="formData.data.categories"
+            :placeholder="$t('pages.setting.placeholder.categoryTip')"
+            :autosize="{ minRows: 1, maxRows: 3 }"
+          />
         </t-form-item>
       </t-form>
     </template>
@@ -76,11 +99,11 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'add'
+    default: 'add',
   },
   group: {
     type: Array,
-    default: []
+    default: [],
   },
 });
 const formRef = useTemplateRef<FormInstanceFunctions>('formRef');

@@ -95,7 +95,7 @@ const saveJsonSync = (filePath: string, content: object): boolean => {
 const readFile = async (filePath: string, crypto: number = 0): Promise<string | false> => {
   try {
     filePath = relativeToAbsolute(filePath);
-    if (!await fileExist(filePath) || (await fileState(filePath)) !== 'file') return false;
+    if (!(await fileExist(filePath)) || (await fileState(filePath)) !== 'file') return false;
     let content = await fs.readFile(filePath, 'utf8');
     if (crypto !== 0) content = gzip.decode(content);
     return content;
@@ -120,7 +120,7 @@ const readFileSync = (filePath: string, crypto: number = 0): string | false => {
 const readJson = async (filePath: string): Promise<any | false> => {
   try {
     filePath = relativeToAbsolute(filePath);
-    if (!await fileExist(filePath) || (await fileState(filePath)) !== 'file') return false;
+    if (!(await fileExist(filePath)) || (await fileState(filePath)) !== 'file') return false;
     return await fs.readJson(filePath);
   } catch {
     return false;
@@ -163,7 +163,7 @@ const readDir = async (dirPath: string): Promise<string[] | false> => {
   try {
     if (!dirPath) return false;
     dirPath = relativeToAbsolute(dirPath);
-    if (!await fileExist(dirPath) || (await fileState(dirPath)) !== 'dir') return false;
+    if (!(await fileExist(dirPath)) || (await fileState(dirPath)) !== 'dir') return false;
     return await fs.readdir(dirPath);
   } catch {
     return false;
@@ -231,7 +231,7 @@ const fileSize = async (folderPath: string): Promise<number> => {
   let totalSize = 0;
 
   try {
-    if (!await fileExist(folderPath)) return 0;
+    if (!(await fileExist(folderPath))) return 0;
     const status = await fileState(folderPath);
 
     if (status === 'dir') {

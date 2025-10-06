@@ -10,8 +10,8 @@ import { defineProps, defineEmits } from 'vue';
 const props = defineProps({
   type: {
     type: String,
-    default: 'primary'
-  }
+    default: 'primary',
+  },
 });
 
 const emit = defineEmits(['click']);

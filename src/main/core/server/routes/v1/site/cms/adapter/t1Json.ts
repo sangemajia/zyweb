@@ -27,7 +27,7 @@ class T1Adapter {
         url: this.api,
         method: 'GET',
       });
-    };
+    }
     let classes: any[] = [];
 
     // 分类
@@ -73,7 +73,7 @@ class T1Adapter {
         url: this.api,
         method: 'GET',
       });
-    };
+    }
 
     if (Array.isArray(response?.list) && response.list.length > 0 && !response.list[0].vod_pic) {
       const ids = response.list.map((item) => item.vod_id);

@@ -41,16 +41,29 @@
               <loading-icon />
             </template>
           </t-link>
-          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{ $t('pages.setting.table.default') }}</t-link>
-          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{ $t('pages.setting.table.edit') }}</t-link>
-          <t-popconfirm :content="$t('pages.setting.table.deleteTip')" @confirm="handleOpChange('delete', [slotProps.row.id])">
+          <t-link theme="primary" @click="handleOpChange('default', slotProps.row.id)">{{
+            $t('pages.setting.table.default')
+          }}</t-link>
+          <t-link theme="primary" @click="handleOpChange('edit', slotProps.row)">{{
+            $t('pages.setting.table.edit')
+          }}</t-link>
+          <t-popconfirm
+            :content="$t('pages.setting.table.deleteTip')"
+            @confirm="handleOpChange('delete', [slotProps.row.id])"
+          >
             <t-link theme="danger">{{ $t('pages.setting.table.delete') }}</t-link>
           </t-popconfirm>
         </t-space>
       </template>
     </common-setting>
 
-    <dialog-form-view v-model:visible="active.dialogForm" :data="formData" :type="active.formType" :group="formGroup" @submit="handleDialogUpdate" />
+    <dialog-form-view
+      v-model:visible="active.dialogForm"
+      :data="formData"
+      :type="active.formType"
+      :group="formGroup"
+      @submit="handleDialogUpdate"
+    />
   </div>
 </template>
 
@@ -60,7 +73,16 @@ import { LoadingIcon } from 'tdesign-icons-vue-next';
 import { onActivated, onMounted, ref, reactive, computed } from 'vue';
 
 import { t } from '@/locales';
-import { fetchSitePage, putSite, delSite, addSite, putSiteDefault, fetchCmsInit, fetchCmsHome, fetchCmsCategory } from '@/api/site';
+import {
+  fetchSitePage,
+  putSite,
+  delSite,
+  addSite,
+  putSiteDefault,
+  fetchCmsInit,
+  fetchCmsHome,
+  fetchCmsCategory,
+} from '@/api/site';
 import emitter from '@/utils/emitter';
 
 import { COLUMNS } from './constants';
@@ -68,30 +90,29 @@ import { COLUMNS } from './constants';
 import DialogFormView from './components/DialogForm.vue';
 import CommonSetting from '@/components/common-setting/table/index.vue';
 
-
 const op = computed(() => {
-  return[
+  return [
     {
       label: t('pages.setting.header.add'),
-      value: 'add'
+      value: 'add',
     },
     {
       label: t('pages.setting.header.enable'),
-      value: 'enable'
+      value: 'enable',
     },
     {
       label: t('pages.setting.header.disable'),
-      value: 'disable'
+      value: 'disable',
     },
     {
       label: t('pages.setting.header.delete'),
-      value: 'delete'
+      value: 'delete',
     },
     {
       label: t('pages.setting.header.check'),
-      value: 'check'
-    }
-  ]
+      value: 'check',
+    },
+  ];
 });
 const active = reactive({
   dialogForm: false,
@@ -108,7 +129,7 @@ const pagination = reactive({
   defaultCurrent: 1,
   pageSize: 20,
   current: 1,
-  theme: "simple"
+  theme: 'simple',
 });
 const tableConfig = ref<{ [key: string]: any }>({
   data: [],
@@ -119,7 +140,7 @@ const tableConfig = ref<{ [key: string]: any }>({
   },
   select: [],
   default: '',
-  group: []
+  group: [],
 });
 
 onMounted(() => {
@@ -128,11 +149,12 @@ onMounted(() => {
 
 onActivated(() => {
   const isListenedRefreshTableData = emitter.all.get('refreshSiteTable');
-  if (!isListenedRefreshTableData) emitter.on('refreshSiteTable', () => {
-    console.log('[setting][site][bus][refresh]');
-    defaultSet();
-    refreshTable();
-  });
+  if (!isListenedRefreshTableData)
+    emitter.on('refreshSiteTable', () => {
+      console.log('[setting][site][bus][refresh]');
+      defaultSet();
+      refreshTable();
+    });
 });
 
 const defaultSet = () => {
@@ -151,7 +173,7 @@ const defaultSet = () => {
     },
     select: [],
     default: '',
-    group: []
+    group: [],
   };
 };
 
@@ -162,19 +184,21 @@ const refreshTable = () => {
 const reqFetch = async (page, pageSize, kw) => {
   try {
     const res = await fetchSitePage({
-      kw, page, pageSize,
+      kw,
+      page,
+      pageSize,
     });
-    if (res?.["default"]) {
+    if (res?.['default']) {
       tableConfig.value.default = res.default;
     }
-    if (res?.["data"]) {
+    if (res?.['data']) {
       tableConfig.value.data = res.data;
       tableConfig.value.rawData = res.data;
     }
-    if (res?.["total"]) {
+    if (res?.['total']) {
       pagination.total = res.total;
     }
-    if (res?.["group"]) {
+    if (res?.['group']) {
       tableConfig.value.group = res.group;
     }
   } catch (err: any) {
@@ -232,7 +256,7 @@ const handleOpChange = async (type, doc) => {
   if (doc.length === 0 && ['enable', 'disable', 'delete', 'check'].includes(type)) {
     MessagePlugin.warning(t('pages.setting.message.noSelectData'));
     return;
-  };
+  }
 
   if (type === 'add') {
     active.formType = 'add';
@@ -246,7 +270,7 @@ const handleOpChange = async (type, doc) => {
       isActive: true,
       type: 1,
       ext: '',
-      categories: ''
+      categories: '',
     };
     formGroup.value = tableConfig.value.group;
     active.dialogForm = true;
@@ -257,11 +281,11 @@ const handleOpChange = async (type, doc) => {
   } else if (type === 'delete') {
     await reqDel(doc);
   } else if (type === 'default') {
-    const activeItem: any = tableConfig.value.data.find((item:any) => item.id === doc)
+    const activeItem: any = tableConfig.value.data.find((item: any) => item.id === doc);
     if (!activeItem || !activeItem.isActive) {
       MessagePlugin.warning(t('pages.setting.message.defaultDisable'));
       return;
-    };
+    }
     await reqDefault(doc);
   } else if (type === 'edit') {
     active.formType = 'edit';
@@ -287,35 +311,40 @@ const handleOpChange = async (type, doc) => {
         if (resHome && Array.isArray(resHome.class) && resHome.class.length > 0) {
           const resCategory = await fetchCmsCategory({
             tid: resHome?.class[0].type_id,
-            sourceId: id
+            sourceId: id,
           });
 
-          if (resCategory && Array.isArray(resCategory.list) && resCategory.list.length > 0 && resCategory.list[0]?.vod_id !== "no_data") {
+          if (
+            resCategory &&
+            Array.isArray(resCategory.list) &&
+            resCategory.list.length > 0 &&
+            resCategory.list[0]?.vod_id !== 'no_data'
+          ) {
             isActive = true;
-          };
-        };
+          }
+        }
 
         if (isActive !== row.isActive) {
           await reqPut([id], { isActive });
           MessagePlugin.closeAll();
-        };
+        }
       } catch (err: any) {
         console.error('[setting][site][check][error]', err);
         if (row.isActive) {
           await reqPut([id], { isActive: false });
           MessagePlugin.closeAll();
-        };
+        }
       } finally {
         tableConfig.value.data[rowIndex].check = false;
       }
-    };
+    }
     MessagePlugin.success(`${t('pages.setting.form.success')}`);
   }
 
   if (['enable', 'disable', 'delete', 'check', 'default'].includes(type)) {
     refreshTable();
     emitter.emit('refreshFilmConfig');
-  };
+  }
 };
 
 const handleDialogUpdate = async (type: string, doc: object) => {
@@ -324,8 +353,8 @@ const handleDialogUpdate = async (type: string, doc: object) => {
       await reqAdd(doc);
     } else {
       await reqPut([active.opId], doc);
-    };
-  };
+    }
+  }
 
   refreshTable();
   emitter.emit('refreshFilmConfig');

@@ -20,12 +20,12 @@ class ZwPlayer extends ZwPlayerCore {
       playbackRate: config.playbackRate,
       startTime: config.startTime,
       isLive: config.isLive,
-      ...config
+      ...config,
     });
 
     // 初始化媒体引擎
     this.mediaEngine = new MediaEngine(this.videoElement, config);
-    
+
     // 如果需要弹幕功能，初始化弹幕引擎
     if (config.danmaku !== false) {
       this.danmakuEngine = new DanmakuEngine(this.container, this.videoElement);
@@ -37,7 +37,7 @@ class ZwPlayer extends ZwPlayerCore {
         showControls: config.controls !== false,
         themeColor: config.themeColor,
         autoHide: config.autoHide,
-        autoHideTime: config.autoHideTime
+        autoHideTime: config.autoHideTime,
       };
       this.uiController = new UIController(this, this.container, controlOptions);
     }
@@ -106,15 +106,15 @@ class ZwPlayer extends ZwPlayerCore {
     if (this.uiController) {
       this.uiController.destroy();
     }
-    
+
     // 销毁媒体引擎
     this.mediaEngine.destroy();
-    
+
     // 销毁弹幕引擎
     if (this.danmakuEngine) {
       this.danmakuEngine.destroy();
     }
-    
+
     // 调用父类销毁方法
     super.destroy();
   }

@@ -14,7 +14,7 @@ export const formatDate = (date: Date | number | string, format: string = 'YYYY-
   const hours = String(d.getHours()).padStart(2, '0');
   const minutes = String(d.getMinutes()).padStart(2, '0');
   const seconds = String(d.getSeconds()).padStart(2, '0');
-  
+
   return format
     .replace('YYYY', String(year))
     .replace('MM', month)
@@ -32,7 +32,7 @@ export const formatDate = (date: Date | number | string, format: string = 'YYYY-
  */
 export const debounce = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
   let timeoutId: NodeJS.Timeout;
-  
+
   return function (...args: Parameters<T>) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func.apply(this, args), delay);
@@ -47,10 +47,10 @@ export const debounce = <T extends (...args: any[]) => any>(func: T, delay: numb
  */
 export const throttle = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
   let lastExecTime = 0;
-  
+
   return function (...args: Parameters<T>) {
     const currentTime = Date.now();
-    
+
     if (currentTime - lastExecTime >= delay) {
       lastExecTime = currentTime;
       func.apply(this, args);
@@ -67,11 +67,11 @@ export const deepClone = <T>(obj: T): T => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
-  
+
   if (obj instanceof Date) {
     return new Date(obj.getTime()) as unknown as T;
   }
-  
+
   if (obj instanceof Array) {
     const clonedArr = [] as unknown as T;
     obj.forEach((item, index) => {
@@ -79,15 +79,15 @@ export const deepClone = <T>(obj: T): T => {
     });
     return clonedArr;
   }
-  
+
   if (typeof obj === 'object') {
     const clonedObj = {} as T;
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       (clonedObj as any)[key] = deepClone((obj as any)[key]);
     });
     return clonedObj;
   }
-  
+
   return obj;
 };
 
@@ -108,18 +108,18 @@ export const isEmpty = (value: any): boolean => {
   if (value === null || value === undefined) {
     return true;
   }
-  
+
   if (typeof value === 'string') {
     return value.trim() === '';
   }
-  
+
   if (Array.isArray(value)) {
     return value.length === 0;
   }
-  
+
   if (typeof value === 'object') {
     return Object.keys(value).length === 0;
   }
-  
+
   return false;
 };

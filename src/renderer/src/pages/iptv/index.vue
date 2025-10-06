@@ -9,26 +9,22 @@
     />
 
     <div class="content">
-      <IptvHeader 
-        :class-list="classList" 
-        :active="active" 
-        @change-class-event="changeClassEvent" 
-      />
+      <IptvHeader :class-list="classList" :active="active" @change-class-event="changeClassEvent" />
 
-      <IptvList 
-        :channel-list="channelList" 
-        :iptv-config="iptvConfig" 
-        :active="active" 
-        :is-visible="isVisible" 
-        :infinite-id="infiniteId" 
-        :render-loading="renderLoading" 
-        :render-error="renderError" 
-        :options-component="optionsComponent" 
-        @load="load" 
-        @play-event="playEvent" 
-        @con-button-click="conButtonClick" 
-        @copy-channel-event="copyChannelEvent" 
-        @del-channel-event="delChannelEvent" 
+      <IptvList
+        :channel-list="channelList"
+        :iptv-config="iptvConfig"
+        :active="active"
+        :is-visible="isVisible"
+        :infinite-id="infiniteId"
+        :render-loading="renderLoading"
+        :render-error="renderError"
+        :options-component="optionsComponent"
+        @load="load"
+        @play-event="playEvent"
+        @con-button-click="conButtonClick"
+        @copy-channel-event="copyChannelEvent"
+        @del-channel-event="delChannelEvent"
       />
     </div>
 
@@ -40,7 +36,6 @@
 <script setup lang="tsx">
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import 'v3-infinite-loading/lib/style.css';
-import lazyImg from '@/assets/lazy.png';
 
 import { ContextMenu, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import moment from 'moment';
@@ -98,22 +93,17 @@ const {
   changeClassEvent,
   load,
   playEvent,
-  clearQueue
+  clearQueue,
 } = useIptvSetup();
 
+import { renderError, renderLoading } from '@/utils/common/renderUtils';
+
 const renderError = () => {
-  return (
-    <div class="renderIcon" style="width: 100%;">
-      <img src={lazyImg} style="width: 100%; object-fit: cover;" />
-    </div>
-  );
+  return renderError();
 };
+
 const renderLoading = () => {
-  return (
-    <div class="renderIcon" style="width: 100%;">
-      <img src={lazyImg} style="width: 100%; object-fit: cover;" />
-    </div>
-  );
+  return renderLoading();
 };
 
 onActivated(() => {
@@ -140,7 +130,7 @@ const delChannelEvent = () => {
   const index = channelList.value.indexOf(channelItem.value);
   if (index > -1) {
     channelList.value.splice(index, 1);
-    delChannel({ids: [channelItem.value.id]});
+    delChannel({ ids: [channelItem.value.id] });
   }
   isVisible.contentMenu = false;
 };

@@ -29,16 +29,15 @@ class T3PyAdapter {
 
     this.api = source.api;
     this.extend = source.extend;
-    this.categoryfilter = source.categories
-      ? source.categories.split(/[,，]/).map((s) => s.trim())
-      : [];
+    this.categoryfilter = source.categories ? source.categories.split(/[,，]/).map((s) => s.trim()) : [];
   }
 
   // 检查 Python 是否安装
   async checkPython(): Promise<boolean> {
     // https://github.com/nodejs/node-v0.x-archive/issues/2190
-    const command = platform === 'win32' ? 'chcp 65001 | where python || where python3' : 'which python || which python3';
-    const linebreak =  platform === 'win32' ? '\r\n' : '\n';
+    const command =
+      platform === 'win32' ? 'chcp 65001 | where python || where python3' : 'which python || which python3';
+    const linebreak = platform === 'win32' ? '\r\n' : '\n';
 
     try {
       const { stdout } = await execAsync(command);
@@ -180,7 +179,7 @@ class T3PyAdapter {
     return await this.execCtx('playerContent', [flag, input, flags]);
   }
 
-  runMain(doc: { func: string, arg: any }): string {
+  runMain(doc: { func: string; arg: any }): string {
     const { func, arg } = doc;
 
     const getLogRecord = () => {

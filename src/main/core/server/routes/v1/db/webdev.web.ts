@@ -27,7 +27,7 @@ class webdev {
         exists: async (path: string) => true,
         createDirectory: async (path: string) => {},
         putFileContents: async (path: string, content: string, options: any) => {},
-        getFileContents: async (path: string, options: any) => '{}'
+        getFileContents: async (path: string, options: any) => '{}',
       };
 
       return true;

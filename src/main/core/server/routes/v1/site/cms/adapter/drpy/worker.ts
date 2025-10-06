@@ -67,7 +67,7 @@ const drpyWork = (parms: { [key: string]: any }) => {
 const siteDrpyWork = async (message: { [key: string]: any }, args: { [key: string]: any }) => {
   const variable = {
     timeout: parseInt(args.timeout) || 5000,
-    debug: JSON.parse((args.debug || 'false')),
+    debug: JSON.parse(args.debug || 'false'),
   };
   globalThis.variable = variable;
   let res;

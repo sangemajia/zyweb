@@ -10,7 +10,7 @@ class EventEmitter {
 
   off(event: string, callback: Function): void {
     if (!this.events[event]) return;
-    
+
     const index = this.events[event].indexOf(callback);
     if (index !== -1) {
       this.events[event].splice(index, 1);
@@ -19,7 +19,7 @@ class EventEmitter {
 
   emit(event: string, ...args: any[]): void {
     if (!this.events[event]) return;
-    
+
     // 复制数组以避免在迭代过程中修改数组
     const callbacks = [...this.events[event]];
     for (const callback of callbacks) {
@@ -36,7 +36,7 @@ class EventEmitter {
       this.off(event, onceWrapper);
       callback(...args);
     };
-    
+
     this.on(event, onceWrapper);
   }
 

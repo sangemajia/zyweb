@@ -12,7 +12,7 @@ import routesV1Modules from './routes/v1';
 async function jsonDbPlugin(fastify: FastifyInstance): Promise<void> {
   const db = new JsonDB(new Config(join(APP_TMP_PATH, 'cache.json'), true, true, '/'));
   fastify.decorate('db', db);
-};
+}
 
 const wrappedJsonDbPlugin = fastifyPlugin(jsonDbPlugin, {
   fastify: '5.x',
@@ -23,7 +23,7 @@ const setup = async () => {
   const server = fastify({
     logger: {
       level: 'info', // 日志级别（可选：trace, debug, info, warn, error, fatal）
-      file: join(APP_LOG_PATH, 'fastify.log') // 日志文件路径
+      file: join(APP_LOG_PATH, 'fastify.log'), // 日志文件路径
     }, // 日志
     forceCloseConnections: true, // 强制关闭连接
     ignoreTrailingSlash: true, // 忽略斜杠

@@ -1,31 +1,100 @@
 [
-  { "key": "version", "value": "3.4.0" },
-  { "key": "theme", "value": "auto" },
-  { "key": "lang", "value": "zh_CN" },
-  { "key": "defaultHot", "value": "kylive" },
-  { "key": "defaultSearchRecommend", "value": "site" },
-  { "key": "defaultSearchType", "value": "site" },
-  { "key": "defaultViewCasual", "value": "" },
-  { "key": "defaultIptvEpg", "value": "https://epg.112114.eu.org/?ch={name}&date={date}" },
-  { "key": "defaultIptvLogo", "value": "https://epg.112114.eu.org/logo/{name}.png" },
-  { "key": "iptvMarkIp", "value": true },
-  { "key": "iptvThumbnail", "value": false },
-  { "key": "iptvDelay", "value": false },
-  { "key": "defaultSite", "value": "" },
-  { "key": "defaultIptv", "value": "" },
-  { "key": "defaultAnalyze", "value": "" },
-  { "key": "analyzeFlag", "value": ["youku", "qq", "iqiyi", "qiyi", "letv", "leshi", "sohu", "tudou", "pptv", "mgtv", "imgo"] },
-  { "key": "defaultDrive", "value": "" },
-  { "key": "softSolution", "value": false },
-  { "key": "agreementMask", "value": false },
-  { "key": "recordShortcut", "value": "" },
-  { "key": "selfBoot", "value": false },
-  { "key": "hardwareAcceleration", "value": true },
+  {
+    "key": "version",
+    "value": "3.4.0"
+  },
+  {
+    "key": "theme",
+    "value": "auto"
+  },
+  {
+    "key": "lang",
+    "value": "zh_CN"
+  },
+  {
+    "key": "defaultHot",
+    "value": "kylive"
+  },
+  {
+    "key": "defaultSearchRecommend",
+    "value": "site"
+  },
+  {
+    "key": "defaultSearchType",
+    "value": "site"
+  },
+  {
+    "key": "defaultViewCasual",
+    "value": ""
+  },
+  {
+    "key": "defaultIptvEpg",
+    "value": "https://epg.112114.eu.org/?ch={name}&date={date}"
+  },
+  {
+    "key": "defaultIptvLogo",
+    "value": "https://epg.112114.eu.org/logo/{name}.png"
+  },
+  {
+    "key": "iptvMarkIp",
+    "value": true
+  },
+  {
+    "key": "iptvThumbnail",
+    "value": false
+  },
+  {
+    "key": "iptvDelay",
+    "value": false
+  },
+  {
+    "key": "defaultSite",
+    "value": ""
+  },
+  {
+    "key": "defaultIptv",
+    "value": ""
+  },
+  {
+    "key": "defaultAnalyze",
+    "value": ""
+  },
+  {
+    "key": "analyzeFlag",
+    "value": ["youku", "qq", "iqiyi", "qiyi", "letv", "leshi", "sohu", "tudou", "pptv", "mgtv", "imgo"]
+  },
+  {
+    "key": "defaultDrive",
+    "value": ""
+  },
+  {
+    "key": "softSolution",
+    "value": false
+  },
+  {
+    "key": "agreementMask",
+    "value": false
+  },
+  {
+    "key": "recordShortcut",
+    "value": ""
+  },
+  {
+    "key": "selfBoot",
+    "value": false
+  },
+  {
+    "key": "hardwareAcceleration",
+    "value": true
+  },
   {
     "key": "ua",
     "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
   },
-  { "key": "dns", "value": "" },
+  {
+    "key": "dns",
+    "value": ""
+  },
   {
     "key": "playerMode",
     "value": {
@@ -40,7 +109,10 @@
       "url": ""
     }
   },
-  { "key": "timeout", "value": 5000},
+  {
+    "key": "timeout",
+    "value": 5000
+  },
   {
     "key": "webdev",
     "value": {
@@ -87,6 +159,12 @@
       "model": ""
     }
   },
-  { "key": "defaultFilterType", "value": false },
-  { "key": "debug", "value": false }
+  {
+    "key": "defaultFilterType",
+    "value": false
+  },
+  {
+    "key": "debug",
+    "value": false
+  }
 ]

@@ -22,41 +22,27 @@
 
 <script setup lang="tsx">
 import { FolderIcon, LoadingIcon } from 'tdesign-icons-vue-next';
+import { renderError, renderLoading } from '@/utils/common/renderUtils';
 
 const props = defineProps({
   item: {
     type: Object,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['getFileOrFolder']);
 
 const getFileOrFolder = (item: any) => {
   emit('getFileOrFolder', item);
-};
-
-const renderError = () => {
-  return (
-    <div class="renderIcon">
-      <FolderIcon size="1.5em" stroke-width="2" />
-    </div>
-  );
-};
-const renderLoading = () => {
-  return (
-    <div class="renderIcon">
-      <LoadingIcon size="1.5em" stroke-width="2" />
-    </div>
-  );
 };
 </script>
 
@@ -106,8 +92,8 @@ const renderLoading = () => {
       text-overflow: ellipsis;
       overflow-wrap: break-word;
       margin-bottom: 2px;
-      -webkit-transition: color .3s ease;
-      transition: color .3s ease;
+      -webkit-transition: color 0.3s ease;
+      transition: color 0.3s ease;
     }
   }
 }

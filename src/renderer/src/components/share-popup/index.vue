@@ -1,6 +1,11 @@
 <template>
-  <t-popup v-model:visible="formVisible" :on-visible-change="onShareVisibleChange" trigger="click" placement="bottom"
-    :overlay-inner-style="{ boxShadow: 'none', padding: '0', borderRadius: '8px' }">
+  <t-popup
+    v-model:visible="formVisible"
+    :on-visible-change="onShareVisibleChange"
+    trigger="click"
+    placement="bottom"
+    :overlay-inner-style="{ boxShadow: 'none', padding: '0', borderRadius: '8px' }"
+  >
     <slot name="customize"></slot>
     <template #content>
       <div class="share-container">

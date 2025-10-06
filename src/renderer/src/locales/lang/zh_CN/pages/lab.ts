@@ -232,8 +232,8 @@ export default {
       free: '免费',
     },
     chat: {
-      modelChange: '由 {model} 模型提供服务'
-    }
+      modelChange: '由 {model} 模型提供服务',
+    },
   },
   dataCrypto: {
     nav: {

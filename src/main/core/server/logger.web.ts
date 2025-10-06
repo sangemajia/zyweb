@@ -11,7 +11,7 @@ const logger = {
   },
   debug: (message: string) => {
     console.debug(`[DEBUG] ${message}`);
-  }
+  },
 };
 
 export default logger;

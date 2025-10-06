@@ -11,7 +11,7 @@ class HttpClient {
     try {
       const url = new URL(endpoint, this.baseUrl);
       if (params) {
-        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+        Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
       }
       const response = await fetch(url.toString(), {
         method: 'GET',

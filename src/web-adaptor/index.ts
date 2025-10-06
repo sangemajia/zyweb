@@ -47,21 +47,21 @@ const electronAPI = {
         case 'toggle-selfBoot':
           console.log('Web version: Cannot toggle self boot in browser');
           // 将开机自启设置发送到后端
-          httpClient.post('/webbridge/session/manage', { action: 'selfBoot', data }).catch(error => {
+          httpClient.post('/webbridge/session/manage', { action: 'selfBoot', data }).catch((error) => {
             console.error('Failed to toggle self boot:', error);
           });
           break;
         case 'update-dns':
           console.log('Web version: DNS update not supported in browser, sending to backend');
           // 将 DNS 更新请求发送到后端
-          httpClient.post('/webbridge/ipc/update-dns', data).catch(error => {
+          httpClient.post('/webbridge/ipc/update-dns', data).catch((error) => {
             console.error('Failed to update DNS:', error);
           });
           break;
         case 'check-for-update':
           console.log('Web version: Update check not supported in browser, sending to backend');
           // 将更新检查请求发送到后端
-          httpClient.post('/webbridge/ipc/check-for-update', {}).catch(error => {
+          httpClient.post('/webbridge/ipc/check-for-update', {}).catch((error) => {
             console.error('Failed to check for updates:', error);
           });
           break;
@@ -95,7 +95,7 @@ const electronAPI = {
           // 在 Web 环境中，文件操作需要通过后端 API 处理
           const [action, config] = args;
           // 将文件操作请求发送到后端
-          return httpClient.post('/webbridge/file/manage', { action, config }).catch(error => {
+          return httpClient.post('/webbridge/file/manage', { action, config }).catch((error) => {
             console.error('Failed to manage file:', error);
             return { status: false, message: 'File operations failed' };
           });
@@ -104,24 +104,32 @@ const electronAPI = {
           switch (args[0]?.type) {
             case 'open':
               console.log('Web version: Open file dialog');
-              return FileSystemUtils.openFilePicker(args[0]?.accept || ['*/*']).then(files => {
-                if (files) {
-                  return { status: true, data: files.map(file => FileSystemUtils.getFileInfo(file)) };
-                } else {
-                  return { status: false, message: 'No files selected' };
-                }
-              }).catch(error => {
-                console.error('Failed to open file dialog:', error);
-                return { status: false, message: 'Failed to open file dialog' };
-              });
+              return FileSystemUtils.openFilePicker(args[0]?.accept || ['*/*'])
+                .then((files) => {
+                  if (files) {
+                    return { status: true, data: files.map((file) => FileSystemUtils.getFileInfo(file)) };
+                  } else {
+                    return { status: false, message: 'No files selected' };
+                  }
+                })
+                .catch((error) => {
+                  console.error('Failed to open file dialog:', error);
+                  return { status: false, message: 'Failed to open file dialog' };
+                });
             case 'save':
               console.log('Web version: Save file dialog');
-              return FileSystemUtils.saveFilePicker(args[0]?.content || '', args[0]?.filename || 'file.txt', args[0]?.mimeType || 'text/plain').then(result => {
-                return { status: true, data: result };
-              }).catch(error => {
-                console.error('Failed to save file dialog:', error);
-                return { status: false, message: 'Failed to save file dialog' };
-              });
+              return FileSystemUtils.saveFilePicker(
+                args[0]?.content || '',
+                args[0]?.filename || 'file.txt',
+                args[0]?.mimeType || 'text/plain',
+              )
+                .then((result) => {
+                  return { status: true, data: result };
+                })
+                .catch((error) => {
+                  console.error('Failed to save file dialog:', error);
+                  return { status: false, message: 'Failed to save file dialog' };
+                });
             default:
               console.log('Web version: Dialog operations not supported in web version');
               return Promise.resolve(null);
@@ -130,14 +138,16 @@ const electronAPI = {
           // 在 Web 环境中，快捷键需要使用浏览器原生功能
           const [shortcutAction, shortcutConfig] = args;
           console.log('Web version: Shortcut management sending to backend');
-          return httpClient.post('/webbridge/boss/shortcut', { action: shortcutAction, config: shortcutConfig }).catch(error => {
-            console.error('Failed to manage boss shortcut:', error);
-            return false;
-          });
+          return httpClient
+            .post('/webbridge/boss/shortcut', { action: shortcutAction, config: shortcutConfig })
+            .catch((error) => {
+              console.error('Failed to manage boss shortcut:', error);
+              return false;
+            });
         case 'ffmpeg-check':
           // 在 Web 环境中，需要通过后端检查 ffmpeg
           console.log('Web version: FFmpeg check needs to be handled by backend');
-          return httpClient.get('/webbridge/ffmpeg/check').catch(error => {
+          return httpClient.get('/webbridge/ffmpeg/check').catch((error) => {
             console.error('Failed to check ffmpeg:', error);
             return false;
           });
@@ -145,7 +155,7 @@ const electronAPI = {
           // 在 Web 环境中，需要通过后端生成缩略图
           const [url, id] = args;
           console.log('Web version: Thumbnail generation needs to be handled by backend');
-          return httpClient.post('/webbridge/ffmpeg/thumbnail', { url, id }).catch(error => {
+          return httpClient.post('/webbridge/ffmpeg/thumbnail', { url, id }).catch((error) => {
             console.error('Failed to generate thumbnail:', error);
             return null;
           });
@@ -160,7 +170,7 @@ const electronAPI = {
         case 'sniffer-media':
           // 在 Web 环境中，需要通过后端处理媒体嗅探
           console.log('Web version: Media sniffing needs to be handled by backend');
-          return httpClient.post('/webbridge/sniffer/media', args[0]).catch(error => {
+          return httpClient.post('/webbridge/sniffer/media', args[0]).catch((error) => {
             console.error('Failed to sniff media:', error);
             return null;
           });
@@ -172,14 +182,14 @@ const electronAPI = {
           // 在 Web 环境中，通过后端处理会话管理
           const [sessionAction] = args;
           console.log('Web version: Session management sending to backend');
-          return httpClient.post('/webbridge/session/manage', { action: sessionAction }).catch(error => {
+          return httpClient.post('/webbridge/session/manage', { action: sessionAction }).catch((error) => {
             console.error('Failed to manage session:', error);
             return { status: false, message: 'Session management failed' };
           });
         default:
           // 对于其他调用，我们可以通过 HTTP API 发送到后端
           console.log(`Web version: Invoking backend API for channel ${channel}`);
-          return httpClient.post(`/webbridge/ipc/${channel}`, args).catch(error => {
+          return httpClient.post(`/webbridge/ipc/${channel}`, args).catch((error) => {
             console.error(`Failed to invoke backend API for channel ${channel}:`, error);
             return null;
           });
@@ -192,7 +202,7 @@ const electronAPI = {
         ipcListeners.set(channel, []);
       }
       ipcListeners.get(channel)!.push(func);
-      
+
       // 通过 WebSocket 监听频道
       webSocketClient.on(channel, (data) => {
         func({}, data);
@@ -205,8 +215,8 @@ const electronAPI = {
       }
       // 注意：WebSocket 客户端的监听器无法直接移除特定频道的监听器
       // 在实际应用中，可能需要更复杂的实现
-    }
-  }
+    },
+  },
 };
 
 // 将 API 添加到全局对象
@@ -214,12 +224,4 @@ window.electron = electronAPI;
 window.removeLoading = removeLoading;
 
 // 导出 API 以供模块使用
-export { 
-  removeLoading, 
-  electronAPI, 
-  webStorage, 
-  httpClient, 
-  webSocketClient, 
-  PlatformUtils, 
-  FileSystemUtils 
-};
+export { removeLoading, electronAPI, webStorage, httpClient, webSocketClient, PlatformUtils, FileSystemUtils };

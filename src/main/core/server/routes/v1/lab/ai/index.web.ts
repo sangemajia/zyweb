@@ -11,7 +11,7 @@ const setting = {
       return { key: '', server: '' };
     }
     return null;
-  }
+  },
 };
 
 const API_PREFIX = 'api/v1/lab/ai';
@@ -20,50 +20,53 @@ const singleAdapter = singleton(OpenAIApp);
 const adapter = new singleAdapter();
 
 const api: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.post(`/${API_PREFIX}/chat`, async (req: FastifyRequest<{ Body: { [key: string]: any } }>, reply: FastifyReply<any>) => {
-    const ai = await setting.get('ai');
-    if (!ai.key && !ai.server) {
-      return { code: -1, msg: 'openai parms missing', data: null, };
-    };
+  fastify.post(
+    `/${API_PREFIX}/chat`,
+    async (req: FastifyRequest<{ Body: { [key: string]: any } }>, reply: FastifyReply<any>) => {
+      const ai = await setting.get('ai');
+      if (!ai.key && !ai.server) {
+        return { code: -1, msg: 'openai parms missing', data: null };
+      }
 
-    const isVisable = adapter.checkClient({ apiKey: ai.key, baseURL: ai.server });
-    if (!isVisable) {
-      return { code: -1, msg: 'openai init  fail', data: null, };
-    };
+      const isVisable = adapter.checkClient({ apiKey: ai.key, baseURL: ai.server });
+      if (!isVisable) {
+        return { code: -1, msg: 'openai init  fail', data: null };
+      }
 
-    const { prompt, model, sessionId, stream = false } = req.body;
+      const { prompt, model, sessionId, stream = false } = req.body;
 
-    const { result, sessionId: sid } = await adapter.chat({
-      prompt,
-      sessionId,
-      stream,
-      model,
-    });
-
-    if (stream) {
-      reply.raw.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+      const { result, sessionId: sid } = await adapter.chat({
+        prompt,
+        sessionId,
+        stream,
+        model,
       });
 
-      result.once('end', () => {
-        reply.raw.end('data: [DONE]\n\n');
-      });
+      if (stream) {
+        reply.raw.writeHead(200, {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        });
 
-      result.on('data', (chunk: Buffer) => {
-        const text = Buffer.from(chunk).toString();
-
-        if (!reply.raw.writableEnded) {
-          reply.raw.write(`data: ${text}\n\n`);
-        } else {
+        result.once('end', () => {
           reply.raw.end('data: [DONE]\n\n');
-        }
-      });
-    } else {
-      return { sessionId: sid, reply: result.choices?.[0]?.message?.content };
-    }
-  });
+        });
+
+        result.on('data', (chunk: Buffer) => {
+          const text = Buffer.from(chunk).toString();
+
+          if (!reply.raw.writableEnded) {
+            reply.raw.write(`data: ${text}\n\n`);
+          } else {
+            reply.raw.end('data: [DONE]\n\n');
+          }
+        });
+      } else {
+        return { sessionId: sid, reply: result.choices?.[0]?.message?.content };
+      }
+    },
+  );
   fastify.post(`/${API_PREFIX}/cache/create`, async () => {
     const res = adapter.cacheCreate();
     return { code: 0, msg: 'ok', data: res };

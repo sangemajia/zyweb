@@ -20,7 +20,7 @@ const MultiPlayer = defineComponent({
       if (type === 'zwplayer') {
         if (zwPlayer.value) await destroy();
         if (mseRef.value) mseRef.value.id = doc.container;
-        
+
         // 创建ZwPlayer实例
         zwPlayer.value = new ZwPlayer({
           container: mseRef.value || doc.container,
@@ -32,14 +32,14 @@ const MultiPlayer = defineComponent({
           volume: 1,
           muted: false,
           playbackRate: 1,
-          startTime: 0
+          startTime: 0,
         });
-        
+
         // 监听时间更新事件
         zwPlayer.value.on('timeupdate', ({ currentTime, duration }) => {
           ctx.emit('updateTime', { currentTime, duration });
         });
-        
+
         return zwPlayer.value;
       }
 
@@ -78,7 +78,7 @@ const MultiPlayer = defineComponent({
         zwPlayer.value.destroy();
         zwPlayer.value = null;
       }
-      
+
       // 销毁适配器实例
       if (adapter.value) {
         await adapter.value.destroy();
@@ -132,7 +132,7 @@ const MultiPlayer = defineComponent({
       destroy,
       play,
       pause,
-      onTimeUpdate
+      onTimeUpdate,
     });
 
     return () => (

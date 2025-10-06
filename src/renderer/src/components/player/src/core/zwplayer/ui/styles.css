@@ -53,7 +53,7 @@
   margin: 0 10px;
 }
 
-.cp-volume-control input[type="range"] {
+.cp-volume-control input[type='range'] {
   width: 60px;
   margin: 0 5px;
   -webkit-appearance: none;
@@ -63,7 +63,7 @@
   outline: none;
 }
 
-.cp-volume-control input[type="range"]::-webkit-slider-thumb {
+.cp-volume-control input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;

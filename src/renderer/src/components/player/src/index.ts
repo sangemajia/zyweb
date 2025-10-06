@@ -11,8 +11,4 @@ export type { MultiPlayerInstance } from './multi-player';
 export type { PlayerConfig, DanmakuComment };
 
 // 导出所有播放器
-export { 
-  MultiPlayer, 
-  mediaUtils,
-  ZwPlayer
-};
+export { MultiPlayer, mediaUtils, ZwPlayer };

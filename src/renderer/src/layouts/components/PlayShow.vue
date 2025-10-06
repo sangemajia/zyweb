@@ -31,22 +31,26 @@ const playerStutus = computed(() => {
   return {
     status: playerStore.status,
     // @ts-ignore
-    title: playerStore.type === 'film' ? playerStore.data.info.vod_name : playerStore.data.info.name || t('pages.playShow.noPlayTitle')
-  }
+    title:
+      playerStore.type === 'film'
+        ? playerStore.data.info.vod_name
+        : playerStore.data.info.name || t('pages.playShow.noPlayTitle'),
+  };
 });
 
-watch(() => playerStutus.value.title,
+watch(
+  () => playerStutus.value.title,
   async () => {
     await nextTick(() => {
       setMarqueeAnimation();
-    })
-  }
+    });
+  },
 );
 
 onMounted(async () => {
   await nextTick(() => {
     setMarqueeAnimation();
-  })
+  });
 });
 
 const setMarqueeAnimation = () => {
@@ -62,7 +66,7 @@ const setMarqueeAnimation = () => {
     // 设置动画持续时间
     marqueeTextRef.value.style.animationDuration = `${duration}s`;
   }
-}
+};
 
 const focusPlayerWindowEvent = () => {
   window.electron.ipcRenderer.send('manage-win', { win: 'play', action: 'focus' });

@@ -22,11 +22,7 @@
               </t-space>
             </template>
             <div class="parms-bar">
-              <t-input
-                v-model="formData.config.server"
-                :label="$t('pages.lab.aiBrain.server')"
-                class="input-item"
-              />
+              <t-input v-model="formData.config.server" :label="$t('pages.lab.aiBrain.server')" class="input-item" />
               <t-input
                 :label="$t('pages.lab.aiBrain.key')"
                 v-model="formData.config.key"
@@ -42,7 +38,7 @@
               >
                 <t-option v-for="item in AI_MODELS" :key="item.label" :value="item.value" :label="item.label" />
               </t-select>
-              <t-button block class="input-item" style="margin-top: var(--td-comp-margin-s);" @click.stop="saveAi">
+              <t-button block class="input-item" style="margin-top: var(--td-comp-margin-s)" @click.stop="saveAi">
                 {{ $t('pages.lab.aiBrain.save') }}
               </t-button>
             </div>
@@ -51,7 +47,7 @@
       </div>
       <div class="ai-item command-library">
         <span class="ai-label">{{ $t('pages.lab.aiBrain.instructionLibrary') }}</span>
-        <t-radio-group variant="default-filled" v-model="formData.aiType" style="margin-bottom: 0;">
+        <t-radio-group variant="default-filled" v-model="formData.aiType" style="margin-bottom: 0">
           <t-radio-button value="qa">
             {{ $t('pages.lab.aiBrain.qa') }}
           </t-radio-button>
@@ -80,12 +76,7 @@
         />
       </div>
       <div class="ai-item demand">
-        <t-button
-          :loading="active.loading"
-          block
-          class="send"
-          @click="AiAnswerEvent()"
-        >
+        <t-button :loading="active.loading" block class="send" @click="AiAnswerEvent()">
           {{ $t('pages.lab.aiBrain.fetch') }}
         </t-button>
       </div>
@@ -94,7 +85,8 @@
           <md-render :text="formData.contentHtml" :label="label" class="chat-msg-content pa-3" />
           <template #actions>
             <t-button size="small" shape="round" @click.stop="copyAiAnswer">{{
-              $t('pages.lab.aiBrain.copy') }}</t-button>
+              $t('pages.lab.aiBrain.copy')
+            }}</t-button>
           </template>
         </t-card>
       </div>
@@ -105,7 +97,7 @@
 <script setup lang="ts">
 import { computed, ref, nextTick, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-import JSON5 from "json5";
+import JSON5 from 'json5';
 
 import { t } from '@/locales';
 import { fetchAiChat } from '@/api/lab';
@@ -138,10 +130,10 @@ const formData = ref({
   codeSnippet: '',
   demand: '',
   result: '',
-  contentHtml: ''
+  contentHtml: '',
 });
 const active = ref({
-  loading: false
+  loading: false,
 });
 const label = computed(() => {
   return {
@@ -149,7 +141,7 @@ const label = computed(() => {
     lang: t('pages.md.label.lang'),
     copySuccess: t('pages.md.label.copySuccess'),
     copyError: t('pages.md.label.copyError'),
-  }
+  };
 });
 
 onMounted(() => {
@@ -171,11 +163,11 @@ const fetchAi = async () => {
 
 const saveAi = async () => {
   try {
-    await putSetting({ key: "ai", doc: formData.value.config });
+    await putSetting({ key: 'ai', doc: formData.value.config });
     MessagePlugin.success(t('pages.setting.data.success'));
   } catch (err) {
     MessagePlugin.error(`${t('pages.setting.data.fail')}:${err}`);
-  };
+  }
 };
 
 const AiAnswerEvent = async () => {
@@ -184,11 +176,11 @@ const AiAnswerEvent = async () => {
     if (!formData.value.demand) {
       MessagePlugin.warning(t('pages.lab.aiBrain.message.contentEmpty'));
       return;
-    };
+    }
     if (!formData.value.config.server || !formData.value.config.key || !formData.value.config.model) {
       MessagePlugin.warning(t('pages.lab.aiBrain.message.aiParmsEmpty'));
       return;
-    };
+    }
     const doc = {
       type: formData.value.aiType,
       codeSnippet: formData.value.codeSnippet,
@@ -218,7 +210,7 @@ const copyAiAnswer = async () => {
     MessagePlugin.success(t('pages.setting.data.success'));
   } catch (err) {
     MessagePlugin.error(`${t('pages.setting.data.fail')}:${err}`);
-  };
+  }
 };
 </script>
 
@@ -245,7 +237,7 @@ const copyAiAnswer = async () => {
       align-items: center;
 
       .title {
-        margin-right: 5px
+        margin-right: 5px;
       }
     }
 

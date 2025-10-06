@@ -8,7 +8,7 @@
   'use strict';
 
   function createCommonjsModule(fn, module) {
-    return (module = { exports: {} }), fn(module, module.exports), module.exports;
+    return ((module = { exports: {} }), fn(module, module.exports), module.exports);
   }
 
   var _global = createCommonjsModule(function (module) {

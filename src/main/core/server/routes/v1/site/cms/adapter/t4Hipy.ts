@@ -155,7 +155,7 @@ class HipyT4Adapter {
       params: {
         extend: this.ext,
         wd,
-        pg
+        pg,
       },
     });
     const videos: any[] = [];

@@ -35,7 +35,7 @@ const handleMouseDown = (event) => {
   if (event.detail === 2) {
     window.electron.ipcRenderer.send('win:invoke', 'max');
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -55,7 +55,8 @@ const handleMouseDown = (event) => {
     margin-left: var(--td-comp-margin-l);
   }
 
-  .left, .right {
+  .left,
+  .right {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -68,7 +69,7 @@ const handleMouseDown = (event) => {
       background: var(--td-bg-color-container);
       border-radius: var(--td-radius-default);
 
-      &>.system-function:first-of-type {
+      & > .system-function:first-of-type {
         margin-left: 0;
       }
 

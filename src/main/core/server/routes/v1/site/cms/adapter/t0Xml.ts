@@ -38,7 +38,7 @@ class T0Adapter {
         url: this.api,
         method: 'GET',
       });
-    };
+    }
     const xml2json = parser.parse(response);
     const data = xml2json?.rss?.class;
     const classList = Array.isArray(data?.ty) ? data.ty : [data?.ty];
@@ -87,7 +87,7 @@ class T0Adapter {
         url: this.api,
         method: 'GET',
       });
-    };
+    }
 
     const xml2json = parser.parse(response);
     const data = xml2json?.rss?.list;

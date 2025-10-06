@@ -21,11 +21,13 @@
           {{ $t('pages.lab.pluginCenter.control.install') }}
         </template>
         <template #body>
-          <t-form ref="formRef" :data="formData" :rules="RULES" :label-width="60"  :requiredMark="false">
+          <t-form ref="formRef" :data="formData" :rules="RULES" :label-width="60" :requiredMark="false">
             <div class="data-item">
               <p class="title-label mg-b-s">{{ $t('pages.lab.pluginCenter.installDialog.step') }}1</p>
               <p class="t-tip mg-b-s">{{ $t('pages.lab.pluginCenter.installDialog.tip.tip1') }}</p>
-              <t-button block class="mg-b-s" @click="handleGoDir">{{ $t('pages.lab.pluginCenter.installDialog.goDir') }}</t-button>
+              <t-button block class="mg-b-s" @click="handleGoDir">{{
+                $t('pages.lab.pluginCenter.installDialog.goDir')
+              }}</t-button>
             </div>
             <div class="data-item">
               <p class="title-label mg-b-s">{{ $t('pages.lab.pluginCenter.installDialog.step') }}2</p>
@@ -38,7 +40,9 @@
         </template>
         <template #footer>
           <t-button variant="outline" @click="onCancel">{{ $t('pages.setting.dialog.cancel') }}</t-button>
-          <t-button theme="primary" @click="onSubmit" :loading="active.installLoading">{{ $t('pages.setting.dialog.install') }}</t-button>
+          <t-button theme="primary" @click="onSubmit" :loading="active.installLoading">{{
+            $t('pages.setting.dialog.install')
+          }}</t-button>
         </template>
       </t-dialog>
     </div>
@@ -68,13 +72,21 @@
               <span class="name">{{ pluginInfo.pluginName || '' }}</span>
               <span class="version">v{{ pluginInfo.version || '0.0.0' }}</span>
             </h1>
-            <span class="desc txthide txthide2"> {{ pluginInfo.description || $t('pages.lab.pluginCenter.empty') }}</span>
+            <span class="desc txthide txthide2">
+              {{ pluginInfo.description || $t('pages.lab.pluginCenter.empty') }}</span
+            >
             <div class="info">
               <div class="status info-item" v-if="pluginInfo.type === 'system'">
                 <application-icon class="icon" />
-                <t-loading size="small" :loading="active.controlLoad?.[pluginInfo.name] === true" v-if="active.controlLoad?.[pluginInfo.name]" />
+                <t-loading
+                  size="small"
+                  :loading="active.controlLoad?.[pluginInfo.name] === true"
+                  v-if="active.controlLoad?.[pluginInfo.name]"
+                />
                 <template v-else>
-                  <t-tag theme="success" size="small" v-if="pluginInfo.status === 'RUNNING'">{{ $t('pages.lab.pluginCenter.info.start') }}</t-tag>
+                  <t-tag theme="success" size="small" v-if="pluginInfo.status === 'RUNNING'">{{
+                    $t('pages.lab.pluginCenter.info.start')
+                  }}</t-tag>
                   <t-tag theme="danger" size="small" v-else>{{ $t('pages.lab.pluginCenter.info.stop') }}</t-tag>
                 </template>
               </div>
@@ -90,16 +102,32 @@
                 <caret-down-small-icon />
               </t-button>
               <t-dropdown-menu>
-                <t-dropdown-item v-if="pluginInfo.type === 'system'" value="start" @click="handleControlChange('start', pluginInfo.name)"> {{ $t('pages.lab.pluginCenter.control.start') }}</t-dropdown-item>
-                <t-dropdown-item v-if="pluginInfo.type === 'system'" value="stop" @click="handleControlChange('stop', pluginInfo.name)"> {{ $t('pages.lab.pluginCenter.control.stop') }}</t-dropdown-item>
-                <t-dropdown-item v-if="pluginInfo.type === 'ui' "value="devtool" @click="handleOpenDevtool"> {{ $t('pages.lab.pluginCenter.control.devtool') }}</t-dropdown-item>
+                <t-dropdown-item
+                  v-if="pluginInfo.type === 'system'"
+                  value="start"
+                  @click="handleControlChangeAction('start', pluginInfo.name)"
+                >
+                  {{ $t('pages.lab.pluginCenter.control.start') }}</t-dropdown-item
+                >
+                <t-dropdown-item
+                  v-if="pluginInfo.type === 'system'"
+                  value="stop"
+                  @click="handleControlChangeAction('stop', pluginInfo.name)"
+                >
+                  {{ $t('pages.lab.pluginCenter.control.stop') }}</t-dropdown-item
+                >
+                <t-dropdown-item v-if="pluginInfo.type === 'ui'" value="devtool" @click="handleOpenDevtoolAction">
+                  {{ $t('pages.lab.pluginCenter.control.devtool') }}</t-dropdown-item
+                >
               </t-dropdown-menu>
             </t-dropdown>
             <t-popconfirm
               :content="$t('pages.lab.pluginCenter.control.uninstallTip')"
-              @confirm="handleControlChange('uninstall', pluginInfo.name)"
+              @confirm="handleControlChangeAction('uninstall', pluginInfo.name)"
             >
-              <t-button theme="danger" class="uninstall_btn">{{ $t('pages.lab.pluginCenter.control.uninstall') }}</t-button>
+              <t-button theme="danger" class="uninstall_btn">{{
+                $t('pages.lab.pluginCenter.control.uninstall')
+              }}</t-button>
             </t-popconfirm>
           </div>
         </div>
@@ -112,8 +140,14 @@
         </div>
         <div class="plugin-webview data-item" v-if="pluginInfo.type === 'ui'">
           <p class="title-label">{{ $t('pages.lab.pluginCenter.webview.title') }}</p>
-          <div class="plugin-content" >
-            <webview class="custom-webview" ref="webviewRef" :src="pluginInfo.main" partition="persist:plugin" allowpopups />
+          <div class="plugin-content">
+            <webview
+              class="custom-webview"
+              ref="webviewRef"
+              :src="pluginInfo.main"
+              partition="persist:plugin"
+              allowpopups
+            />
           </div>
         </div>
       </div>
@@ -126,202 +160,36 @@
 </template>
 
 <script lang="tsx" setup>
-import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue';
-import { FormInstanceFunctions, FormProps, MessagePlugin } from 'tdesign-vue-next';
-import { ApplicationIcon, CaretDownSmallIcon, LoadingIcon, VerifiedIcon } from 'tdesign-icons-vue-next';
+import { useTemplateRef } from 'vue';
+import { FormInstanceFunctions, FormProps } from 'tdesign-vue-next';
+import { ApplicationIcon, CaretDownSmallIcon, VerifiedIcon } from 'tdesign-icons-vue-next';
 import { t } from '@/locales';
-import { list, install, uninstall, start, stop} from '@/api/plugin';
 import MdRender from '@/components/markdown-render/index.vue';
 import TitleMenu from '@/components/title-menu/index.vue';
-import logoIcon from '@/assets/icon.png';
+import { usePluginCenterSetup } from './pluginCenterSetup';
 
-const pluginList = ref<any[]>([]);
-const pluginInfo = ref<{ [key: string]: string }>({});
-const formData = ref({ pluginName: '' });
-const formRef = useTemplateRef<FormInstanceFunctions>('formRef');
-const active = ref({
-  nav: '',
-  aside: '',
-  installDialog: false,
-  installLoading: false,
-  control: '',
-  controlLoad: {}
-});
-const webviewRef = ref<any>(null);
-const label = computed(() => {
-  return {
-    copy: t('pages.md.label.copy'),
-    lang: t('pages.md.label.lang'),
-    copySuccess: t('pages.md.label.copySuccess'),
-    copyError: t('pages.md.label.copyError'),
-  }
-});
+const {
+  pluginList,
+  pluginInfo,
+  formData,
+  formRef,
+  active,
+  webviewRef,
+  label,
+  renderError,
+  renderLoading,
+  navList,
+  init,
+  handleItemClick,
+  handleOpChange,
+  onCancel,
+  onSubmit,
+  handleControlChangeAction,
+  handleOpenDevtoolAction,
+  RULES,
+} = usePluginCenterSetup();
 
-const renderError = () => {
-  return (
-    <div class="renderIcon">
-      <img src={logoIcon} style="width: 64px; height: 64px; margin-top: 4px;" />
-    </div>
-  );
-};
-const renderLoading = () => {
-  return (
-    <div class="renderIcon">
-      <LoadingIcon size="1.5em" stroke-width="2" />
-    </div>
-  );
-};
-
-const navList = computed(() => {
-  return pluginList.value.map(item => ({
-    type_name: item.pluginName,
-    type_id: item.name
-  }))
-});
-
-onMounted(()=>{
-  fetchData();
-});
-
-const fetchData = async () => {
-  const res = await list();
-  if (res && res.length > 0) {
-    pluginList.value = res;
-    const item = res[0];
-    active.value.aside = item.name;
-    pluginInfo.value = item;
-  }
-};
-
-const webviewLoadError = (err: any) => {
-  MessagePlugin.warning(`${t('pages.lab.pluginCenter.control.loadUiEntryError')}: ${err.errorDescription}`);
-  webviewRef.value.src = 'about:blank';
-};
-
-const handleItemClick = async(name: string) => {
-  active.value.aside = name;
-  const item = pluginList.value.find(p => p.name === name);
-  pluginInfo.value = item;
-  if (pluginInfo.value.type === 'ui') nextTick(() => {
-    webviewRef.value.removeEventListener('did-fail-load', webviewLoadError);
-    webviewRef.value.addEventListener('did-fail-load', webviewLoadError);
-  });
-};
-
-const handleGoDir = async() => {
-  window.electron.ipcRenderer.send('open-path', 'plugin');
-}
-
-const handleOpenDevtool = () => {
-  if (webviewRef.value) {
-    webviewRef.value?.openDevTools();
-  } else {
-    MessagePlugin.warning(`${t('pages.lab.pluginCenter.control.devtoolDomAttchErrTip')}`);
-  }
-};
-
-const handleControl = async (type: string, name: string) => {
-  const methodMap = {
-    start: start,
-    stop: stop,
-    uninstall: uninstall,
-    install: install,
-  };
-
-  if (!methodMap?.[type]) return;
-
-  try {
-    const updatedPluginList = await methodMap[type]([ name ]);
-    const checkSuccess = () => {
-      return type === 'uninstall' ? true : updatedPluginList && updatedPluginList.length > 0;
-    };
-
-    if (checkSuccess()) {
-      MessagePlugin.success(`${t('pages.setting.form.success')}`);
-      if (type === 'uninstall') {
-        pluginList.value = pluginList.value.filter(p => p.name !== name);
-        pluginInfo.value = pluginList.value.length > 0 ? pluginList.value[0] : {};
-        active.value.aside = pluginList.value.length > 0 ? pluginList.value[0].name : '';
-      } else if (type === 'install') {
-        const installIndex = pluginList.value.findIndex(p => p.name === updatedPluginList[0].name);
-        if (installIndex > -1) pluginList.value[installIndex] = updatedPluginList[0];
-        else pluginList.value.push(updatedPluginList[0]);
-        pluginInfo.value = updatedPluginList[0];
-        active.value.aside = updatedPluginList[0].name;
-      } else {
-        const updateIndex = pluginList.value.findIndex(p => p.name === name);
-        if (updateIndex > -1) {
-          pluginList.value[updateIndex] = updatedPluginList[0];
-          pluginInfo.value = updatedPluginList[0];
-        }
-      }
-    } else {
-      MessagePlugin.warning(`${t('pages.setting.form.fail')}`);
-    }
-  } catch (err: any) {
-    console.log(`[pluginCenter][install][error]`, err);
-    MessagePlugin.error(`${t('pages.setting.form.fail')}: ${err.message}`);
-  };
-};
-
-const handleControlChange = async (type: string, name: string) => {
-  active.value.control = '';
-
-  if (!['install','uninstall','start','stop','update','upgrade'].includes(type)) return;
-  if (active.value.controlLoad?.[name]) {
-    MessagePlugin.warning(t('pages.lab.pluginCenter.control.cancelTip'));
-    return;
-  }
-
-  active.value.controlLoad[name] = true;
-  await handleControl(type, name);
-  active.value.controlLoad[name] = false;
-};
-
-const handleInstall = async (type: string, name: string) => {
-  if (active.value.installLoading) {
-    MessagePlugin.warning(t('pages.lab.pluginCenter.control.cancelTip'));
-    return;
-  }
-
-  active.value.installLoading = true;
-  await handleControl(type, name);
-  active.value.installLoading = false;
-
-  active.value.installDialog = false;
-};
-
-const handleOpChange = (type:string) => {
-  active.value.nav = '';
-
-  switch (type) {
-    case 'install':
-      active.value.installDialog = true;
-      break;
-    case 'file':
-      handleGoDir();
-      break;
-  }
-};
-
-const onCancel = () => {
-  active.value.installDialog = false;
-};
-
-const onSubmit: FormProps['onSubmit'] = () => {
-  formRef.value?.validate().then((validateResult) => {
-    if (validateResult && Object.keys(validateResult).length) {
-      const firstError = Object.values(validateResult)[0]?.[0]?.message;
-      MessagePlugin.warning(firstError);
-    } else {
-      handleInstall('install', formData.value.pluginName);
-    }
-  });
-};
-
-const RULES = {
-  pluginName: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-};
+init();
 </script>
 
 <style lang="less" scoped>
@@ -365,7 +233,7 @@ const RULES = {
         .t-select__wrap {
           width: fit-content;
           position: relative;
-          height: calc(var(--td-comp-size-m) -(var(--td-comp-paddingTB-xxs)* 2));
+          height: calc(var(--td-comp-size-m) -(var(--td-comp-paddingTB-xxs) * 2));
 
           .t-input--auto-width {
             min-width: 44px;
@@ -386,7 +254,7 @@ const RULES = {
           }
         }
         .t-select__wrap::before {
-          content: "";
+          content: '';
           position: absolute;
           left: 0px;
           top: 50%;

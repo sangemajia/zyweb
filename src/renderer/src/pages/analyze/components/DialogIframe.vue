@@ -1,6 +1,13 @@
 <template>
-  <t-dialog v-model:visible="formVisible" show-in-attached-element width="100%" :show-overlay="false" :header="platformData.name"
-    :footer="false" @close="closeEvent">
+  <t-dialog
+    v-model:visible="formVisible"
+    show-in-attached-element
+    width="100%"
+    :show-overlay="false"
+    :header="platformData.name"
+    :footer="false"
+    @close="closeEvent"
+  >
     <div v-if="platformData.url" class="platform-container">
       <webview ref="webviewRef" :src="platformData.url" class="platform-play-box" disablewebsecurity allowpopups />
       <div class="side-floatbtn">

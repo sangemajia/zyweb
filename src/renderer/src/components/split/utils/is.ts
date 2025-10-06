@@ -15,9 +15,7 @@ export function isBoolean(obj: unknown): obj is boolean {
   return opt.call(obj) === '[object Boolean]';
 }
 
-export function isObject<T extends unknown>(
-  obj: T
-): obj is Extract<T, Record<string, any>> {
+export function isObject<T extends unknown>(obj: T): obj is Extract<T, Record<string, any>> {
   return opt.call(obj) === '[object Object]';
 }
 
@@ -77,15 +75,11 @@ export function isWindow(el: any): el is Window {
   return el === window;
 }
 
-export const isComponentInstance = (
-  value: any
-): value is ComponentPublicInstance => {
+export const isComponentInstance = (value: any): value is ComponentPublicInstance => {
   return value?.$ !== undefined;
 };
 
-export const isArrayChildren = (
-  children: VNodeNormalizedChildren
-): children is VNode[] => {
+export const isArrayChildren = (children: VNodeNormalizedChildren): children is VNode[] => {
   return isArray(children);
 };
 

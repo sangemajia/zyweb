@@ -4,5 +4,5 @@ export default {
   default: '默认',
   delete: '删除',
   edit: '编辑',
-  debug: '调试'
-}
+  debug: '调试',
+};

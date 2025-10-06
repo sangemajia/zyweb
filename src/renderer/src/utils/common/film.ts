@@ -30,10 +30,10 @@ const VIP_LIST = [
  */
 const fetchBingeData = async (relateId: string, videoId: number): Promise<{ status: boolean; data: any }> => {
   console.log('[film_common][fetchBingeData][start]收藏获取流程开启');
-  let data = { status: false, data: {}, };
+  let data = { status: false, data: {} };
   try {
     const response = await findStar({ relateId, videoId });
-    data = { status: !!response, data: response || {}, };
+    data = { status: !!response, data: response || {} };
     console.log(`[film_common][fetchBingeData][return]`, data);
   } catch (err) {
     console.error(`[film_common][fetchBingeData][error]`, err);
@@ -52,7 +52,7 @@ const fetchBingeData = async (relateId: string, videoId: number): Promise<{ stat
  */
 const putBingeData = async (action: string, id: any = null, doc: any = {}): Promise<{ status: boolean; data: any }> => {
   console.log('[film_common][putBingeData][start]收藏更新流程开启');
-  let data = { status: false, data: {}, };
+  let data = { status: false, data: {} };
   try {
     let res = {};
     if (action === 'add') {
@@ -136,7 +136,7 @@ const putHistoryData = async (id: any = null, doc: any = {}): Promise<void> => {
 
   try {
     if (id) {
-      data = await putHistory({ ids: [id], doc, });
+      data = await putHistory({ ids: [id], doc });
     } else {
       data = await addHistory(doc);
     }
@@ -375,11 +375,28 @@ const formatContent = (text: string | undefined | null): string => {
   text = text.trim();
 
   const retainTextMap = [
-    '年份', '年代', '上映',
-    '地区', '类型', '语言', '更新', '更新至', '评分',
-    '导演', '编剧', '主演', '演员',
-    '简介', '背景', '详情',
-    '片长', '状态', '播放', '集数', '标签', '更新至',
+    '年份',
+    '年代',
+    '上映',
+    '地区',
+    '类型',
+    '语言',
+    '更新',
+    '更新至',
+    '评分',
+    '导演',
+    '编剧',
+    '主演',
+    '演员',
+    '简介',
+    '背景',
+    '详情',
+    '片长',
+    '状态',
+    '播放',
+    '集数',
+    '标签',
+    '更新至',
   ];
   const retainCharMap = ['：', ':', ' '];
 
@@ -472,9 +489,18 @@ const formatReverseOrder = (action: 'positive' | 'negative', current: number, to
  */
 const fetchBarrageData = async (
   realUrl: string,
-  options: { url: string, id: string | number, key: string, support: string[], start: number, mode: number, color: number, content: number },
-  active: { flimSource: string, filmIndex: string },
-): Promise<{ barrage: string[], id: string | number | null }> => {
+  options: {
+    url: string;
+    id: string | number;
+    key: string;
+    support: string[];
+    start: number;
+    mode: number;
+    color: number;
+    content: number;
+  },
+  active: { flimSource: string; filmIndex: string },
+): Promise<{ barrage: string[]; id: string | number | null }> => {
   console.log('[film_common][fetchBarrageData][start]获取弹幕流程开启');
   let data: any = { barrage: [], id: null };
 
@@ -491,8 +517,10 @@ const fetchBarrageData = async (
     const isValidUrl = typeof url === 'string' && /^(https?:\/\/)/.test(url);
     const isValidId = id && ['string', 'number'].includes(typeof id);
     const isValidKey = typeof key === 'string' && key.length > 0;
-    const isValidSupport = (Array.isArray(support) && support.length > 0 && support.includes(flimSource)) || VIP_LIST.some((domain) => hostname.includes(domain));
-    const isValidNumbers = [start, mode, color, content].every(value => typeof value === 'number');
+    const isValidSupport =
+      (Array.isArray(support) && support.length > 0 && support.includes(flimSource)) ||
+      VIP_LIST.some((domain) => hostname.includes(domain));
+    const isValidNumbers = [start, mode, color, content].every((value) => typeof value === 'number');
     // 综合判断
     if (isValidUrl && isValidId && isValidKey && isValidSupport && isValidNumbers) {
       const res = await fetchConfig({ url: `${url}${realUrl}`, method: 'GET' });
@@ -539,7 +567,7 @@ const fetchAnalyzeHelper = async (url: string, type: number, headers: object = {
 
         const [header] = JSONPath({ path: '$.header', json: resOfficial.data }) || [];
         const [headers] = JSONPath({ path: '$.headers', json: resOfficial.data }) || [];
-        
+
         play.headers = header || headers || {};
       }
     } else if (type == 0) {

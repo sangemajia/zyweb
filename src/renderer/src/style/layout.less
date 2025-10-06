@@ -308,13 +308,12 @@
   border: none;
 }
 
-
 .title-label {
   font-weight: 500;
   color: var(--td-text-color-primary);
 
   &::before {
-    content: "";
+    content: '';
     border: 1px solid var(--td-brand-color);
     height: 0.6rem;
     border-radius: var(--td-radius-default);
@@ -557,7 +556,10 @@
   white-space: nowrap;
 }
 
-.txthide1,.txthide2, .txthide3,.txthide4 {
+.txthide1,
+.txthide2,
+.txthide3,
+.txthide4 {
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -618,12 +620,7 @@
   --td-loading-bg: #111111;
   --td-loading-circle: #45c58b;
   --td-loading-dot: #fefefe;
-  --td-bg-dot: linear-gradient(
-    180deg,
-    hsla(0, 0%, 100%, 0),
-    hsla(0, 0%, 100%, 0.1) 53%,
-    hsla(0, 0%, 100%, 0)
-  );
+  --td-bg-dot: linear-gradient(180deg, hsla(0, 0%, 100%, 0), hsla(0, 0%, 100%, 0.1) 53%, hsla(0, 0%, 100%, 0));
 }
 
 :root,
@@ -653,10 +650,5 @@
   --td-loading-bg: #fefefe;
   --td-loading-circle: #45c58b;
   --td-loading-dot: #111113;
-  --td-bg-dot: linear-gradient(
-    180deg,
-    hsla(0, 0%, 83%, 0),
-    hsla(0, 0%, 83%, 1) 53%,
-    hsla(0, 0%, 83%, 0)
-  );
+  --td-bg-dot: linear-gradient(180deg, hsla(0, 0%, 83%, 0), hsla(0, 0%, 83%, 1) 53%, hsla(0, 0%, 83%, 0));
 }

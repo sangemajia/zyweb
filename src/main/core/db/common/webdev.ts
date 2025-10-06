@@ -43,7 +43,7 @@ const cronSyncWebdev = () => {
   registerSchedule({
     name: 'syncWebdev',
     fun: syncWebdev,
-    interval: 5 * 60 * 1000
+    interval: 5 * 60 * 1000,
   });
   runSchedule('syncWebdev');
 };

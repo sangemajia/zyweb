@@ -4,5 +4,5 @@ export const render = () => {
 };
 
 export default {
-  render
+  render,
 };

@@ -283,7 +283,8 @@ export default {
     content1: '因不收集使用者資料，可選擇同步盤作為設定檔保存服務',
     content2: '內建 WebDAV 作為同步盤服務，推薦堅果雲',
     content3: '若開啟自動同步，每 5 分鐘同步一次',
-    webdev: { // 原鍵名疑似為 webdav
+    webdev: {
+      // 原鍵名疑似為 webdav
       title: '同步盤參數',
       check: '校驗',
       save: '儲存',
@@ -299,7 +300,8 @@ export default {
     syncToLocal: '雲端資料覆蓋本機',
     syncToLocalTip: '本機資料將被清除，確認操作嗎',
   },
-  thumbanilFfmpeg: { // 原鍵名疑似 thumbnailFfmpeg
+  thumbanilFfmpeg: {
+    // 原鍵名疑似 thumbnailFfmpeg
     haveFfmpeg: '檢測到 ffmpeg 模組已安裝',
     noFfmpeg: '未檢測到 ffmpeg 模組',
   },

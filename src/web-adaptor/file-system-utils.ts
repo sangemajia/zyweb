@@ -14,15 +14,15 @@ class FileSystemUtils {
   static async readFile(file: File): Promise<string | ArrayBuffer> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         resolve(event.target!.result!);
       };
-      
+
       reader.onerror = (error) => {
         reject(error);
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -31,15 +31,15 @@ class FileSystemUtils {
   static async readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         resolve(event.target!.result as ArrayBuffer);
       };
-      
+
       reader.onerror = (error) => {
         reject(error);
       };
-      
+
       reader.readAsArrayBuffer(file);
     });
   }
@@ -48,15 +48,15 @@ class FileSystemUtils {
   static async readFileAsDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         resolve(event.target!.result as string);
       };
-      
+
       reader.onerror = (error) => {
         reject(error);
       };
-      
+
       reader.readAsDataURL(file);
     });
   }
@@ -70,13 +70,13 @@ class FileSystemUtils {
   static downloadFile(content: string | Blob, filename: string): void {
     const blob = typeof content === 'string' ? new Blob([content]) : content;
     const url = URL.createObjectURL(blob);
-    
+
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    
+
     // 清理
     setTimeout(() => {
       document.body.removeChild(a);
@@ -96,20 +96,22 @@ class FileSystemUtils {
       try {
         // @ts-ignore
         const handles = await window.showOpenFilePicker({
-          types: [{
-            accept: {
-              '*/*': acceptTypes
-            }
-          }],
-          multiple: true
+          types: [
+            {
+              accept: {
+                '*/*': acceptTypes,
+              },
+            },
+          ],
+          multiple: true,
         });
-        
+
         const files: File[] = [];
         for (const handle of handles) {
           const file = await handle.getFile();
           files.push(file);
         }
-        
+
         return files;
       } catch (error) {
         console.error('Failed to open file picker:', error);
@@ -122,7 +124,7 @@ class FileSystemUtils {
         input.type = 'file';
         input.multiple = true;
         input.accept = acceptTypes.join(',');
-        
+
         input.onchange = () => {
           if (input.files && input.files.length > 0) {
             resolve(Array.from(input.files));
@@ -130,7 +132,7 @@ class FileSystemUtils {
             resolve(null);
           }
         };
-        
+
         input.click();
       });
     }
@@ -144,17 +146,19 @@ class FileSystemUtils {
         // @ts-ignore
         const handle = await window.showSaveFilePicker({
           suggestedName: filename,
-          types: [{
-            accept: {
-              [mimeType]: ['.txt']
-            }
-          }]
+          types: [
+            {
+              accept: {
+                [mimeType]: ['.txt'],
+              },
+            },
+          ],
         });
-        
+
         const writable = await handle.createWritable();
         await writable.write(content);
         await writable.close();
-        
+
         return true;
       } catch (error) {
         console.error('Failed to save file:', error);
@@ -174,7 +178,7 @@ class FileSystemUtils {
       size: file.size,
       type: file.type,
       lastModified: file.lastModified,
-      webkitRelativePath: (file as any).webkitRelativePath || ''
+      webkitRelativePath: (file as any).webkitRelativePath || '',
     };
   }
 
@@ -190,19 +194,19 @@ class FileSystemUtils {
       console.warn('Directory picker not supported');
       return null;
     }
-    
+
     try {
       // @ts-ignore
       const handle = await window.showDirectoryPicker();
       const files: FileSystemFileHandle[] = [];
-      
+
       // @ts-ignore
       for await (const entry of handle.values()) {
         if (entry.kind === 'file') {
           files.push(entry);
         }
       }
-      
+
       return files;
     } catch (error) {
       console.error('Failed to read directory:', error);

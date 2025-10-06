@@ -236,7 +236,11 @@ const html = {
 };
 
 const unicode = {
-  encode: (val: string) => val.split('').map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')).join(''),
+  encode: (val: string) =>
+    val
+      .split('')
+      .map((c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
+      .join(''),
   decode: (val: string) => val.replace(/\\u([\dA-Fa-f]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16))),
 };
 

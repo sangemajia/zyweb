@@ -7,6 +7,6 @@ export default {
   copyUrl: '複製網址',
   message: {
     copySuccess: '複製成功，快分享給好友吧！',
-    copyFail: '當前環境不支援一鍵複製，請手動複製連結！'
-  }
+    copyFail: '當前環境不支援一鍵複製，請手動複製連結！',
+  },
 };

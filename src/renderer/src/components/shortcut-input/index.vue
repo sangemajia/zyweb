@@ -26,8 +26,8 @@ const attrsCustom = computed(() => {
     placeholder: t('pages.setting.placeholder.shortcutInput'),
     tips: tip.value,
     status: status.value,
-    ...attrs
-  }
+    ...attrs,
+  };
 });
 const props = defineProps({
   modelValue: {
@@ -54,7 +54,7 @@ watch(
   () => props.modelValue,
   (val) => {
     modelValue.value = val;
-  }
+  },
 );
 
 watch(
@@ -74,9 +74,8 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
-
 
 const platform = (() => {
   const platform = (navigator as any).userAgentData.platform;
@@ -111,12 +110,24 @@ const handleShortcutFormat = (str: string): string => {
 const checkShortcut = (val: string): boolean => {
   const specialKeys = ['Ctrl', 'Alt', 'Shift', 'Meta'];
   const publicKeys = [
-    '=', '-', '~', '[', ']', ';', "'", ',', '.', '/', // 标点符号
+    '=',
+    '-',
+    '~',
+    '[',
+    ']',
+    ';',
+    "'",
+    ',',
+    '.',
+    '/', // 标点符号
     ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)), // A-Z
     ...Array.from({ length: 10 }, (_, i) => i.toString()), // 0-9
-    ...Array.from({ length: 11 }, (_, i) => `F${(i+1).toString()}`), // F1-F12
+    ...Array.from({ length: 11 }, (_, i) => `F${(i + 1).toString()}`), // F1-F12
     'Space', // 空格
-    'Right', 'Left', 'Up', 'Down', // 方向键
+    'Right',
+    'Left',
+    'Up',
+    'Down', // 方向键
   ];
 
   const keys = val.split('+').map((key) => key.trim());
@@ -130,12 +141,9 @@ const handleKeyDown = (_value: any, context: { e: KeyboardEvent }) => {
   const { e } = context;
   e.preventDefault();
 
-  const auxiliaryKey = [
-    e.ctrlKey && 'Ctrl',
-    e.altKey && 'Alt',
-    e.shiftKey && 'Shift',
-    e.metaKey && 'Meta',
-  ].filter(Boolean) as string[];
+  const auxiliaryKey = [e.ctrlKey && 'Ctrl', e.altKey && 'Alt', e.shiftKey && 'Shift', e.metaKey && 'Meta'].filter(
+    Boolean,
+  ) as string[];
 
   let publicKey: string = '';
   if (e.key.length === 1 && e.key.match(/[a-zA-Z0-9]/)) {

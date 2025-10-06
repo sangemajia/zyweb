@@ -1,5 +1,6 @@
 #!/bin/bash
 # 使用动态内存限制构建所有组件的脚本
+# 采用单进程流水式逐个排队的方式构建组件
 
 echo "开始使用动态内存限制构建所有组件..."
 
@@ -9,6 +10,9 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # 确保在项目根目录
 cd "$PROJECT_DIR"
+
+# 初始化组件缓存
+"$SCRIPT_DIR/component-cache.sh" init
 
 # 构建组件列表
 components=(
@@ -29,7 +33,7 @@ chmod +x "$SCRIPT_DIR/dynamic-memory-build.sh"
 success_count=0
 total_count=${#components[@]}
 
-# 逐个构建组件
+# 逐个构建组件（单进程流水式）
 for component_info in "${components[@]}"; do
     config_file=$(echo "$component_info" | cut -d':' -f1)
     component_name=$(echo "$component_info" | cut -d':' -f2)
@@ -42,10 +46,29 @@ for component_info in "${components[@]}"; do
         continue
     fi
     
+    # 检查组件是否已缓存且有效
+    if "$SCRIPT_DIR/component-cache.sh" check "$component_name"; then
+        echo "从缓存恢复 $component_name 组件..."
+        "$SCRIPT_DIR/component-cache.sh" restore "$component_name"
+        if [ $? -eq 0 ]; then
+            echo "$component_name 组件从缓存恢复成功!"
+            ((success_count++))
+            continue
+        else
+            echo "从缓存恢复 $component_name 组件失败，重新构建..."
+        fi
+    else
+        echo "$component_name 组件未缓存或已过期，需要重新构建..."
+    fi
+    
     # 使用动态内存限制构建组件
-    "$SCRIPT_DIR/dynamic-memory-build.sh" "$config_file" "$component_name"
+    # 为iflow等关键进程保留资源，降低构建进程优先级
+    # 采用单进程流水式构建，避免并发占用过多资源
+    nice -n 19 "$SCRIPT_DIR/dynamic-memory-build.sh" "$config_file" "$component_name"
     
     if [ $? -eq 0 ]; then
+        # 缓存构建成功的组件
+        "$SCRIPT_DIR/component-cache.sh" cache "$component_name"
         ((success_count++))
     fi
     

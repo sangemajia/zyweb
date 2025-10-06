@@ -4,5 +4,5 @@ export default {
   default: '預設',
   delete: '刪除',
   edit: '編輯',
-  debug: '除錯'
-}
+  debug: '除錯',
+};

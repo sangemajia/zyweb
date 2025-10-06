@@ -3,4 +3,4 @@ export interface Label {
   lang?: string;
   copySuccess?: string;
   copyError?: string;
-};
+}

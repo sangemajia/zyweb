@@ -19,18 +19,12 @@ class Jsoup {
   }
 
   parseText(text: string) {
-    // 使用正则表达式替换所有空白字符序列为单个换行符 '
-'
-    text = text.replace(/[\s]+/gm, '
-');
+    // 使用正则表达式替换所有空白字符序列为单个换行符
+    text = text.replace(/[\s]+/gm, '\n');
     // 压缩连续的换行符为单个换行符
-    text = text.replace(/
-+/g, '
-').replace(/^\s+/, '');
-    // 前面两步执行完结果和py的一致。剩下的就是把
-替换成空格就和java的一致了
-    text = text.replace(/
-/g, ' ');
+    text = text.replace(/\n+/g, '\n').replace(/^\s+/, '');
+    // 前面两步执行完结果和py的一致。剩下的就是把换行符替换成空格就和java的一致了
+    text = text.replace(/\n/g, ' ');
     return text;
   }
 

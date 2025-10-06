@@ -7,35 +7,35 @@ const mediaUtils = (() => {
    * @returns
    */
   const getFileExtension = (t: string) => {
-    if (t && "string" == typeof t) {
-      if (t.startsWith("magnet:")) return "magnet";
+    if (t && 'string' == typeof t) {
+      if (t.startsWith('magnet:')) return 'magnet';
 
       const e = /(?:\.([^.]+))?$/;
-      return e.exec(t)?.[1] ? e.exec(t)![1].split("?")[0].toLowerCase() : "";
+      return e.exec(t)?.[1] ? e.exec(t)![1].split('?')[0].toLowerCase() : '';
     }
-    return "";
-  }
+    return '';
+  };
 
   /**
    * 获取文件类型
    * @param t
    * @returns
    */
-  const getMimetype = (t: string) =>  {
+  const getMimetype = (t: string) => {
     const EXT_MIME = {
-      m3u8: "application/x-mpegURL",
-      flv: "video/flv",
-      mp4: "video/mp4",
-      webm: "video/webm",
-      rtmp: "rtmp/flv",
-      mpd: "application/dash+xml",
-      mp3: "audio/mpeg",
-      m4a: "audio/mp4"
-    }
+      m3u8: 'application/x-mpegURL',
+      flv: 'video/flv',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      rtmp: 'rtmp/flv',
+      mpd: 'application/dash+xml',
+      mp3: 'audio/mpeg',
+      m4a: 'audio/mp4',
+    };
 
     const e = getFileExtension(t);
-    return EXT_MIME[e.toLowerCase()] || "";
-  }
+    return EXT_MIME[e.toLowerCase()] || '';
+  };
 
   const formatUrlHeaders = (url: string, headers: { [key: string]: string } = {}) => {
     if (headers && Object.keys(headers).length > 0) {
@@ -64,19 +64,22 @@ const mediaUtils = (() => {
     const capitalizeHeader = (header: string) =>
       header
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join('-');
 
-    return Object.entries(headers).reduce((formattedHeaders, [key, value]) => {
-      const capitalizedHeader = capitalizeHeader(key);
+    return Object.entries(headers).reduce(
+      (formattedHeaders, [key, value]) => {
+        const capitalizedHeader = capitalizeHeader(key);
 
-      // 检查是否为不安全头并进行重命名
-      const finalHeader = unsafeHeads.has(capitalizedHeader) ? `Electron-${capitalizedHeader}` : capitalizedHeader;
+        // 检查是否为不安全头并进行重命名
+        const finalHeader = unsafeHeads.has(capitalizedHeader) ? `Electron-${capitalizedHeader}` : capitalizedHeader;
 
-      // 添加到结果对象
-      formattedHeaders[finalHeader] = value;
-      return formattedHeaders;
-    }, {} as { [key: string]: string });
+        // 添加到结果对象
+        formattedHeaders[finalHeader] = value;
+        return formattedHeaders;
+      },
+      {} as { [key: string]: string },
+    );
   };
 
   // 支持的媒体格式映射
@@ -135,9 +138,7 @@ const mediaUtils = (() => {
 
   // 映射 Content-Type 到具体格式
   const mapContentTypeToFormat = (contentType: string): string | undefined => {
-    const entry = Object.entries(supportedFormats).find(([type]) =>
-      contentType.includes(type)
-    );
+    const entry = Object.entries(supportedFormats).find(([type]) => contentType.includes(type));
     return entry ? entry[1] : undefined;
   };
 
@@ -154,7 +155,7 @@ const mediaUtils = (() => {
           timeout,
           headers: {
             ...formatWeb2electronHeaders(headers),
-            'Range': 'bytes=0-7'
+            Range: 'bytes=0-7',
           },
         });
 

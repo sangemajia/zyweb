@@ -48,7 +48,7 @@ const createMenu = () => {
         { type: 'separator' },
         { label: '放大', role: 'zoomIn' },
         { label: '缩小', role: 'zoomOut' },
-        { label: '重置',  role: 'resetZoom' },
+        { label: '重置', role: 'resetZoom' },
         { type: 'separator' },
         { label: '切换全屏', role: 'togglefullscreen' },
       ],

@@ -1,6 +1,11 @@
 <template>
-  <t-drawer v-model:visible="formVisible" show-in-attached-element :header="$t('pages.analyze.history.title')"
-    size="small" class="history-items">
+  <t-drawer
+    v-model:visible="formVisible"
+    show-in-attached-element
+    :header="$t('pages.analyze.history.title')"
+    size="small"
+    class="history-items"
+  >
     <div v-for="item in historyList" :key="item.id" @click="historyPlayEvent(item)">
       <div class="history-item">
         <div class="date">{{ formatDate(item.date) }}</div>
@@ -84,17 +89,17 @@ const historyPlayEvent = async (item) => {
 
 // 历史删除
 const histroyDeleteEvent = async (id) => {
-  const index = historyList.value.findIndex(item => item.id === id);
+  const index = historyList.value.findIndex((item) => item.id === id);
   if (index !== -1) {
     historyList.value.splice(index, 1);
-    delHistory({ids:[id]});
+    delHistory({ ids: [id] });
   }
 };
 
 // 历史清空
 const histroyClearEvent = () => {
   const handleClear = () => {
-    delHistory({type:'analyze'});
+    delHistory({ type: 'analyze' });
     historyList.value = [];
     confirmDia.hide();
   };
@@ -118,7 +123,7 @@ const getHistoryList = async () => {
   const res = await fetchHistoryPage({
     page: pageIndex,
     pageSize,
-    type: 'analyze'
+    type: 'analyze',
   });
   const { list, total } = res;
   historyList.value = [...historyList.value, ...list];

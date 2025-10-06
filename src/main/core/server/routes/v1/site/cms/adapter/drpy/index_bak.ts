@@ -36,7 +36,7 @@ class workerLruCache extends LruCache {
     child.removeAllListeners();
     treeKill(child.pid!, 'SIGTERM');
   }
-};
+}
 
 const lruCache = new workerLruCache(cacheQueueSize);
 
@@ -85,20 +85,19 @@ class T3Adapter {
   }
 
   private async execCtx(options: { [key: string]: any }): Promise<any> {
-    this.child = lruCache.get(this.id) || fork(
-      resolve(__dirname, 'site_drpy_worker.js'),
-      [
+    this.child =
+      lruCache.get(this.id) ||
+      fork(resolve(__dirname, 'site_drpy_worker.js'), [
         `T3Fork-execCtx-${uuidv4()}`,
         this.timeout.toString(),
-        this.debug.toString()
-      ]
-    );
+        this.debug.toString(),
+      ]);
     lruCache.put(this.id, this.child!);
 
     if (!this.isInit) {
       if (options.type !== 'init') await this.doWork(this.child!, { type: 'init', data: this.ext });
       this.isInit = true;
-    };
+    }
 
     const res = await this.doWork(this.child!, { ...options });
     return res.data;
@@ -127,7 +126,9 @@ class T3Adapter {
       }
 
       if (this.categoryfilter.length > 0) {
-        classes = classes.sort((a, b) => this.categoryfilter.indexOf(a.type_name) - this.categoryfilter.indexOf(b.type_name));
+        classes = classes.sort(
+          (a, b) => this.categoryfilter.indexOf(a.type_name) - this.categoryfilter.indexOf(b.type_name),
+        );
       }
     }
 

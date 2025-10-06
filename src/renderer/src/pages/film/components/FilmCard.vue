@@ -4,9 +4,15 @@
       <div v-if="item.vod_remarks || item.vod_remark" class="card-tag card-tag-orange">
         <span class="card-tag-text text-hide">{{ item.vod_remarks || item.vod_remark }}</span>
       </div>
-      <t-image class="card-main-item" :src="item.vod_pic"
-        :style="{ height: '100%', background: 'none', overflow: 'hidden' }" :lazy="true" fit="cover"
-        :loading="renderLoading" :error="renderError">
+      <t-image
+        class="card-main-item"
+        :src="item.vod_pic"
+        :style="{ height: '100%', background: 'none', overflow: 'hidden' }"
+        :lazy="true"
+        fit="cover"
+        :loading="renderLoading"
+        :error="renderError"
+      >
         <template #overlayContent>
           <div class="op" v-if="item.relateSite">
             <div class="op-box">
@@ -29,22 +35,20 @@
 </template>
 
 <script setup lang="tsx">
-import lazyImg from '@/assets/lazy.png';
-
 // 定义组件属性
 const props = defineProps({
   item: {
     type: Object,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // 定义事件发射器
@@ -112,17 +116,17 @@ const playEvent = (item: any) => {
         bottom: 0;
         left: 0;
         width: 100%;
-        background: linear-gradient(to bottom, rgba(22, 24, 35, 0.4) 0%, rgba(22, 24, 35, .8) 100%);
+        background: linear-gradient(to bottom, rgba(22, 24, 35, 0.4) 0%, rgba(22, 24, 35, 0.8) 100%);
 
         .op-box {
           padding: var(--td-comp-paddingTB-xs) 0;
-          background: linear-gradient(to right,
-              rgba(255, 255, 255, 0),
-              rgba(255, 255, 255, 0.4) 30%,
-              rgba(255, 255, 255, 0.4) 70%,
-              rgba(255, 255, 255, 0));
-          ;
-
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.4) 30%,
+            rgba(255, 255, 255, 0.4) 70%,
+            rgba(255, 255, 255, 0)
+          );
           span {
             text-align: center;
             display: inline-block;

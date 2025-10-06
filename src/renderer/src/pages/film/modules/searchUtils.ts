@@ -3,12 +3,12 @@ import { t } from '@/locales';
 import { fetchCmsInit, fetchCmsSearch } from '@/api/site';
 
 // 搜索组
-export const searchGroup = (type: string, defaultConfig:{ [key: string]: string }, siteConfig) => {
-  if (!defaultConfig || !defaultConfig?.id ) return [];
+export const searchGroup = (type: string, defaultConfig: { [key: string]: string }, siteConfig) => {
+  if (!defaultConfig || !defaultConfig?.id) return [];
 
-  let query = siteConfig.data.filter((item) => item["search"] !== 0);
-  if (type === 'site') query = query.filter((item) => item["id"] === defaultConfig["id"]);
-  if (type === 'group') query = query.filter((item) => item["group"] === defaultConfig["group"]);
+  let query = siteConfig.data.filter((item) => item['search'] !== 0);
+  if (type === 'site') query = query.filter((item) => item['id'] === defaultConfig['id']);
+  if (type === 'group') query = query.filter((item) => item['group'] === defaultConfig['group']);
   return query;
 };
 
@@ -24,12 +24,12 @@ export const searchEvent = (searchTxt, siteConfig, active) => {
   const searchCurrentSite = siteConfig.searchGroup ? siteConfig.searchGroup[0] : null;
   // 重置无限加载
   const infiniteId = +new Date();
-  
-  return { 
-    active, 
-    filmData, 
-    pagination, 
+
+  return {
+    active,
+    filmData,
+    pagination,
     searchCurrentSite,
-    infiniteId
+    infiniteId,
   };
 };

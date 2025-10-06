@@ -8,18 +8,17 @@ function rsaDecode(text) {
   const prefix = '-----BEGIN RSA PRIVATE KEY-----';
   const endfix = '-----END RSA PRIVATE KEY-----';
   const privateKey = prefix + '\n' + key + '\n' + endfix;
-  const rsa = new WxmpRsa()
-  rsa.setPrivateKey(privateKey)
+  const rsa = new WxmpRsa();
+  rsa.setPrivateKey(privateKey);
   return rsa.decryptLong(text);
-};
+}
 
 function base64Decode(text) {
   return CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(text));
 }
 
 function gzipDecode(b64Data) {
-  const strData = window.
-  atob(b64Data);
+  const strData = window.atob(b64Data);
   const charData = Uint8Array.from(strData, (x) => x.charCodeAt(0));
   const data = pako.inflate(charData);
   return new TextDecoder().decode(data);
@@ -45,7 +44,7 @@ const decodeFuncs = {
   gzip: (text) => gzipDecode(text),
   base64: (text) => base64Decode(text),
   aes: (text) => aesDecode(text),
-  rsa: (text) => rsaDecode(text)
+  rsa: (text) => rsaDecode(text),
 };
 
 function getOriginalJs(jsCode) {
@@ -66,6 +65,6 @@ function getOriginalJs(jsCode) {
     }
   }
   return decodeContent;
-};
+}
 
 export { getOriginalJs };

@@ -13,18 +13,17 @@
       </t-form-item>
       <t-form-item :label="$t('pages.setting.base.bossKey')" name="shortcutKey">
         <t-space align="center">
-          <shortcut-input
-            v-model="formData.recordShortcut"
-            class="shortcut-content"
-            :style="{ width: '255px' }"
-          />
+          <shortcut-input v-model="formData.recordShortcut" class="shortcut-content" :style="{ width: '255px' }" />
           <span class="title" @click="handleReset('recordShortcut')">{{ $t('pages.setting.base.reset') }}</span>
         </t-space>
       </t-form-item>
       <t-form-item :label="$t('pages.setting.base.timeout')" name="timeout">
         <div class="timeout">
           <t-space align="center">
-            <t-input-number v-model="formData.timeout" theme="column" class="timeout-content"
+            <t-input-number
+              v-model="formData.timeout"
+              theme="column"
+              class="timeout-content"
               :placeholder="t('pages.setting.placeholder.general')"
               :style="{ width: '255px' }"
               :min="5000"
@@ -39,8 +38,12 @@
         <div class="film">
           <t-space direction="vertical">
             <t-space align="center">
-              <t-select v-model="formData.defaultHot" :placeholder="$t('pages.setting.placeholder.general')"
-                :label="$t('pages.setting.base.hotRecommend')" :style="{ width: '255px' }">
+              <t-select
+                v-model="formData.defaultHot"
+                :placeholder="$t('pages.setting.placeholder.general')"
+                :label="$t('pages.setting.base.hotRecommend')"
+                :style="{ width: '255px' }"
+              >
                 <t-option value="kylive" :label="$t('pages.setting.base.kylive')"></t-option>
                 <t-option value="enlightent" :label="$t('pages.setting.base.enlightent')"></t-option>
                 <t-option value="douban" :label="$t('pages.setting.base.douban')"></t-option>
@@ -48,14 +51,22 @@
               </t-select>
             </t-space>
             <t-space align="center">
-              <t-select v-model="formData.defaultSearchType" :placeholder="$t('pages.setting.placeholder.general')"
-                :label="$t('pages.setting.base.search')" :style="{ width: '120px' }">
+              <t-select
+                v-model="formData.defaultSearchType"
+                :placeholder="$t('pages.setting.placeholder.general')"
+                :label="$t('pages.setting.base.search')"
+                :style="{ width: '120px' }"
+              >
                 <t-option value="site" :label="$t('pages.setting.base.site')"></t-option>
                 <t-option value="group" :label="$t('pages.setting.base.group')"></t-option>
                 <t-option value="all" :label="$t('pages.setting.base.all')"></t-option>
               </t-select>
-              <t-select v-model="formData.defaultFilterType" :placeholder="$t('pages.setting.placeholder.general')"
-                :label="$t('pages.setting.base.filter')" :style="{ width: '120px' }">
+              <t-select
+                v-model="formData.defaultFilterType"
+                :placeholder="$t('pages.setting.placeholder.general')"
+                :label="$t('pages.setting.base.filter')"
+                :style="{ width: '120px' }"
+              >
                 <t-option :value="true" :label="$t('pages.setting.base.on')"></t-option>
                 <t-option :value="false" :label="$t('pages.setting.base.off')"></t-option>
               </t-select>
@@ -73,13 +84,21 @@
               <span class="title" @click="handleDialog('iptvThumbnail')">{{ $t('pages.setting.base.info') }}</span>
             </t-space>
             <t-space align="center">
-              <t-input v-model="formData.defaultIptvEpg" :label="$t('pages.setting.base.defaultEpg')"
-                :placeholder="$t('pages.setting.placeholder.epgTip')" :style="{ width: '255px' }" />
+              <t-input
+                v-model="formData.defaultIptvEpg"
+                :label="$t('pages.setting.base.defaultEpg')"
+                :placeholder="$t('pages.setting.placeholder.epgTip')"
+                :style="{ width: '255px' }"
+              />
               <span class="title" @click="handleReset('defaultIptvEpg')">{{ $t('pages.setting.base.reset') }}</span>
             </t-space>
             <t-space align="center">
-              <t-input v-model="formData.defaultIptvLogo" :label="$t('pages.setting.base.globalLogo')"
-                :placeholder="$t('pages.setting.placeholder.logoTip')" :style="{ width: '255px' }" />
+              <t-input
+                v-model="formData.defaultIptvLogo"
+                :label="$t('pages.setting.base.globalLogo')"
+                :placeholder="$t('pages.setting.placeholder.logoTip')"
+                :style="{ width: '255px' }"
+              />
               <span class="title" @click="handleReset('defaultIptvLogo')">{{ $t('pages.setting.base.reset') }}</span>
             </t-space>
           </t-space>
@@ -91,21 +110,33 @@
         <div class="player">
           <t-space direction="vertical">
             <t-space align="center">
-              <t-select v-model="formData.playerMode.type" :options="PLAYER_OPTIONS"
-                :placeholder="$t('pages.setting.placeholder.general')" :style="{ width: '255px' }" />
+              <t-select
+                v-model="formData.playerMode.type"
+                :options="PLAYER_OPTIONS"
+                :placeholder="$t('pages.setting.placeholder.general')"
+                :style="{ width: '255px' }"
+              />
               <span class="title" @click="handleDialogForm('snifferMode')">{{ $t('pages.setting.base.sniffer') }}</span>
               <span class="title" @click="handleDialogForm('barrage')">{{ $t('pages.setting.base.barrage') }}</span>
             </t-space>
             <t-space align="center" v-if="formData.playerMode.type === 'custom'">
-              <t-input v-model="formData.playerMode.external" :label="$t('pages.setting.base.command')"
-                :placeholder="$t('pages.setting.placeholder.general')" :style="{ width: '255px' }" />
+              <t-input
+                v-model="formData.playerMode.external"
+                :label="$t('pages.setting.base.command')"
+                :placeholder="$t('pages.setting.placeholder.general')"
+                :style="{ width: '255px' }"
+              />
               <span class="title" @click="handleDialog('customPlayer')">{{ $t('pages.setting.base.info') }}</span>
             </t-space>
           </t-space>
         </div>
 
         <dialog-barrage-view v-model:visible="isVisible.barrage" :data="dialogFormData" @submit="handleDialogReceive" />
-        <dialog-sniffer-view v-model:visible="isVisible.snifferMode" :data="dialogFormData" @submit="handleDialogReceive" />
+        <dialog-sniffer-view
+          v-model:visible="isVisible.snifferMode"
+          :data="dialogFormData"
+          @submit="handleDialogReceive"
+        />
         <dialog-custom-player-view v-model:visible="isVisible.customPlayer" />
       </t-form-item>
       <t-form-item :label="$t('pages.setting.base.security')" name="security">
@@ -181,10 +212,7 @@ const createAsyncComponentRefs = (components: string[]): Record<string, any> => 
   return refs;
 };
 
-const componentNames = [
-  'Data', 'Ua', 'Dns', 'Update',
-  'Thumbnail', 'CustomPlayer', 'Sniffer', 'Barrage',
-];
+const componentNames = ['Data', 'Ua', 'Dns', 'Update', 'Thumbnail', 'CustomPlayer', 'Sniffer', 'Barrage'];
 
 // 生成异步组件引用
 const {
@@ -195,7 +223,7 @@ const {
   DialogThumbnailView,
   DialogCustomPlayerView,
   DialogSnifferView,
-  DialogBarrageView
+  DialogBarrageView,
 } = createAsyncComponentRefs(componentNames);
 const DialogDisclaimerView = shallowRef(defineAsyncComponent(() => import('@/pages/Disclaimer.vue')));
 
@@ -231,7 +259,7 @@ const formData = ref({
   defaultSite: null,
   defaultIptv: null,
   defaultAnalyze: null,
-  analyzeFlag: [ 'youku', 'qq', 'iqiyi', 'qiyi', 'letv', 'sohu', 'tudou', 'pptv', 'mgtv' ],
+  analyzeFlag: ['youku', 'qq', 'iqiyi', 'qiyi', 'letv', 'sohu', 'tudou', 'pptv', 'mgtv'],
   defaultDrive: '',
   defaultViewCasual: '',
   playerMode: { type: 'zwplayer', external: '' },
@@ -245,77 +273,96 @@ const formData = ref({
   hardwareAcceleration: true,
   ua: '',
   communitySubscribe: '',
-  webdev: { sync: false, data: { url: "https://dav.jianguoyun.com/dav/", username: "", password: "" } },
+  webdev: { sync: false, data: { url: 'https://dav.jianguoyun.com/dav/', username: '', password: '' } },
   windowPosition: { status: false, position: { width: 1000, height: 640 } },
-  debug: false
+  debug: false,
 });
 
 const MODE_OPTIONS = computed(() => [
   { type: 'light', text: t('pages.setting.base.light') },
   { type: 'dark', text: t('pages.setting.base.dark') },
-  { type: 'auto', text: t('pages.setting.base.auto') }
+  { type: 'auto', text: t('pages.setting.base.auto') },
 ]);
 
 const PLAYER_OPTIONS = computed(() => [
   { label: t('pages.setting.base.zwplayer'), value: 'zwplayer' },
-  { label: t('pages.setting.base.custom'), value: 'custom' }
+  { label: t('pages.setting.base.custom'), value: 'custom' },
 ]);
 
 const theme = computed(() => storeSetting.getStateMode);
 
-const getModeIcon = (mode: string) => ({
-  light: SettingLightIcon,
-  dark: SettingDarkIcon,
-  auto: SettingAutoIcon
-})[mode];
+const getModeIcon = (mode: string) =>
+  ({
+    light: SettingLightIcon,
+    dark: SettingDarkIcon,
+    auto: SettingAutoIcon,
+  })[mode];
 
-watch(() => theme.value, val => formData.value.theme = val);
+watch(
+  () => theme.value,
+  (val) => (formData.value.theme = val),
+);
 
-watch(() => formData.value, async (newVal) => {
-  storeSetting.updateConfig({
-    mode: newVal.theme,
-    timeout: Math.max(newVal.timeout, 5000)
-  });
-  storePlayer.updateConfig({
-    setting: {
-      playerMode: newVal.playerMode,
-      snifferMode: newVal.snifferMode,
-      barrage: newVal.barrage
-    },
-  } as any);
-  await putConf(newVal);
-}, { deep: true });
+watch(
+  () => formData.value,
+  async (newVal) => {
+    storeSetting.updateConfig({
+      mode: newVal.theme,
+      timeout: Math.max(newVal.timeout, 5000),
+    });
+    storePlayer.updateConfig({
+      setting: {
+        playerMode: newVal.playerMode,
+        snifferMode: newVal.snifferMode,
+        barrage: newVal.barrage,
+      },
+    } as any);
+    await putConf(newVal);
+  },
+  { deep: true },
+);
 
 // 监听刷新hot
-watch(() => [
-  formData.value.defaultHot,
-  formData.value.defaultSearchType,
-  formData.value.defaultFilterType
-], () => emitter.emit('refreshHotConfig'));
+watch(
+  () => [formData.value.defaultHot, formData.value.defaultSearchType, formData.value.defaultFilterType],
+  () => emitter.emit('refreshHotConfig'),
+);
 
 // 监听刷新iptv
-watch(() => [
-  formData.value.iptvMarkIp,
-  formData.value.iptvDelay,
-  formData.value.iptvThumbnail,
-  formData.value.defaultIptvEpg
-], () => emitter.emit('refreshIptvConfig'));
+watch(
+  () => [
+    formData.value.iptvMarkIp,
+    formData.value.iptvDelay,
+    formData.value.iptvThumbnail,
+    formData.value.defaultIptvEpg,
+  ],
+  () => emitter.emit('refreshIptvConfig'),
+);
 
 // 监听快捷键
 watch(
   () => formData.value.recordShortcut,
   async (val) => {
-    await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'unRegister', config: { name: 'boss' }});
+    await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
+      action: 'unRegister',
+      config: { name: 'boss' },
+    });
     if (!val) return;
 
-    const isAvailable = await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'isRegistered', config: { shortcut: val }});
+    const isAvailable = await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
+      action: 'isRegistered',
+      config: { shortcut: val },
+    });
     if (isAvailable) {
       formData.value.recordShortcut = '';
       MessagePlugin.error(t('pages.setting.placeholder.shortcutErrRegistered'));
     } else {
-      await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'register', config: { shortcut: val, name: 'boss' }});
+      await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
+        action: 'register',
+        config: { shortcut: val, name: 'boss' },
+      });
     }
-  }
+  },
 );
 
 onMounted(() => {
@@ -357,7 +404,7 @@ const handleResetFactory = () => {
     placement: 'center',
     closeBtn: '',
     onConfirm: async () => {
-      await clearDb(["reset", "cache"]);
+      await clearDb(['reset', 'cache']);
       window.electron.ipcRenderer.send('clearCache');
       dialog.hide();
       handleReboot();
@@ -388,7 +435,7 @@ const handleReset = (type: string): void => {
 
   if (defaultMap.hasOwnProperty(type)) {
     formData.value[type] = defaultMap[type as keyof typeof defaultMap];
-  };
+  }
 };
 
 // 对话框 + 传参

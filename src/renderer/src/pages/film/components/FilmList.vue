@@ -23,10 +23,7 @@
           <template #complete>{{ $t(`pages.film.infiniteLoading.${active.infiniteType}`) }}</template>
           <template #error>{{ $t('pages.film.infiniteLoading.error') }}</template>
         </infinite-loading>
-        <infinite-loading
-          v-else="isVisible.lazyload"
-          class="infinite-loading-container"
-        />
+        <infinite-loading v-else="isVisible.lazyload" class="infinite-loading-container" />
       </div>
     </div>
   </div>
@@ -41,28 +38,28 @@ import FilmCard from './FilmCard.vue';
 const props = defineProps({
   filmData: {
     type: Object,
-    required: true
+    required: true,
   },
   active: {
     type: Object,
-    required: true
+    required: true,
   },
   isVisible: {
     type: Object,
-    required: true
+    required: true,
   },
   infiniteId: {
     type: Number,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // 定义事件发射器

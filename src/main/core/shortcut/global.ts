@@ -24,7 +24,7 @@ const globalShortcut = {
   register({ shortcut, func, name, override = false }: RegisterParams): Record<string, boolean> {
     const result: Record<string, boolean> = {};
     const shortcuts = Array.isArray(shortcut) ? shortcut : [shortcut];
-    shortcuts.forEach(sc => result[sc] = false);
+    shortcuts.forEach((sc) => (result[sc] = false));
 
     if (!shortcuts.length || typeof func !== 'function' || !name) {
       logger.warn('[globalShortcut][register] 参数不合法');
@@ -71,7 +71,7 @@ const globalShortcut = {
 
         try {
           if (Array.isArray(shortcuts)) {
-            shortcuts.forEach(sc => globalShortcutModule.unregister(sc));
+            shortcuts.forEach((sc) => globalShortcutModule.unregister(sc));
           } else {
             globalShortcutModule.unregister(shortcuts);
           }
@@ -122,7 +122,7 @@ const globalShortcut = {
       logger.error(`[globalShortcut][isRegistered] 检查失败: ${shortcut}`, err);
       return false;
     }
-  }
+  },
 };
 
 export default globalShortcut;

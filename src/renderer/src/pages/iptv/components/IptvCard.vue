@@ -1,6 +1,14 @@
 <template>
-  <t-col :md="3" :lg="3" :xl="2" :xxl="1" class="card"
-    @click="playEvent(item)" @contextmenu="conButtonClick(item, $event)" @contextmenu.prevent>
+  <t-col
+    :md="3"
+    :lg="3"
+    :xl="2"
+    :xxl="1"
+    class="card"
+    @click="playEvent(item)"
+    @contextmenu="conButtonClick(item, $event)"
+    @contextmenu.prevent
+  >
     <div class="card-main">
       <div v-show="iptvConfig.ext.delay && item.delay" class="card-delay-tag">
         <span v-if="item.delay < 500" class="status-item success">{{ item.delay }}ms</span>
@@ -12,15 +20,14 @@
         <span v-if="item.ipVersion === -1" class="status-item error">{{ $t('pages.iptv.unknown') }}</span>
         <span v-else class="status-item success">IPV{{ item.ipVersion }}</span>
       </div>
-      <t-image class="card-main-item"
+      <t-image
+        class="card-main-item"
         :src="iptvConfig.ext.thumbnail ? item.thumbnail : item.logo"
         :style="{
           width: '100%',
           background: 'none',
           overflow: 'hidden',
-          padding: iptvConfig.ext.thumbnail
-            ? 'none'
-            : '35px 30px'
+          padding: iptvConfig.ext.thumbnail ? 'none' : '35px 30px',
         }"
         :lazy="true"
         :loading="renderLoading"
@@ -34,25 +41,25 @@
 </template>
 
 <script setup lang="tsx">
-import lazyImg from '@/assets/lazy.png';
+import { renderError, renderLoading } from '@/utils/common/renderUtils';
 
 const props = defineProps({
   item: {
     type: Object,
-    required: true
+    required: true,
   },
   iptvConfig: {
     type: Object,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['playEvent', 'conButtonClick']);
@@ -64,21 +71,6 @@ const playEvent = (item: any) => {
 const conButtonClick = (item: any, event: any) => {
   emit('conButtonClick', item, event);
 };
-
-const renderError = () => {
-  return (
-    <div class="renderIcon" style="width: 100%;">
-      <img src={lazyImg} style="width: 100%; object-fit: cover;" />
-    </div>
-  );
-};
-const renderLoading = () => {
-  return (
-    <div class="renderIcon" style="width: 100%;">
-      <img src={lazyImg} style="width: 100%; object-fit: cover;" />
-    </div>
-  );
-};
 </script>
 
 <style lang="less" scoped>
@@ -88,7 +80,6 @@ const renderLoading = () => {
   position: relative;
   cursor: pointer;
   border-radius: var(--td-radius-default);
-
 
   &:hover {
     .card-main {

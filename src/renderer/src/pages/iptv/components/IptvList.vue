@@ -12,8 +12,7 @@
           @play-event="playEvent"
           @con-button-click="conButtonClick"
         />
-        <context-menu :show="isVisible.contentMenu" :options="optionsComponent"
-          @close="isVisible.contentMenu = false">
+        <context-menu :show="isVisible.contentMenu" :options="optionsComponent" @close="isVisible.contentMenu = false">
           <context-menu-item :label="$t('pages.iptv.contextMenu.copyChannel')" @click="copyChannelEvent" />
           <context-menu-item :label="$t('pages.iptv.contextMenu.delChannel')" @click="delChannelEvent" />
         </context-menu>
@@ -30,10 +29,7 @@
           <template #complete>{{ $t(`pages.iptv.infiniteLoading.${active.infiniteType}`) }}</template>
           <template #error>{{ $t('pages.iptv.infiniteLoading.error') }}</template>
         </infinite-loading>
-        <infinite-loading
-          v-else="isVisible.lazyload"
-          class="infinite-loading-container"
-        />
+        <infinite-loading v-else="isVisible.lazyload" class="infinite-loading-container" />
       </div>
     </div>
   </div>
@@ -54,45 +50,39 @@ const storeSetting = useSettingStore();
 const props = defineProps({
   channelList: {
     type: Array,
-    required: true
+    required: true,
   },
   iptvConfig: {
     type: Object,
-    required: true
+    required: true,
   },
   active: {
     type: Object,
-    required: true
+    required: true,
   },
   isVisible: {
     type: Object,
-    required: true
+    required: true,
   },
   infiniteId: {
     type: Number,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
+    required: true,
   },
   optionsComponent: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
-const emit = defineEmits([
-  'load', 
-  'playEvent', 
-  'conButtonClick', 
-  'copyChannelEvent', 
-  'delChannelEvent'
-]);
+const emit = defineEmits(['load', 'playEvent', 'conButtonClick', 'copyChannelEvent', 'delChannelEvent']);
 
 const mode = computed(() => {
   return storeSetting.displayMode;

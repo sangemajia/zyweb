@@ -13,11 +13,8 @@
       </t-row>
 
       <div>
-        <infinite-loading
-          v-if="isVisible.lazyload"
-          class="infinite-loading-container"
-        />
-        <div v-else class="infinite-loading-container" style="min-height: 1px; text-align: center; margin-bottom: 2em;">
+        <infinite-loading v-if="isVisible.lazyload" class="infinite-loading-container" />
+        <div v-else class="infinite-loading-container" style="min-height: 1px; text-align: center; margin-bottom: 2em">
           {{ $t(`pages.drive.infiniteLoading.${active.infiniteType}`) }}
         </div>
       </div>
@@ -32,24 +29,24 @@ import InfiniteLoading from 'v3-infinite-loading';
 defineProps({
   driveContent: {
     type: Array,
-    required: true
+    required: true,
   },
   active: {
     type: Object,
-    required: true
+    required: true,
   },
   isVisible: {
     type: Object,
-    required: true
+    required: true,
   },
   renderLoading: {
     type: Function,
-    required: true
+    required: true,
   },
   renderError: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['getFileOrFolder']);

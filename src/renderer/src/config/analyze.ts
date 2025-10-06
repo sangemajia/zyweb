@@ -73,7 +73,7 @@ const platform = computed(() => {
     },
     {
       url: 'https://www.le.com',
-      host:'le.com',
+      host: 'le.com',
       id: 'letv',
       name: t('pages.analyze.platform.letv'),
       img: logoLe,
@@ -83,7 +83,7 @@ const platform = computed(() => {
     },
     {
       url: 'https://tv.sohu.com',
-      host:'sohu.com',
+      host: 'sohu.com',
       id: 'sohu',
       name: t('pages.analyze.platform.sohu'),
       img: logoSohu,
@@ -93,7 +93,7 @@ const platform = computed(() => {
     },
     {
       url: 'https://www.pptv.com',
-      host:'pptv.com',
+      host: 'pptv.com',
       id: 'pptv',
       name: t('pages.analyze.platform.pptv'),
       img: logoPptv,

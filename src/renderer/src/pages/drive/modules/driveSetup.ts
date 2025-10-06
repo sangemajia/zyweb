@@ -25,16 +25,16 @@ export const useDriveSetup = () => {
       startPage: '',
       search: false,
       headers: {},
-      params: {}
-    }
+      params: {},
+    },
   });
   const active = ref({
     nav: '',
-    infiniteType: 'noMore'
-  })
+    infiniteType: 'noMore',
+  });
   const isVisible = reactive({
     loading: false,
-    lazyload: false
+    lazyload: false,
   });
   const driveContent = ref<any[]>([]);
   const breadcrumb = ref<any[]>([]);
@@ -53,7 +53,14 @@ export const useDriveSetup = () => {
   // 获取云文件夹处理函数
   const getCloudFolderHandler = async (item) => {
     try {
-      const result = await getCloudFolder(item, driveConfig.value, isVisible, driveContent.value, breadcrumb.value, formatBreadcrumb);
+      const result = await getCloudFolder(
+        item,
+        driveConfig.value,
+        isVisible,
+        driveContent.value,
+        breadcrumb.value,
+        formatBreadcrumb,
+      );
       driveContent.value = result.driveContent;
       breadcrumb.value = result.breadcrumb;
     } catch (err) {
@@ -77,15 +84,15 @@ export const useDriveSetup = () => {
         startPage: '',
         search: false,
         headers: {},
-        params: {}
-      }
+        params: {},
+      },
     };
     await getSetting(driveConfig.value, active.value);
     if (active.value.nav) await initCloud(driveConfig.value, isVisible, getCloudFolderHandler);
   };
 
   // 默认配置
-  const defaultConf = ()=>{
+  const defaultConf = () => {
     driveContent.value = [];
     breadcrumb.value = [];
     active.value.nav = '';
@@ -96,7 +103,7 @@ export const useDriveSetup = () => {
   const changeConf = async (id: string) => {
     console.log(`[drive] change source: ${id}`);
 
-    const item: any = driveConfig.value.data.find(item => item.id === id);
+    const item: any = driveConfig.value.data.find((item) => item.id === id);
     item.startPage = item?.startPage ? item.startPage : '/';
 
     defaultConf();
@@ -106,7 +113,7 @@ export const useDriveSetup = () => {
   };
 
   // 面包屑跳转
-  const gotoBreadcrumbPath = async (path:string) => {
+  const gotoBreadcrumbPath = async (path: string) => {
     isVisible.lazyload = true;
 
     try {
@@ -114,7 +121,7 @@ export const useDriveSetup = () => {
       const res = await fetchAlistDir({ path, sourceId: id });
       driveContent.value = res.list;
       breadcrumb.value = formatBreadcrumb(path);
-    } finally{
+    } finally {
       isVisible.lazyload = false;
     }
   };
@@ -123,7 +130,7 @@ export const useDriveSetup = () => {
   const getFileOrFolder = (item) => {
     const isFolder = item.type === 0;
     if (isFolder) {
-      getCloudFolderHandler(item)
+      getCloudFolderHandler(item);
     } else {
       playEvent(item, driveConfig.value, storePlayer, isVisible, driveContent.value, breadcrumb.value);
     }
@@ -144,6 +151,6 @@ export const useDriveSetup = () => {
     changeConf,
     gotoBreadcrumbPath,
     getFileOrFolder,
-    getCloudFolderHandler
+    getCloudFolderHandler,
   };
 };

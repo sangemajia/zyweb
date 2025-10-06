@@ -46,7 +46,7 @@ const label = computed(() => {
     lang: t('pages.md.label.lang'),
     copySuccess: t('pages.md.label.copySuccess'),
     copyError: t('pages.md.label.copyError'),
-  }
+  };
 });
 const emits = defineEmits(['update:visible']);
 

@@ -36,7 +36,7 @@ export const checkChannelIp = async (pageIndex, pageSize, channelList) => {
   };
 
   // 将任务加入队列
-  const results = await Promise.all(dataList.map(item => ipversionQueue.add(() => updateStatus(item))));
+  const results = await Promise.all(dataList.map((item) => ipversionQueue.add(() => updateStatus(item))));
 
   // 更新频道状态
   return updateChannelStatus(results, start, 'ipVersion', channelList);
@@ -59,7 +59,7 @@ export const checkChannelDelay = async (pageIndex, pageSize, channelList) => {
   };
 
   // 将任务加入队列
-  const results = await Promise.all(dataList.map(item => delayQueue.add(() => updateStatus(item))));
+  const results = await Promise.all(dataList.map((item) => delayQueue.add(() => updateStatus(item))));
 
   // 更新频道状态
   return updateChannelStatus(results, start, 'delay', channelList);
@@ -76,9 +76,9 @@ export const generateThumbnail = async (pageIndex, pageSize, channelList) => {
     try {
       const res = await window.electron.ipcRenderer.invoke('ffmpeg-thumbnail', item.url, item.id);
       if (res) {
-        const index = channelList.findIndex(channel => channel.id === res.key);
+        const index = channelList.findIndex((channel) => channel.id === res.key);
         if (index !== -1) {
-          channelList[index]["thumbnail"] = res.url;
+          channelList[index]['thumbnail'] = res.url;
         }
       }
     } catch (err) {
@@ -87,9 +87,9 @@ export const generateThumbnail = async (pageIndex, pageSize, channelList) => {
   };
 
   // 将任务加入队列
-  await Promise.all(dataList.map(item => thumbnailQueue.add(() => updateThumbnail(item))));
+  await Promise.all(dataList.map((item) => thumbnailQueue.add(() => updateThumbnail(item))));
   return channelList;
-}
+};
 
 // 清空队列，并终止请求
 export const clearQueue = () => {

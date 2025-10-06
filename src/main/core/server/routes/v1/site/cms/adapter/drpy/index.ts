@@ -53,22 +53,22 @@ class T3DrpyAdapter {
   private async execCtx(options: { [key: string]: any }): Promise<any> {
     let pool = lruCache!.get(this.id);
     if (!pool) {
-      pool = workerpool.pool(
-        join(__dirname, 'site_drpy_worker.js'),
-        { workerType: 'process', maxWorkers: this.cacheQueueSize }
-      );
+      pool = workerpool.pool(join(__dirname, 'site_drpy_worker.js'), {
+        workerType: 'process',
+        maxWorkers: this.cacheQueueSize,
+      });
       lruCache!.put(this.id, pool);
-    };
+    }
 
     if (!this.isInit) {
       if (options.type !== 'init') {
-        await pool.exec(
-          'siteDrpyWork',
-          [{ type: 'init', data: this.ext }, { timeout: this.timeout, debug: this.debug }]
-        );
+        await pool.exec('siteDrpyWork', [
+          { type: 'init', data: this.ext },
+          { timeout: this.timeout, debug: this.debug },
+        ]);
       }
       this.isInit = true;
-    };
+    }
 
     const res = await pool.exec('siteDrpyWork', [{ ...options }, { timeout: this.timeout, debug: this.debug }]);
     return res.data;

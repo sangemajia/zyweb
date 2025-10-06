@@ -15,8 +15,8 @@ const createTrayMenu = () => {
       label: '打开数据目录',
       click: () => shell.openPath(APP_STORE_PATH),
     },
-    { label: '关于', role: 'about', },
-    { label: '退出', role: 'quit', },
+    { label: '关于', role: 'about' },
+    { label: '退出', role: 'quit' },
   ]);
 };
 

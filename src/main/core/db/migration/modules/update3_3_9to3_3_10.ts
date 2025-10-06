@@ -27,11 +27,17 @@ const update = async () => {
     }
   }
 
-  const old_defaultFilterType = await db.select().from(schema.setting).where(eq(schema.setting.key, 'defaultFilterType'));
+  const old_defaultFilterType = await db
+    .select()
+    .from(schema.setting)
+    .where(eq(schema.setting.key, 'defaultFilterType'));
   if (old_defaultFilterType.length > 0) {
     // @ts-ignore
     const defaultFilterTypeValue = old_defaultFilterType[0].value.data === 'on' ? true : false;
-    await db.update(schema.setting).set({ value: { data: defaultFilterTypeValue } }).where(eq(schema.setting.key, 'defaultFilterType'));
+    await db
+      .update(schema.setting)
+      .set({ value: { data: defaultFilterTypeValue } })
+      .where(eq(schema.setting.key, 'defaultFilterType'));
   } else {
     await db.insert(schema.setting).values({ key: 'defaultFilterType', value: { data: false } });
   }

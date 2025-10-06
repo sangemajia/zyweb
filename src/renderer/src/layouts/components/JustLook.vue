@@ -3,8 +3,16 @@
     <t-button theme="default" shape="square" variant="text" @click="toggleDrawerAndHandlePlayer">
       <dvd-icon />
     </t-button>
-    <t-drawer v-model:visible="isVisible.drawer" show-in-attached-element :footer=null :attach="`.${prefix}-content`"
-      :size-draggable="{ max: 920, min: 320 }" @confirm="change" @close="close" size="320px">
+    <t-drawer
+      v-model:visible="isVisible.drawer"
+      show-in-attached-element
+      :footer="null"
+      :attach="`.${prefix}-content`"
+      :size-draggable="{ max: 920, min: 320 }"
+      @confirm="change"
+      @close="close"
+      size="320px"
+    >
       <div class="content">
         <div id="mse"></div>
         <div class="slide">
@@ -30,7 +38,7 @@ import { prefix } from '@/config/global';
 import { t } from '@/locales';
 
 const isVisible = reactive({
-  drawer: false
+  drawer: false,
 });
 const api = ref();
 const player = ref();
@@ -42,8 +50,8 @@ const config = ref({
   volume: 1,
   muted: false,
   playbackRate: 1,
-  startTime: 0
-})
+  startTime: 0,
+});
 
 const fetchDataAndSetPlayerConfig = async () => {
   const res = await fetchSettingDetail('defaultViewCasual');
@@ -55,14 +63,14 @@ const fetchDataAndSetPlayerConfig = async () => {
 
   api.value = res.value;
   config.value.url = res.value;
-}
+};
 
 const initializePlayer = () => {
   if (player.value) {
     player.value.destroy();
   }
   player.value = new ZwPlayer(config.value);
-}
+};
 
 const toggleDrawerAndHandlePlayer = async () => {
   if (!isVisible.drawer) {
@@ -76,14 +84,14 @@ const toggleDrawerAndHandlePlayer = async () => {
     close();
     isVisible.drawer = false;
   }
-}
+};
 
 const close = () => {
   if (player.value) {
     player.value.destroy();
     player.value = null;
   }
-}
+};
 
 const change = () => {
   if (player.value) {
@@ -91,7 +99,7 @@ const change = () => {
     config.value.url = api.value;
     player.value = new ZwPlayer(config.value);
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -119,7 +127,7 @@ const change = () => {
       background-color: #33343f;
       height: 40px;
       line-height: 40px;
-      opacity: .7;
+      opacity: 0.7;
       text-align: center;
       width: 32px;
 
@@ -135,7 +143,6 @@ const change = () => {
 
     .refresh {
       border-radius: var(--td-radius-round);
-
     }
   }
 }

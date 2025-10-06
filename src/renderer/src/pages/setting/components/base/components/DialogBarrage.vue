@@ -24,7 +24,13 @@
             <t-input v-model="formData.data.data.key" :placeholder="$t('pages.setting.placeholder.general')" />
           </t-form-item>
           <t-form-item :label="$t('pages.setting.barrage.support')" name="support">
-            <t-tag-input v-model="formData.data.data.support" clearable excess-tags-display-type="scroll" :placeholder="$t('pages.setting.placeholder.general')" @change="handleFlagFilter" />
+            <t-tag-input
+              v-model="formData.data.data.support"
+              clearable
+              excess-tags-display-type="scroll"
+              :placeholder="$t('pages.setting.placeholder.general')"
+              @change="handleFlagFilter"
+            />
           </t-form-item>
         </div>
         <div class="data-item">
@@ -32,16 +38,36 @@
           <p class="t-tip mg-b-s">{{ $t('pages.setting.barrage.tip') }}</p>
           <t-space break-line size="small">
             <t-form-item :label="$t('pages.setting.barrage.start')" name="start">
-              <t-input-number theme="column" :min="0" v-model="formData.data.data.start" :placeholder="$t('pages.setting.placeholder.general')" />
+              <t-input-number
+                theme="column"
+                :min="0"
+                v-model="formData.data.data.start"
+                :placeholder="$t('pages.setting.placeholder.general')"
+              />
             </t-form-item>
             <t-form-item :label="$t('pages.setting.barrage.color')" name="color">
-              <t-input-number theme="column" :min="0" v-model="formData.data.data.color" :placeholder="$t('pages.setting.placeholder.general')" />
+              <t-input-number
+                theme="column"
+                :min="0"
+                v-model="formData.data.data.color"
+                :placeholder="$t('pages.setting.placeholder.general')"
+              />
             </t-form-item>
             <t-form-item :label="$t('pages.setting.barrage.mode')" name="mode">
-              <t-input-number theme="column" :min="0" v-model="formData.data.data.mode" :placeholder="$t('pages.setting.placeholder.general')" />
+              <t-input-number
+                theme="column"
+                :min="0"
+                v-model="formData.data.data.mode"
+                :placeholder="$t('pages.setting.placeholder.general')"
+              />
             </t-form-item>
             <t-form-item :label="$t('pages.setting.barrage.content')" name="content">
-              <t-input-number theme="column" :min="0" v-model="formData.data.data.content" :placeholder="$t('pages.setting.placeholder.general')" />
+              <t-input-number
+                theme="column"
+                :min="0"
+                v-model="formData.data.data.content"
+                :placeholder="$t('pages.setting.placeholder.general')"
+              />
             </t-form-item>
           </t-space>
         </div>
@@ -55,10 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, useTemplateRef } from 'vue';
-import { FormInstanceFunctions, FormProps, MessagePlugin } from 'tdesign-vue-next';
-import { cloneDeep, uniq } from 'lodash-es';
-import { t } from '@/locales';
+import { useDialogBarrageSetup } from './dialogBarrageSetup';
 
 defineOptions({
   name: 'SettingBaseDialogBarrage',
@@ -71,68 +94,16 @@ const props = defineProps({
   },
   data: {
     type: Object,
-    default: { data: { url: '', id: '', key: '', support: [], start: '', mode: '', color: '', content: ''  },  type: '' },
+    default: { data: { url: '', id: '', key: '', support: [], start: '', mode: '', color: '', content: '' }, type: '' },
   },
 });
-const formVisible = ref(false);
-const formData = ref({
-  data: cloneDeep(props.data),
-  raw: cloneDeep(props.data),
-});
-const formRef = useTemplateRef<FormInstanceFunctions>('formRef');
 
 const emits = defineEmits(['update:visible', 'submit']);
 
-watch(
-  () => formVisible.value,
-  (val) => {
-    emits('update:visible', val);
-  },
+const { formVisible, formData, formRef, handleFlagFilter, onSubmit, onReset, RULES } = useDialogBarrageSetup(
+  props,
+  emits,
 );
-watch(
-  () => props.visible,
-  (val) => {
-    formVisible.value = val;
-  },
-);
-watch(
-  () => props.data,
-  (val) => {
-    formData.value = { data: cloneDeep(val), raw: cloneDeep(val) };
-  },
-);
-
-const handleFlagFilter = (value: string[]) => {
-  formData.value.data.support = uniq(value);
-};
-
-const onSubmit: FormProps['onSubmit'] = async () => {
-  formRef.value?.validate().then((validateResult) => {
-    if (validateResult && Object.keys(validateResult).length) {
-      const firstError = Object.values(validateResult)[0]?.[0]?.message;
-      MessagePlugin.warning(firstError);
-    } else {
-      const { data, type } = formData.value.data;
-      emits('submit', { data, type });
-      formVisible.value = false;
-    }
-  });
-};
-
-const onReset: FormProps['onReset'] = () => {
-  formData.value.data = { ...formData.value.raw };
-};
-
-const RULES = {
-  url: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  id: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  key: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  support: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  start: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  mode: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  color: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-  content: [{ required: true, message: t('pages.setting.dialog.rule.message'), type: 'error' }],
-};
 </script>
 
 <style lang="less" scoped></style>

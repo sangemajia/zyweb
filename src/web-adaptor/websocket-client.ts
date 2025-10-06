@@ -18,7 +18,7 @@ class WebSocketClient {
   connect(): void {
     try {
       this.ws = new WebSocket(this.url);
-      
+
       this.ws.onopen = () => {
         console.log('[WebSocket] Connected to server');
         this.reconnectAttempts = 0;
@@ -30,7 +30,7 @@ class WebSocketClient {
           const data = JSON.parse(event.data);
           console.log('[WebSocket] Received message:', data);
           this.emit('message', data);
-          
+
           // 如果消息包含频道信息，触发相应的事件
           if (data.channel) {
             this.emit(data.channel, data.data);
@@ -43,11 +43,13 @@ class WebSocketClient {
       this.ws.onclose = () => {
         console.log('[WebSocket] Connection closed');
         this.emit('disconnected');
-        
+
         // 尝试重新连接
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
           this.reconnectAttempts++;
-          console.log(`[WebSocket] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+          console.log(
+            `[WebSocket] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`,
+          );
           setTimeout(() => this.connect(), this.reconnectInterval);
         } else {
           console.error('[WebSocket] Max reconnect attempts reached');
@@ -112,7 +114,7 @@ class WebSocketClient {
   // 触发事件
   private emit(event: string, ...args: any[]): void {
     if (this.listeners.has(event)) {
-      this.listeners.get(event)!.forEach(listener => {
+      this.listeners.get(event)!.forEach((listener) => {
         try {
           listener(...args);
         } catch (error) {

@@ -223,7 +223,7 @@ class AppYsV2Adapter {
             params: {
               wd,
               pg,
-            }
+            },
           });
           vod_id = res.data.list[0].vod_id;
         } else {
@@ -233,7 +233,7 @@ class AppYsV2Adapter {
             params: {
               text: wd,
               pg,
-            }
+            },
           });
           vod_id = (res.list || res.data)[0].vod_id;
         }

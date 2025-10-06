@@ -40,7 +40,11 @@ const html = {
 };
 
 const unicode = {
-  encode: (val: string) => val.split('').map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')).join(''),
+  encode: (val: string) =>
+    val
+      .split('')
+      .map((c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
+      .join(''),
   decode: (val: string) => val.replace(/\\u([\dA-Fa-f]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16))),
 };
 
@@ -59,8 +63,11 @@ const url = {
 };
 
 const hex = {
-  encode: (val: string) => Array.from(utf8ToUint8Array(val)).map(b => b.toString(16).padStart(2, '0')).join(''),
-  decode: (val: string) => uint8ArrayToUtf8(new Uint8Array(val.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)))),
+  encode: (val: string) =>
+    Array.from(utf8ToUint8Array(val))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join(''),
+  decode: (val: string) => uint8ArrayToUtf8(new Uint8Array(val.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))),
 };
 
 export { base64, hash, hmac, html, unicode, gzip, url, hex };

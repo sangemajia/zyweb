@@ -8,12 +8,12 @@ export const playEvent = async (item, siteConfig, active, isVisible, detailFormD
   isVisible.loading = true;
 
   try {
-    let site = item?.relateSite ? item.relateSite: siteConfig.default;
+    let site = item?.relateSite ? item.relateSite : siteConfig.default;
 
     if (!active.tmpId || active.tmpId !== site.id) {
       await fetchCmsInit({ sourceId: site.id });
       active.tmpId = site.id;
-    };
+    }
 
     // folder模式
     if (item.hasOwnProperty('vod_tag') && item['vod_tag'] === 'folder') {
@@ -24,15 +24,15 @@ export const playEvent = async (item, siteConfig, active, isVisible, detailFormD
       const pagination = { pageIndex: 1 };
       // 重置无限加载
       const infiniteId = +new Date();
-      return { 
-        active, 
-        filmData, 
-        pagination, 
+      return {
+        active,
+        filmData,
+        pagination,
         infiniteId,
         detailFormData: null,
-        isVisible 
+        isVisible,
       };
-    };
+    }
 
     if (!('vod_play_from' in item && 'vod_play_url' in item)) {
       const res = await fetchCmsDetail({ sourceId: site.id, id: item.vod_id });
@@ -41,14 +41,14 @@ export const playEvent = async (item, siteConfig, active, isVisible, detailFormD
       if (!detailItem.vod_pic) detailItem.vod_pic = item.vod_pic;
       if (!detailItem.vod_id) detailItem.vod_id = item.vod_id;
       item = detailItem;
-    };
+    }
     console.log('[film][playEvent]', item);
 
     const playerMode = storePlayer.getSetting.playerMode;
     const doc = {
       info: { ...item, name: item.vod_name },
       ext: { site, setting: storePlayer.setting },
-    }
+    };
     if (playerMode.type === 'custom') {
       detailFormData = doc;
       isVisible.detail = true;

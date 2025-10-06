@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface OpenAIRunChatOption {
   model?: string;
-  messages: Array<{ role: 'user' | 'system' | 'assistant'; content: string; }>;
+  messages: Array<{ role: 'user' | 'system' | 'assistant'; content: string }>;
   stream?: boolean;
   timeout?: number;
 }
@@ -43,9 +43,7 @@ class OpenAIApp {
   checkClient(options: ClientOptions = {}): boolean {
     const isVisable = this.checkOptions(options);
     if (!isVisable) return false;
-    const isDifferent = Object.keys(options).some(
-      key => this.options[key] !== options[key]
-    );
+    const isDifferent = Object.keys(options).some((key) => this.options[key] !== options[key]);
     if (isDifferent) {
       this.options = { ...this.options, ...options };
       this.clientCreate(this.options);
@@ -83,7 +81,7 @@ class OpenAIApp {
     return { id: key, metadata: this.messages.get(key) || [] };
   }
 
-  cachePut(key: string, metadata: Array<{ index: number, doc: { role: string; content: string } }>) {
+  cachePut(key: string, metadata: Array<{ index: number; doc: { role: string; content: string } }>) {
     const current = this.messages.get(key) || [];
     for (let { index, doc } of metadata) {
       if (index < 0) index = current.length + index;
@@ -103,7 +101,7 @@ class OpenAIApp {
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
         temperature: 0.3,
         stream,
-        stream_options: { "include_usage": false } // 禁用使用统计
+        stream_options: { include_usage: false }, // 禁用使用统计
       },
       { maxRetries: 1, timeout },
     );
@@ -140,7 +138,7 @@ class OpenAIApp {
         passThroughStream.end();
         this.cacheAdd(sessionId!, { role: 'assistant', content: chunks.join('') });
         // console.log(this.cacheFetch(sessionId!));
-      })()
+      })();
 
       return { result: passThroughStream, sessionId }; // 返回完整的处理结果
     } else {

@@ -4,13 +4,21 @@
       <div class="left-operation-container">
         <div class="component-op">
           <t-radio-group variant="default-filled" v-model="opMethod" @change="handleOpChange">
-            <t-radio-button v-for="(item, index) in op" :key="index" :value="item.value">{{ item.label }}</t-radio-button>
+            <t-radio-button v-for="(item, index) in op" :key="index" :value="item.value">{{
+              item.label
+            }}</t-radio-button>
           </t-radio-group>
         </div>
       </div>
       <div class="right-operation-container">
         <div class="search">
-          <t-input v-model="searchText" :placeholder="$t('pages.setting.header.search')" clearable @enter="handleOpSearch" @clear="handleOpSearch">
+          <t-input
+            v-model="searchText"
+            :placeholder="$t('pages.setting.header.search')"
+            clearable
+            @enter="handleOpSearch"
+            @clear="handleOpSearch"
+          >
             <template #prefix-icon>
               <search-icon size="16px" />
             </template>
@@ -33,10 +41,10 @@
         @select-change="handleSelectChange"
         @page-change="handlePageChange"
       >
-      <template v-for="itemSlot in Object.keys(slots)" :key="itemSlot" v-slot:[itemSlot]="temp">
-        <slot :name="itemSlot" v-bind="temp"></slot>
-      </template>
-    </t-table>
+        <template v-for="itemSlot in Object.keys(slots)" :key="itemSlot" v-slot:[itemSlot]="temp">
+          <slot :name="itemSlot" v-bind="temp"></slot>
+        </template>
+      </t-table>
     </div>
   </div>
 </template>
@@ -64,7 +72,7 @@ defineProps({
   },
   pagination: {
     type: Object,
-  }
+  },
 });
 const slots = useSlots();
 const dataLoading = ref(false);
@@ -83,7 +91,7 @@ const handleOpSearch = () => {
   emits('opSearch', searchText.value);
 };
 
-const handlePageChange = (curr: {current: number, pageSize: number}) => {
+const handlePageChange = (curr: { current: number; pageSize: number }) => {
   emits('pageChange', curr.current, curr.pageSize);
 };
 
@@ -91,7 +99,6 @@ const handleSelectChange = (val: any[]) => {
   tableSelect.value = val;
 };
 </script>
-
 
 <style lang="less" scoped>
 .common-setting {
@@ -125,7 +132,7 @@ const handleSelectChange = (val: any[]) => {
         }
       }
     }
-  };
+  }
 
   .table-container {
     height: calc(100% - 32px - 2 * var(--td-size-4));

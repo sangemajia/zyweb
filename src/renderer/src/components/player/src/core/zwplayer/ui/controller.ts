@@ -25,9 +25,9 @@ class UIController {
       autoHide: true,
       autoHideTime: 3000,
       themeColor: '#00a1ff',
-      ...options
+      ...options,
     };
-    
+
     if (this.options.showControls) {
       this.initControlBar();
       this.initControls();
@@ -49,7 +49,7 @@ class UIController {
     this.controlBar.style.padding = '0 10px';
     this.controlBar.style.zIndex = '20';
     this.controlBar.style.transition = 'opacity 0.3s';
-    
+
     this.container.appendChild(this.controlBar);
   }
 
@@ -62,16 +62,16 @@ class UIController {
         this.player.pause();
       }
     });
-    
+
     // 音量控制
     this.controls.volume = this.createVolumeControl();
-    
+
     // 时间显示
     this.controls.time = this.createTimeDisplay();
-    
+
     // 进度条
     this.controls.progress = this.createProgressControl();
-    
+
     // 全屏按钮
     this.controls.fullscreen = this.createButton('fullscreen', '⛶', () => {
       if (this.player.isFullscreenMode()) {
@@ -80,7 +80,7 @@ class UIController {
         this.player.enterFullscreen();
       }
     });
-    
+
     // 画中画按钮
     this.controls.pip = this.createButton('pip', 'PIP', () => {
       if (this.player.isPipMode()) {
@@ -89,9 +89,9 @@ class UIController {
         this.player.enterPip();
       }
     });
-    
+
     // 将控件添加到控制栏
-    Object.values(this.controls).forEach(control => {
+    Object.values(this.controls).forEach((control) => {
       this.controlBar.appendChild(control);
     });
   }
@@ -112,9 +112,9 @@ class UIController {
     button.style.display = 'flex';
     button.style.alignItems = 'center';
     button.style.justifyContent = 'center';
-    
+
     button.addEventListener('click', onClick);
-    
+
     return button;
   }
 
@@ -124,11 +124,11 @@ class UIController {
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.margin = '0 10px';
-    
+
     const button = this.createButton('volume', '🔊', () => {
       this.player.setMuted(!this.player.getMuted());
     });
-    
+
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.min = '0';
@@ -137,18 +137,18 @@ class UIController {
     slider.value = this.player.getVolume().toString();
     slider.style.width = '60px';
     slider.style.margin = '0 5px';
-    
+
     slider.addEventListener('input', () => {
       this.player.setVolume(parseFloat(slider.value));
     });
-    
+
     container.appendChild(button);
     container.appendChild(slider);
-    
+
     // 保存引用以便更新
     this.controls.volumeButton = button;
     this.controls.volumeSlider = slider;
-    
+
     return container;
   }
 
@@ -160,7 +160,7 @@ class UIController {
     timeDisplay.style.margin = '0 10px';
     timeDisplay.style.whiteSpace = 'nowrap';
     timeDisplay.textContent = '00:00 / 00:00';
-    
+
     return timeDisplay;
   }
 
@@ -172,7 +172,7 @@ class UIController {
     container.style.height = '100%';
     container.style.display = 'flex';
     container.style.alignItems = 'center';
-    
+
     const progress = document.createElement('div');
     progress.className = 'cp-progress';
     progress.style.width = '100%';
@@ -180,7 +180,7 @@ class UIController {
     progress.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
     progress.style.position = 'relative';
     progress.style.cursor = 'pointer';
-    
+
     const buffer = document.createElement('div');
     buffer.className = 'cp-progress-buffer';
     buffer.style.position = 'absolute';
@@ -189,7 +189,7 @@ class UIController {
     buffer.style.height = '100%';
     buffer.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     buffer.style.width = '0%';
-    
+
     const played = document.createElement('div');
     played.className = 'cp-progress-played';
     played.style.position = 'absolute';
@@ -198,7 +198,7 @@ class UIController {
     played.style.height = '100%';
     played.style.backgroundColor = this.options.themeColor;
     played.style.width = '0%';
-    
+
     const handle = document.createElement('div');
     handle.className = 'cp-progress-handle';
     handle.style.position = 'absolute';
@@ -210,11 +210,11 @@ class UIController {
     handle.style.borderRadius = '50%';
     handle.style.transform = 'translateX(-50%)';
     handle.style.display = 'none';
-    
+
     progress.appendChild(buffer);
     progress.appendChild(played);
     progress.appendChild(handle);
-    
+
     // 进度条事件
     progress.addEventListener('click', (e) => {
       const rect = progress.getBoundingClientRect();
@@ -223,26 +223,26 @@ class UIController {
       const time = duration * percent;
       this.player.setCurrentTime(time);
     });
-    
+
     progress.addEventListener('mouseenter', () => {
       handle.style.display = 'block';
     });
-    
+
     progress.addEventListener('mouseleave', () => {
       handle.style.display = 'none';
     });
-    
+
     progress.addEventListener('mousemove', (e) => {
       const rect = progress.getBoundingClientRect();
       const percent = (e.clientX - rect.left) / rect.width;
       handle.style.left = `${percent * 100}%`;
     });
-    
+
     // 保存引用
     this.controls.progressBuffer = buffer;
     this.controls.progressPlayed = played;
     this.controls.progressHandle = handle;
-    
+
     container.appendChild(progress);
     return container;
   }
@@ -254,38 +254,38 @@ class UIController {
         this.controls.play.textContent = '⏸';
       }
     });
-    
+
     this.player.on('pause', () => {
       if (this.controls.play) {
         this.controls.play.textContent = '▶';
       }
     });
-    
+
     // 时间更新
     this.player.on('timeupdate', ({ currentTime, duration }) => {
       this.updateTimeDisplay(currentTime, duration);
       this.updateProgress(currentTime, duration);
     });
-    
+
     // 音量变化
     this.player.on('volumechange', ({ volume, muted }) => {
       this.updateVolumeDisplay(volume, muted);
     });
-    
+
     // 全屏变化
     this.player.on('fullscreenchange', (isFullscreen) => {
       if (this.controls.fullscreen) {
         this.controls.fullscreen.textContent = isFullscreen ? '⛶' : '⛶';
       }
     });
-    
+
     // 画中画变化
     this.player.on('pipchange', (isPip) => {
       if (this.controls.pip) {
         this.controls.pip.textContent = isPip ? 'PIP' : 'PIP';
       }
     });
-    
+
     // 鼠标事件用于自动隐藏控制栏
     if (this.options.autoHide) {
       this.container.addEventListener('mouseenter', () => {
@@ -293,18 +293,18 @@ class UIController {
         this.showControls();
         this.clearHideTimeout();
       });
-      
+
       this.container.addEventListener('mouseleave', () => {
         this.isMouseOver = false;
         this.setHideTimeout();
       });
-      
+
       this.container.addEventListener('mousemove', () => {
         this.showControls();
         this.clearHideTimeout();
         this.setHideTimeout();
       });
-      
+
       // 初始隐藏
       this.setHideTimeout();
     }

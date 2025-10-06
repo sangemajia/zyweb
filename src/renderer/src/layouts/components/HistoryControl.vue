@@ -22,11 +22,11 @@ const router = useRouter();
 const route = useRoute();
 
 const gotoBack = () => {
-  router.back()
+  router.back();
 };
 
 const gotoForward = () => {
-  router.forward()
+  router.forward();
 };
 
 const gotoRefresh = () => {

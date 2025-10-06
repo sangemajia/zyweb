@@ -1,93 +1,110 @@
-interface DanmakuComment {
-  id?: string;
-  text: string;
-  time: number;
-  color?: string;
-  mode?: 'scroll' | 'top' | 'bottom';
-  size?: number;
-  author?: string;
-}
-
-interface PlayerConfig {
+// 统一的播放器配置接口
+export interface PlayerConfig {
+  // 容器元素或ID
   container: string | HTMLElement;
+
+  // 视频源URL
   url: string;
-  type?: 'mp4' | 'm3u8' | 'flv' | 'mpd' | 'torrent' | 'mpegts' | 'auto';
+
+  // 视频类型 (mp4, m3u8, flv, mpd, torrent, mpegts, auto)
+  type?: string;
+
+  // 自动播放
   autoplay?: boolean;
+
+  // 音量 (0-1)
   volume?: number;
+
+  // 静音
   muted?: boolean;
+
+  // 播放速度 (0.5-4)
   playbackRate?: number;
+
+  // 开始时间
   startTime?: number;
+
+  // 是否为直播
   isLive?: boolean;
-  controls?: boolean;
+
+  // 宽度
   width?: string;
+
+  // 高度
   height?: string;
+
+  // 是否显示控制栏
+  controls?: boolean;
+
+  // 是否启用弹幕
+  danmaku?: boolean;
+
+  // 主题色
+  themeColor?: string;
+
+  // 控制栏自动隐藏
+  autoHide?: boolean;
+
+  // 控制栏自动隐藏时间(毫秒)
+  autoHideTime?: number;
+
+  // 其他配置项
   [key: string]: any;
 }
 
-interface PlayerEvents {
+// 弹幕评论接口
+export interface DanmakuComment {
+  // 弹幕文本
+  text: string;
+
+  // 弹幕颜色
+  color?: string;
+
+  // 弹幕类型 (top, bottom, scroll)
+  type?: string;
+
+  // 弹幕大小
+  size?: number;
+
+  // 弹幕发送时间
+  time?: number;
+
+  // 弹幕发送者
+  author?: string;
+}
+
+// 播放器事件接口
+export interface PlayerEvents {
+  // 播放事件
   play: () => void;
+
+  // 暂停事件
   pause: () => void;
+
+  // 结束事件
   ended: () => void;
+
+  // 时间更新事件
   timeupdate: (data: { currentTime: number; duration: number }) => void;
+
+  // 音量变化事件
   volumechange: (data: { volume: number; muted: boolean }) => void;
+
+  // 播放速度变化事件
   ratechange: (data: { playbackRate: number }) => void;
+
+  // 就绪事件
   ready: () => void;
-  error: (error: Error) => void;
+
+  // 错误事件
+  error: (error: any) => void;
+
+  // 全屏变化事件
   fullscreenchange: (isFullscreen: boolean) => void;
+
+  // 画中画变化事件
   pipchange: (isPip: boolean) => void;
-  [key: string]: (...args: any[]) => void;
 }
 
-interface CustomPlayerInterface {
-  // 基础控制
-  play(): Promise<void>;
-  pause(): void;
-  stop(): void;
-  
-  // 音频控制
-  setVolume(volume: number): void;
-  getVolume(): number;
-  setMuted(muted: boolean): void;
-  getMuted(): boolean;
-  
-  // 视频控制
-  setPlaybackRate(rate: number): void;
-  getPlaybackRate(): number;
-  setCurrentTime(time: number): void;
-  getCurrentTime(): number;
-  getDuration(): number;
-  
-  // 全屏控制
-  enterFullscreen(): Promise<void>;
-  exitFullscreen(): Promise<void>;
-  isFullscreenMode(): boolean;
-  
-  // 画中画控制
-  enterPip(): Promise<void>;
-  exitPip(): Promise<void>;
-  isPipMode(): boolean;
-  
-  // 弹幕控制
-  loadDanmaku(comments: DanmakuComment[]): void;
-  sendDanmaku(comment: DanmakuComment): void;
-  showDanmaku(): void;
-  hideDanmaku(): void;
-  
-  // 事件监听
-  on<T extends keyof PlayerEvents>(event: T, callback: PlayerEvents[T]): void;
-  on(event: string, callback: Function): void;
-  off<T extends keyof PlayerEvents>(event: T, callback: PlayerEvents[T]): void;
-  off(event: string, callback: Function): void;
-  once<T extends keyof PlayerEvents>(event: T, callback: PlayerEvents[T]): void;
-  once(event: string, callback: Function): void;
-  emit(event: string, ...args: any[]): void;
-  
-  // 状态检查
-  isPaused(): boolean;
-  isVideoElement(): HTMLVideoElement;
-  
-  // 销毁
-  destroy(): void;
-}
-
-export type { DanmakuComment, PlayerConfig, PlayerEvents, CustomPlayerInterface };
+// 媒体类型
+export type MediaType = 'mp4' | 'm3u8' | 'flv' | 'mpd' | 'torrent' | 'mpegts' | 'auto';

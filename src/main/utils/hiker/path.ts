@@ -17,13 +17,30 @@ type AppDefaultPath =
   | 'videos'
   | 'recent'
   | 'logs'
-  | 'crashDumps'
+  | 'crashDumps';
 
 type AppPath = 'runtime' | 'resources' | AppDefaultPath;
 
 const getAppDefaultPath = (name: AppPath): string => {
   // 定义支持的路径名称
-  const appPaths = ['home', 'appData', 'userData', 'sessionData', 'temp', 'exe', 'module', 'desktop', 'documents', 'downloads', 'music', 'pictures', 'videos', 'recent', 'logs', 'crashDumps'];
+  const appPaths = [
+    'home',
+    'appData',
+    'userData',
+    'sessionData',
+    'temp',
+    'exe',
+    'module',
+    'desktop',
+    'documents',
+    'downloads',
+    'music',
+    'pictures',
+    'videos',
+    'recent',
+    'logs',
+    'crashDumps',
+  ];
 
   // 运行状态路径
   if (name === 'runtime') {
@@ -33,7 +50,7 @@ const getAppDefaultPath = (name: AppPath): string => {
   // 公告文件夹路径
   if (name === 'resources') {
     const resourcesPath = join(app.getAppPath(), 'resources');
-    return app.isPackaged ? resourcesPath.replace("app.asar", "app.asar.unpacked") : resourcesPath;
+    return app.isPackaged ? resourcesPath.replace('app.asar', 'app.asar.unpacked') : resourcesPath;
   }
 
   // 检查是否是支持的路径名称

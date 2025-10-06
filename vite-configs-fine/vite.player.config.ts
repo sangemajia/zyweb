@@ -70,7 +70,7 @@ export default defineConfig({
     noDiscovery: true,
     include: undefined,
     // 禁用预打包以减少内存使用
-    disabled: true,
+    noDiscovery: true,
   },
   // 减少内存使用的实验性选项
   worker: {
