@@ -4,12 +4,12 @@ import path from 'path'
 
 // 功能组件构建配置
 export default defineConfig({
-  root: '.', // 设置根目录
+  root: '/workspace/zyweb', // 设置根目录为项目根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../src/renderer'),
+      '@main': path.resolve(__dirname, '../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/code-editor/index',
+    outDir: '../dist/client/fine-components/code-editor',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/code-editor/index/index.vue',
-      name: 'index',
+      entry: path.resolve(__dirname, '../src/renderer/src/components/code-editor/build-entry.ts'),
+      name: 'code-editor',
       formats: ['es'],
       fileName: 'index'
     },
@@ -43,7 +43,20 @@ export default defineConfig({
         'axios',
         'lodash-es',
         'moment',
-        '@vueuse/core'
+        '@vueuse/core',
+        'monaco-editor',
+        'monaco-editor/esm/vs/language/json/json.worker',
+        'monaco-editor/esm/vs/language/css/css.worker',
+        'monaco-editor/esm/vs/language/html/html.worker',
+        'monaco-editor/esm/vs/language/typescript/ts.worker',
+        'monaco-editor/esm/vs/editor/editor.worker',
+        'monaco-editor/esm/vs/language/json/json.worker?worker',
+        'monaco-editor/esm/vs/language/css/css.worker?worker',
+        'monaco-editor/esm/vs/language/html/html.worker?worker',
+        'monaco-editor/esm/vs/language/typescript/ts.worker?worker',
+        'monaco-editor/esm/vs/editor/editor.worker?worker',
+        'splitpanes',
+        'splitpanes/dist/splitpanes.css'
       ],
       output: {
         globals: {
@@ -54,7 +67,10 @@ export default defineConfig({
           axios: 'axios',
           'lodash-es': '_',
           moment: 'moment',
-          '@vueuse/core': 'VueUse'
+          '@vueuse/core': 'VueUse',
+          'monaco-editor': 'monaco',
+          'splitpanes': 'Splitpanes',
+          'splitpanes/dist/splitpanes.css': 'SplitpanesCSS'
         },
         // 减少每个chunk的大小
         compact: true,
@@ -65,6 +81,9 @@ export default defineConfig({
     // 增加内存限制
     chunkSizeWarningLimit: 200000, // 200MB
     brotliSize: false,
+    // 进一步减少内存使用
+    cssCodeSplit: true,
+    modulePreload: false,
   },
   optimizeDeps: {
     noDiscovery: true,

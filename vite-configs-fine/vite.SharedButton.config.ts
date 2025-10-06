@@ -7,9 +7,9 @@ export default defineConfig({
   root: '.', // 设置根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../../src/renderer'),
+      '@main': path.resolve(__dirname, '../../src/main'),
     },
   },
   plugins: [
@@ -29,10 +29,10 @@ export default defineConfig({
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/shared/SharedButton.vue',
+      entry: '../../src/renderer/src/components/shared/SharedButton.vue',
       name: 'SharedButton',
       formats: ['es'],
-      fileName: 'index'
+      fileName: 'SharedButton'
     },
     rollupOptions: {
       external: [

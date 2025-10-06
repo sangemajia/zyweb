@@ -4,12 +4,12 @@ import path from 'path'
 
 // 功能组件构建配置
 export default defineConfig({
-  root: '.', // 设置根目录
+  root: '/workspace/zyweb', // 设置根目录为项目根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../src/renderer'),
+      '@main': path.resolve(__dirname, '../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/terminal/index',
+    outDir: '../dist/client/fine-components/terminal',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/terminal/index/index.vue',
-      name: 'index',
+      entry: path.resolve(__dirname, '../src/renderer/src/components/terminal/index.vue'),
+      name: 'terminal',
       formats: ['es'],
       fileName: 'index'
     },
@@ -43,7 +43,11 @@ export default defineConfig({
         'axios',
         'lodash-es',
         'moment',
-        '@vueuse/core'
+        '@vueuse/core',
+        '@xterm/xterm',
+        '@xterm/addon-fit',
+        '@xterm/addon-web-links',
+        '@xterm/xterm/css/xterm.css'
       ],
       output: {
         globals: {
@@ -54,7 +58,11 @@ export default defineConfig({
           axios: 'axios',
           'lodash-es': '_',
           moment: 'moment',
-          '@vueuse/core': 'VueUse'
+          '@vueuse/core': 'VueUse',
+          '@xterm/xterm': 'xterm',
+          '@xterm/addon-fit': 'FitAddon',
+          '@xterm/addon-web-links': 'WebLinksAddon',
+          '@xterm/xterm/css/xterm.css': 'xtermCSS'
         },
         // 减少每个chunk的大小
         compact: true,
@@ -65,6 +73,9 @@ export default defineConfig({
     // 增加内存限制
     chunkSizeWarningLimit: 200000, // 200MB
     brotliSize: false,
+    // 进一步减少内存使用
+    cssCodeSplit: true,
+    modulePreload: false,
   },
   optimizeDeps: {
     noDiscovery: true,

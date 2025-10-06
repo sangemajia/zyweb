@@ -7,9 +7,9 @@ export default defineConfig({
   root: '.', // 设置根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../../src/renderer'),
+      '@main': path.resolve(__dirname, '../../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/common-nav/index',
+    outDir: '../../dist/client/fine-components/common-nav',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/common-nav/index/index.vue',
-      name: 'index',
+      entry: '../../src/renderer/src/components/common-nav/index.vue',
+      name: 'common-nav',
       formats: ['es'],
       fileName: 'index'
     },

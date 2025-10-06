@@ -7,9 +7,9 @@ export default defineConfig({
   root: '.', // 设置根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../../src/renderer'),
+      '@main': path.resolve(__dirname, '../../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/markdown-render/index',
+    outDir: '../../dist/client/fine-components/markdown-render',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/markdown-render/index/index.vue',
-      name: 'index',
+      entry: '../../src/renderer/src/components/markdown-render/index.vue',
+      name: 'markdown-render',
       formats: ['es'],
       fileName: 'index'
     },
@@ -43,7 +43,10 @@ export default defineConfig({
         'axios',
         'lodash-es',
         'moment',
-        '@vueuse/core'
+        '@vueuse/core',
+        'markdown-it',
+        'markdown-it-mathjax3',
+        'highlight.js'
       ],
       output: {
         globals: {
@@ -54,7 +57,10 @@ export default defineConfig({
           axios: 'axios',
           'lodash-es': '_',
           moment: 'moment',
-          '@vueuse/core': 'VueUse'
+          '@vueuse/core': 'VueUse',
+          'markdown-it': 'MarkdownIt',
+          'markdown-it-mathjax3': 'MarkdownItMathjax3',
+          'highlight.js': 'hljs'
         },
         // 减少每个chunk的大小
         compact: true,

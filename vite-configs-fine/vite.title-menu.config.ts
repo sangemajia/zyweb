@@ -7,9 +7,9 @@ export default defineConfig({
   root: '.', // 设置根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../../src/renderer'),
+      '@main': path.resolve(__dirname, '../../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/title-menu/index',
+    outDir: '../../dist/client/fine-components/title-menu',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/title-menu/index/index.vue',
-      name: 'index',
+      entry: '../../src/renderer/src/components/title-menu/index.vue',
+      name: 'title-menu',
       formats: ['es'],
       fileName: 'index'
     },

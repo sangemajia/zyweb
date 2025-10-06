@@ -4,12 +4,12 @@ import path from 'path'
 
 // 功能组件构建配置
 export default defineConfig({
-  root: '.', // 设置根目录
+  root: '/workspace/zyweb', // 设置根目录为项目根目录
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(__dirname, '../src/renderer/src'),
+      '@renderer': path.resolve(__dirname, '../src/renderer'),
+      '@main': path.resolve(__dirname, '../src/main'),
     },
   },
   plugins: [
@@ -24,13 +24,13 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/client/fine-components/shortcut-input/index',
+    outDir: '../dist/client/fine-components/shortcut-input',
     emptyOutDir: true,
     sourcemap: false,
     minify: false, // 禁用压缩以节省内存
     lib: {
-      entry: 'src/renderer/src/components/shortcut-input/index/index.vue',
-      name: 'index',
+      entry: path.resolve(__dirname, '../src/renderer/src/components/shortcut-input/index.vue'),
+      name: 'shortcut-input',
       formats: ['es'],
       fileName: 'index'
     },
@@ -65,6 +65,9 @@ export default defineConfig({
     // 增加内存限制
     chunkSizeWarningLimit: 200000, // 200MB
     brotliSize: false,
+    // 进一步减少内存使用
+    cssCodeSplit: true,
+    modulePreload: false,
   },
   optimizeDeps: {
     noDiscovery: true,
