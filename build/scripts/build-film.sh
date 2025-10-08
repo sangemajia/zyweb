@@ -142,7 +142,7 @@ build_component() {
     
     # 在构建前先执行一次清理
     log_info "构建前执行内存清理..."
-    ./build/scripts/build-cleanup.sh
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
     
     # 记录构建开始时间
     local start_time=$(date +%s)
@@ -169,7 +169,7 @@ build_component() {
         
         # 构建完成后执行内存清理
         log_info "构建完成后执行内存清理..."
-        ./build/scripts/build-cleanup.sh
+        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
         return 0
     else
         log_error "错误: ${component_name} 构建失败 (退出码: $exit_code)"
@@ -179,7 +179,7 @@ build_component() {
         
         # 构建失败后也执行内存清理
         log_info "构建失败后执行内存清理..."
-        ./build/scripts/build-cleanup.sh
+        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
         return $exit_code
     fi
 }
