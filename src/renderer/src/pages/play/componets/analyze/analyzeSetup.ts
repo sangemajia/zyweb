@@ -1,6 +1,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { throttle } from 'lodash-es';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { t } from '@/locales';
 import { fetchBingeData, putBingeData, fetchHistoryData, putHistoryData } from '@/utils/common/chase';
@@ -106,7 +106,7 @@ export const useAnalyzeSetup = (props: any, emits: any) => {
     const { key } = extConf.value.site;
     const { url: vod_id, name: vod_name } = infoConf.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'analyze',
       relateId: key,
       videoId: vod_id,
@@ -147,7 +147,7 @@ export const useAnalyzeSetup = (props: any, emits: any) => {
     const { url: vod_id, name: vod_name } = infoConf.value;
     const { watchTime, duration, playEnd, skipTimeInStart, skipTimeInEnd } = videoData.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'analyze',
       relateId: key,
       siteSource: '',
@@ -155,7 +155,7 @@ export const useAnalyzeSetup = (props: any, emits: any) => {
       videoId: vod_id,
       videoImage: '',
       videoName: vod_name,
-      videoIndex: `${vod_name}$${vod_id}`,
+      videoIndex: `${vod_name}${vod_id}`,
       watchTime: watchTime,
       duration: duration,
       skipTimeInStart: skipTimeInStart,

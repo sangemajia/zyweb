@@ -2,7 +2,7 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { t } from '@/locales';
 import { usePlayStore } from '@/store';
 import { fetchHistoryData, putHistoryData } from '@/utils/common/chase';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 // 播放
 export const playEvent = async (item, iptvConfig, storePlayer, isVisible) => {
@@ -17,7 +17,7 @@ export const playEvent = async (item, iptvConfig, storePlayer, isVisible) => {
       const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = item;
       const historyRes = await fetchHistoryData(site.key, vod_url, ['iptv']);
       const doc = {
-        date: moment().unix(),
+        date: dayjs().unix(),
         type: 'iptv',
         relateId: site.key,
         siteSource: type_name,

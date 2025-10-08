@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useLocalStorage, useScriptTag, usePreferredDark } from '@vueuse/core';
+import { useLocalStorage, useScriptTag, usePreferredDark } from '@vueuse/core/useLocalStorage';
 import { onMounted, ref, watch } from 'vue';
 
 import { localeConfigKey } from '@/locales/index';

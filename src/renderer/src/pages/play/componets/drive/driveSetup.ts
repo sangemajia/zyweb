@@ -1,6 +1,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { throttle } from 'lodash-es';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { fetchBingeData, putBingeData, fetchHistoryData, putHistoryData } from '@/utils/common/chase';
 import { fetchAlistFile, putAlistInit } from '@/api/drive';
 
@@ -90,7 +90,7 @@ export const useDriveSetup = (props: any, emits: any) => {
     const { key } = extConf.value.site;
     const { id: vod_id, thumb: vod_pic, name: vod_name, path: type_name, remark: vod_remarks } = infoConf.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'drive',
       relateId: key,
       videoId: vod_id,
@@ -131,7 +131,7 @@ export const useDriveSetup = (props: any, emits: any) => {
     const { id: vod_id, thumb: vod_pic, name: vod_name, url: vod_url, path: type_name } = infoConf.value;
     const { watchTime, duration, playEnd, skipTimeInStart, skipTimeInEnd } = videoData.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'drive',
       relateId: key,
       siteSource: type_name,
@@ -139,7 +139,7 @@ export const useDriveSetup = (props: any, emits: any) => {
       videoId: vod_id,
       videoImage: vod_pic,
       videoName: vod_name,
-      videoIndex: `${vod_name}$${vod_url}`,
+      videoIndex: `${vod_name}${vod_url}`,
       watchTime: watchTime,
       duration: duration,
       skipTimeInStart: skipTimeInStart,

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getOriginalJs } from './crypto';
 import { fetchCmsRunMain, putSite, addSite } from '@/api/site';
 import { setT3Proxy } from '@/api/proxy';

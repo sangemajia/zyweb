@@ -1,6 +1,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { throttle } from 'lodash-es';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { fetchBingeData, putBingeData, fetchHistoryData, putHistoryData } from '@/utils/common/chase';
 import { fetchChannelPage, fetchChannelEpg } from '@/api/iptv';
 import { formatEpgStatus } from './utils/iptvUtils';
@@ -50,7 +50,7 @@ export const useIptvSetup = (props: any, emits: any) => {
     (val) => {
       infoConf.value = val;
       formData.value.title = val.name;
-      getEpgList(val.name, moment().format('YYYY-MM-DD'));
+      getEpgList(val.name, dayjs().format('YYYY-MM-DD'));
     },
     { deep: true },
   );
@@ -99,7 +99,7 @@ export const useIptvSetup = (props: any, emits: any) => {
     const { key } = extConf.value.site;
     const { id: vod_id, logo: vod_pic, name: vod_name, group: type_name } = infoConf.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'iptv',
       relateId: key,
       videoId: vod_id,
@@ -140,7 +140,7 @@ export const useIptvSetup = (props: any, emits: any) => {
     const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = infoConf.value;
     const { watchTime, duration, playEnd, skipTimeInStart, skipTimeInEnd } = videoData.value;
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'iptv',
       relateId: key,
       siteSource: type_name,
@@ -148,7 +148,7 @@ export const useIptvSetup = (props: any, emits: any) => {
       videoId: vod_id,
       videoImage: vod_pic,
       videoName: vod_name,
-      videoIndex: `${vod_name}$${vod_url}`,
+      videoIndex: `${vod_name}${vod_url}`,
       watchTime: watchTime,
       duration: duration,
       skipTimeInStart: skipTimeInStart,
@@ -266,7 +266,7 @@ export const useIptvSetup = (props: any, emits: any) => {
     if (!historyData.value?.id) await putHistory();
 
     // 2. 获取电子节目单(不影响)
-    getEpgList(formData.value.title, moment().format('YYYY-MM-DD'));
+    getEpgList(formData.value.title, dayjs().format('YYYY-MM-DD'));
 
     // 3. 获取收藏(不影响)
     fetchBinge();

@@ -100,7 +100,7 @@
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 
 import { ContextMenu, ContextMenuItem, ContextMenuSeparator, ContextMenuGroup } from '@imengyu/vue3-context-menu';
-import { onClickOutside } from '@vueuse/core/useOnClickOutside';
+import { onClickOutside } from '@vueuse/core';
 import { ListInstanceFunctions } from 'tdesign-vue-next';
 import { DataSearchIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { computed, ref, watch, useTemplateRef, onActivated } from 'vue';

@@ -1,5 +1,5 @@
 import { MessagePlugin } from 'tdesign-vue-next';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { fetchBingeData, putBingeData, fetchHistoryData, putHistoryData } from '@/utils/common/chase';
 import {
   VIP_LIST,
@@ -37,7 +37,7 @@ export const putBinge = async (bingeData: any, extConf: any, infoConf: any, setA
   const { key } = extConf.site;
   const { vod_id, vod_pic, vod_name, type_name, vod_remarks } = infoConf;
   const doc = {
-    date: moment().unix(),
+    date: dayjs().unix(),
     type: 'film',
     relateId: key,
     videoId: vod_id,
@@ -106,7 +106,7 @@ export const putHistory = async (
   const { watchTime, duration, playEnd, skipTimeInStart, skipTimeInEnd } = videoData;
   const { flimSource, filmIndex } = active;
   const doc = {
-    date: moment().unix(),
+    date: dayjs().unix(),
     type: 'film',
     relateId: key,
     siteSource: flimSource,

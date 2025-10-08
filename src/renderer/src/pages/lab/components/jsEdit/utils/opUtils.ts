@@ -233,15 +233,15 @@ export const handleDomDebug = async (type: string, rule: string, html: string, l
 
   try {
     const res = await methodMap[type]({ html: content, rule });
-    console.warn(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, res);
+    console.warn(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`, res);
 
-    logRef.value?.write(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+    logRef.value?.write(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
     logRef.value?.write(res);
     MessagePlugin.success(`${t('pages.setting.data.success')}`);
   } catch (err: any) {
-    console.error(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, err);
+    console.error(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`, err);
 
-    logRef.value?.write(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+    logRef.value?.write(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
     logRef.value?.write(err, 'error');
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
   }
@@ -271,15 +271,15 @@ export const handleDataDebugLog = async (mode: string, debugId: string, logRef: 
     const res = await utilsGetLog(mode, debugId);
 
     res.forEach(([_type, time, content]) => {
-      console.info(`log: ${moment(time).format('YYYY-MM-DD HH:mm:ss')}`, content);
+      console.info(`log: ${dayjs(time).format('YYYY-MM-DD HH:mm:ss')}`, content);
 
-      logRef.value?.write(`log: ${moment(time).format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+      logRef.value?.write(`log: ${dayjs(time).format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
       logRef.value?.write(content);
     });
   } catch (err: any) {
-    console.warn(`log: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, err);
+    console.warn(`log: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`, err);
 
-    logRef.value?.write(`log: ${moment().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+    logRef.value?.write(`log: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
     logRef.value?.write(err, 'error');
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
   }
@@ -508,7 +508,7 @@ export const handleDataDebug = async (
   const edit = editTime;
   const init = initTime;
   if (type === 'init' || (edit > init && auto)) {
-    const currentTime = moment().unix();
+    const currentTime = dayjs().unix();
     // setLastEditTimeInit(currentTime);
     if (type !== 'init') {
       await fetchCmsInit({ sourceId: debugId, debug: true });
@@ -531,15 +531,15 @@ export const handleDataDebug = async (
   try {
     const res = await methodMap[type]({ ...data, sourceId: debugId });
     // if (type === 'proxy') setProxyUpload(JSON5.stringify(res));
-    console.info(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, res);
+    console.info(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`, res);
 
-    // logRef.value?.write(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+    // logRef.value?.write(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
     // logRef.value?.write(res);
     MessagePlugin.success(`${t('pages.setting.data.success')}`);
   } catch (err: any) {
-    console.warn(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, err);
+    console.warn(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`, err);
 
-    // logRef.value?.write(`${type}: ${moment().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
+    // logRef.value?.write(`${type}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} > `, 'info', false);
     // logRef.value?.write(err, 'error');
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
   }

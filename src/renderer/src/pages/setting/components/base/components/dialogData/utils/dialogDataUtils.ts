@@ -1,5 +1,5 @@
 import { MessagePlugin } from 'tdesign-vue-next';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
 import { t } from '@/locales';
 import { clearDb, exportDb, webdevLocal2Remote, webdevRemote2Local, initDb } from '@/api/setting';
@@ -74,7 +74,7 @@ const clearHistory = async (type: string) => {
 const addHistoryItem = async (type: string, data: { [key: string]: string }, historyList: any) => {
   try {
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       relateId: data.relateId,
       videoName: data.videoName,
       videoId: data.videoId,
@@ -173,7 +173,7 @@ const exportData = async (active: any) => {
     const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
       action: 'showSaveDialog',
       config: {
-        defaultPath: `zyfun_config_${moment().format('YYYYMMDD_HHmmss')}.json`,
+        defaultPath: `zyfun_config_${dayjs().format('YYYYMMDD_HHmmss')}.json`,
         properties: ['showHiddenFiles'],
         filters: [{ name: 'JSON Files', extensions: ['json'] }],
       },

@@ -208,7 +208,7 @@
 import { ref, watch, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { throttle } from 'lodash-es';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   ChevronDownIcon,
   ChevronRightSIcon,

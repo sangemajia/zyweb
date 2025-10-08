@@ -128,7 +128,7 @@ import {
   OrderDescendingIcon,
 } from 'tdesign-icons-vue-next';
 import TitleMenu from '@/components/title-menu/index.vue';
-import { useDetailSetup } from './detailSetup';
+import { useDetailSetup } from './detail/detailSetup';
 
 const props = defineProps({
   visible: {

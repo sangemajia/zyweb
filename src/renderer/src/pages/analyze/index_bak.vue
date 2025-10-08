@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Share1Icon, CloseIcon, HistoryIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onActivated, onMounted, ref, watch, useTemplateRef } from 'vue';
@@ -226,20 +226,20 @@ const getVideoInfo = async (url: string, title: string) => {
   const res = await findHistory({ relateId: active.value.nav, videoId: url });
 
   if (res)
-    putHistory({
-      ids: [res.id],
-      doc: { date: moment().unix() },
-    });
-  else {
-    const doc = {
-      date: moment().unix(),
-      relateId: active.value.nav,
-      videoId: url,
-      videoName: urlTitle.value,
-      type: 'analyze',
-    };
-    addHistory(doc);
-  }
+        putHistory({
+          ids: [res.id],
+          doc: { date: dayjs().unix() },
+        });
+      else {
+        const doc = {
+          date: dayjs().unix(),
+          relateId: active.value.nav,
+          videoId: url,
+          videoName: urlTitle.value,
+          type: 'analyze',
+        };
+        addHistory(doc);
+      }
 };
 
 // input 变化

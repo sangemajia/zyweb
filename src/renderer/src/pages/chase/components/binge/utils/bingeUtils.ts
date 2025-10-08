@@ -1,5 +1,7 @@
-import moment from 'moment';
-import { size, findIndex, reject } from 'lodash-es';
+import dayjs from 'dayjs';
+import size from 'lodash-es/size';
+import findIndex from 'lodash-es/findIndex';
+import reject from 'lodash-es/reject';
 import { MessagePlugin } from 'tdesign-vue-next';
 import PQueue from 'p-queue';
 import { delStar, fetchStarPage } from '@/api/star';
@@ -66,7 +68,7 @@ const handleIptvPlay = async (item: any, storePlayer: any) => {
     // 记录播放记录
     const historyRes = await fetchHistoryData(relateSite.key, videoId, ['iptv']);
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'iptv',
       relateId: relateSite.key,
       siteSource: infoData.group,
@@ -74,7 +76,7 @@ const handleIptvPlay = async (item: any, storePlayer: any) => {
       videoId: videoId,
       videoImage: videoImage,
       videoName: videoName,
-      videoIndex: `${videoName}$${infoData.url}`,
+      videoIndex: `${videoName}${infoData.url}`,
       watchTime: 0,
       duration: 0,
       skipTimeInStart: 0,
@@ -110,7 +112,7 @@ const handleDrivePlay = async (item: any, storePlayer: any) => {
     // 记录播放记录
     const historyRes = await fetchHistoryData(relateSite.key, videoId, ['drive']);
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'drive',
       relateId: relateSite.key,
       siteSource: videoType,
@@ -118,7 +120,7 @@ const handleDrivePlay = async (item: any, storePlayer: any) => {
       videoId: videoId,
       videoImage: videoImage,
       videoName: videoName,
-      videoIndex: `${videoName}$${infoData.url}`,
+      videoIndex: `${videoName}${infoData.url}`,
       watchTime: 0,
       duration: 0,
       skipTimeInStart: 0,
@@ -160,7 +162,7 @@ const handleAnalyzePlay = async (item: any, storePlayer: any) => {
     window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: response.url });
     const historyRes = await fetchHistoryData(relateSite.key, videoId, ['analyze']);
     const doc = {
-      date: moment().unix(),
+      date: dayjs().unix(),
       type: 'analyze',
       relateId: relateSite.key,
       siteSource: '',
@@ -168,7 +170,7 @@ const handleAnalyzePlay = async (item: any, storePlayer: any) => {
       videoId: videoId,
       videoImage: '',
       videoName: videoName,
-      videoIndex: `${videoName}$${response.url}`,
+      videoIndex: `${videoName}${response.url}`,
       watchTime: 0,
       duration: 0,
       skipTimeInStart: 0,

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { t } from '@/locales';
 import {
@@ -89,7 +89,7 @@ const putBinge = async (bingeData: any, active: any, extConf: any, infoConf: any
   const { key } = extConf.site;
   const { vod_id, vod_pic, vod_name, type_name, vod_remarks } = infoConf;
   const doc = {
-    date: moment().unix(),
+    date: dayjs().unix(),
     type: 'film',
     relateId: key,
     videoId: vod_id,
@@ -132,7 +132,7 @@ const putHistory = async (historyData: any, active: any, extConf: any, infoConf:
   const { vod_id, vod_pic, vod_name } = infoConf;
   const { flimSource, filmIndex } = active;
   const doc = {
-    date: moment().unix(),
+    date: dayjs().unix(),
     type: 'film',
     relateId: key,
     siteSource: flimSource,

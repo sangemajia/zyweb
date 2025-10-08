@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /**
  * 格式化 EPG 状态
@@ -7,12 +7,12 @@ import moment from 'moment';
  * @returns 'playing' | 'unplay' | 'played'
  */
 export const formatEpgStatus = (start: string, end: string): 'playing' | 'unplay' | 'played' => {
-  const nowTimestamp = moment();
-  const startTimestamp = moment().set({
+  const nowTimestamp = dayjs();
+  const startTimestamp = dayjs().set({
     hours: parseInt(start.split(':')[0], 10),
     minutes: parseInt(start.split(':')[1], 10),
   });
-  const endTimestamp = moment().set({
+  const endTimestamp = dayjs().set({
     hours: parseInt(end.split(':')[0], 10),
     minutes: parseInt(end.split(':')[1], 10),
   });

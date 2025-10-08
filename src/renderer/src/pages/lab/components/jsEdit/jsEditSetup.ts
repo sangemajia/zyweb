@@ -154,7 +154,7 @@ export const useJsEditSetup = () => {
     watch(
       () => form.value.content.js,
       () => {
-        const currentTime = moment().unix();
+        const currentTime = dayjs().unix();
         form.value.lastEditTime.edit = currentTime;
       },
     );

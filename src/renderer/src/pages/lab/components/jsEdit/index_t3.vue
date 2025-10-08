@@ -231,7 +231,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from 'moment';
+import dayjs from 'dayjs';
 import jsBeautify from 'js-beautify';
 import JSON5 from 'json5';
 import { computed, ref, onMounted, watch } from 'vue';
@@ -385,7 +385,7 @@ watch(
 watch(
   () => form.value.content.edit,
   () => {
-    const currentTime = moment().unix();
+    const currentTime = dayjs().unix();
     form.value.lastEditTime.edit = currentTime;
   },
 );
@@ -674,7 +674,7 @@ const performAction = async (type, requestData = {}) => {
     }
     // 4.自动初始化则上传并初始化
     if (type === 'init' || (form.value.lastEditTime.edit > form.value.lastEditTime.init && form.value.init.auto)) {
-      const currentTime = moment().unix();
+      const currentTime = dayjs().unix();
       form.value.lastEditTime.init = currentTime;
       await putSite({ ids: [debugId.value], doc: { ext: content } });
       if (type !== 'init') {

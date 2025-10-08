@@ -48,6 +48,8 @@ function readExternalDeps() {
     'sm-crypto',
     'splitpanes',
     'v3-infinite-loading',
+    'he',
+    'wxmp-rsa',
     
     // Electron相关（Web环境中模拟）
     'electron',

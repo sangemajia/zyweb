@@ -36,7 +36,7 @@
 <script setup lang="tsx">
 import 'v3-infinite-loading/lib/style.css';
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { FolderIcon, LoadingIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onActivated, onMounted, reactive, ref } from 'vue';

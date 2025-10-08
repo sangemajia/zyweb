@@ -3,7 +3,7 @@ import { usePlayStore } from '@/store';
 import { fetchAlistFile } from '@/api/drive';
 import { fetchHistoryData, putHistoryData } from '@/utils/common/chase';
 import { base64 } from '@/utils/crypto';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 // 播放
 export const playEvent = async (item, driveConfig, storePlayer, isVisible, driveContent, breadcrumb) => {
@@ -19,7 +19,7 @@ export const playEvent = async (item, driveConfig, storePlayer, isVisible, drive
       // 记录播放记录
       const historyRes = await fetchHistoryData(site.key, base64.encode(item.path), ['drive']);
       const doc = {
-        date: moment().unix(),
+        date: dayjs().unix(),
         type: 'drive',
         relateId: site.key,
         siteSource: breadcrumb?.at(-1)?.path,

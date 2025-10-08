@@ -38,7 +38,7 @@ import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import 'v3-infinite-loading/lib/style.css';
 
 import { ContextMenu, ContextMenuItem } from '@imengyu/vue3-context-menu';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import PQueue from 'p-queue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import InfiniteLoading from 'v3-infinite-loading';

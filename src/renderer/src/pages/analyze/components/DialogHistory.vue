@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import 'v3-infinite-loading/lib/style.css';
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { DeleteIcon } from 'tdesign-icons-vue-next';
 import { DialogPlugin } from 'tdesign-vue-next';
 import InfiniteLoading from 'v3-infinite-loading';
@@ -147,7 +147,7 @@ const load = async ($state) => {
 };
 
 const formatDate = (timestamp: number) => {
-  return moment.unix(timestamp).format('YYYY-MM-DD');
+  return dayjs.unix(timestamp).format('YYYY-MM-DD');
 };
 </script>
 
