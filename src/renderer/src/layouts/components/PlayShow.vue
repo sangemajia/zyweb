@@ -1,14 +1,14 @@
 <template>
   <div class="player-show">
     <div v-if="playerStutus.status" class="box-flex">
-      <div class="mini-box" @click="focusPlayerWindowEvent">
+      <div class="mini-box">
         <div class="mini-box-video">
           <video-library-icon size="large" class="video" />
         </div>
         <div class="mini-box-title-warp" ref="marqueeContainerRef">
           <span class="mini-box-title" ref="marqueeTextRef">{{ playerStutus.title }}</span>
         </div>
-        <div class="mini-box-close" @click.stop="destroyPlayerWindowEvent">
+        <div class="mini-box-close" @click.stop="closePlayer">
           <close-icon size="large" class="close" />
         </div>
       </div>
@@ -68,12 +68,8 @@ const setMarqueeAnimation = () => {
   }
 };
 
-const focusPlayerWindowEvent = () => {
-  window.electron.ipcRenderer.send('manage-win', { win: 'play', action: 'focus' });
-};
-
-const destroyPlayerWindowEvent = () => {
-  window.electron.ipcRenderer.send('manage-win', { win: 'play', action: 'destroy' });
+// Web版本中不适用窗口管理功能
+const closePlayer = () => {
   playerStore.updateConfig({
     status: false,
   });
@@ -94,11 +90,9 @@ const destroyPlayerWindowEvent = () => {
       width: 140px;
       display: flex;
       align-items: center;
-      cursor: pointer;
 
       &-close,
       &-video {
-        cursor: pointer;
         text-align: center;
         display: flex;
         align-items: center;

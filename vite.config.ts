@@ -6,9 +6,9 @@ import path from 'path'
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/renderer/src'),
-      '@renderer': path.resolve(__dirname, 'src/renderer'),
-      '@main': path.resolve(__dirname, 'src/main'),
+      '@': path.resolve(process.cwd(), 'src/renderer/src'),
+      '@renderer': path.resolve(process.cwd(), 'src/renderer'),
+      '@main': path.resolve(process.cwd(), 'src/main'),
     },
   },
   plugins: [
@@ -48,7 +48,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../dist/zyweb',
+    outDir: path.resolve(process.cwd(), '../dist/zyweb'),
     emptyOutDir: true,
     // 禁用压缩以减少内存使用
     minify: false,

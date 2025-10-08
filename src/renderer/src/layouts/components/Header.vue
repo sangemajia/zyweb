@@ -32,9 +32,8 @@ import SystemPin from './SystemPin.vue';
 import Lab from './Lab.vue';
 
 const handleMouseDown = (event) => {
-  if (event.detail === 2) {
-    window.electron.ipcRenderer.send('win:invoke', 'max');
-  }
+  // Web版本中不处理窗口最大化功能
+  console.log('窗口最大化功能在Web版本中不适用');
 };
 </script>
 

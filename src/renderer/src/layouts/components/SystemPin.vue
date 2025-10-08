@@ -1,5 +1,5 @@
 <template>
-  <div class="system-pin" @click="toggleAlwaysOnTop">
+  <div class="system-pin">
     <t-button theme="default" shape="square" variant="text">
       <pin-filled-icon v-if="active.pin" />
       <pin-icon v-else />
@@ -15,13 +15,9 @@ const active = ref({
   pin: false,
 });
 
-// 窗口置顶
+// 窗口置顶功能在Web版本中不适用
 const toggleAlwaysOnTop = async () => {
-  const currStatus = await window.electron.ipcRenderer.invoke('manage-pin', { action: 'status' });
-  const newStatus = await window.electron.ipcRenderer.invoke('manage-pin', {
-    action: 'set',
-    config: { status: !currStatus },
-  });
-  active.value.pin = newStatus;
+  // Web版本中不实现窗口置顶功能
+  console.log('窗口置顶功能在Web版本中不适用');
 };
 </script>
