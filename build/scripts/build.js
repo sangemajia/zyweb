@@ -2,8 +2,11 @@
 // 统一构建脚本 - 智能化构建入口
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { execSync, exec } from 'child_process';
+import { promisify } from 'util';
 import { fileURLToPath } from 'url';
+
+const execAsync = promisify(exec);
 
 // 获取当前文件的目录路径
 const __filename = fileURLToPath(import.meta.url);
@@ -162,7 +165,7 @@ export NODE_OPTIONS="--max-old-space-size=${recommendedNodeMemory}"
 }
 
 // 执行构建命令
-function executeBuildCommand(command, componentType) {
+async function executeBuildCommand(command, componentType) {
   log.info(`开始构建 ${componentType}...`);
   
   // 获取构建前的内存信息
@@ -172,7 +175,7 @@ function executeBuildCommand(command, componentType) {
   // 在构建前执行清理
   log.info("构建前执行内存清理...");
   try {
-    execSync('./build/scripts/build-cleanup.sh', { stdio: 'inherit' });
+    await execAsync('./build/scripts/build-cleanup.sh');
   } catch (error) {
     log.warning("清理脚本执行失败，继续构建...");
   }
@@ -182,7 +185,7 @@ function executeBuildCommand(command, componentType) {
   
   try {
     // 执行构建命令
-    execSync(command, { stdio: 'inherit' });
+    await execAsync(command);
     
     // 记录构建结束时间
     const endTime = Date.now();
@@ -198,7 +201,7 @@ function executeBuildCommand(command, componentType) {
     // 构建完成后执行清理
     log.info("构建完成后执行内存清理...");
     try {
-      execSync('./build/scripts/build-cleanup.sh', { stdio: 'inherit' });
+      await execAsync('./build/scripts/build-cleanup.sh');
     } catch (error) {
       log.warning("清理脚本执行失败...");
     }
@@ -215,7 +218,7 @@ function executeBuildCommand(command, componentType) {
     // 构建失败后也执行清理
     log.info("构建失败后执行内存清理...");
     try {
-      execSync('./build/scripts/build-cleanup.sh', { stdio: 'inherit' });
+      await execAsync('./build/scripts/build-cleanup.sh');
     } catch (error) {
       log.warning("清理脚本执行失败...");
     }
@@ -284,11 +287,15 @@ async function main() {
   
   // 按顺序构建各层
   for (const layer of layers) {
-    const success = executeBuildCommand(`bash ${layer.script}`, layer.name);
+    const success = await executeBuildCommand(`bash ${layer.script}`, layer.name);
     if (!success) {
       log.error(`构建失败: ${layer.name}`);
       process.exit(1);
     }
+    
+    // 在组件之间添加延迟，避免被容器环境终止
+    log.info(`等待2秒后继续构建下一个组件...`);
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
   
   // 记录总结束时间
