@@ -12,5 +12,5 @@ export default createViteConfig({
   external: [
 
   ],
-  outDir: '../../../dist/zyweb/shared-components'
+  outDir: path.resolve(__dirname, '../../../dist/zyweb/shared-components')
 });

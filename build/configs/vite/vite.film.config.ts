@@ -18,5 +18,5 @@ export default createViteConfig({
     './shared-components/assets/SharedCard-*.js',
     './shared-components/assets/SimpleShared-*.js',
   ],
-  outDir: '../../../dist/zyweb/film'
+  outDir: path.resolve(__dirname, '../../../dist/zyweb/film')
 });
