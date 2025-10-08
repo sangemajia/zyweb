@@ -58,28 +58,9 @@ const mediaUtils = (() => {
     return headers;
   };
 
+  // Empty function as we are removing Electron-specific code in web version
   const formatWeb2electronHeaders = (headers: { [key: string]: string }) => {
-    const unsafeHeads = new Set(['Host', 'Referer', 'Origin', 'User-Agent', 'Content-Length', 'Set-Cookie', 'Cookie']);
-
-    const capitalizeHeader = (header: string) =>
-      header
-        .split('-')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('-');
-
-    return Object.entries(headers).reduce(
-      (formattedHeaders, [key, value]) => {
-        const capitalizedHeader = capitalizeHeader(key);
-
-        // 检查是否为不安全头并进行重命名
-        const finalHeader = unsafeHeads.has(capitalizedHeader) ? `Electron-${capitalizedHeader}` : capitalizedHeader;
-
-        // 添加到结果对象
-        formattedHeaders[finalHeader] = value;
-        return formattedHeaders;
-      },
-      {} as { [key: string]: string },
-    );
+    return headers;
   };
 
   // 支持的媒体格式映射
@@ -154,7 +135,7 @@ const mediaUtils = (() => {
           method,
           timeout,
           headers: {
-            ...formatWeb2electronHeaders(headers),
+            ...formatRemoveUnSafeHeaders(headers),
             Range: 'bytes=0-7',
           },
         });
@@ -190,7 +171,8 @@ const mediaUtils = (() => {
     mediaType2PlayerType,
     formatRemoveUnSafeHeaders,
     formatUrlHeaders,
-    formatWeb2electronHeaders,
+    // formatWeb2electronHeaders is removed for web version
+    // formatWeb2electronHeaders,
   };
 })();
 

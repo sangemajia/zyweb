@@ -5,7 +5,6 @@
   "main": "./dist-electron/main/index.js",
   "type": "module",
   "scripts": {
-    "dev:web": "vite",
     "build": "build/scripts/build-cleanup.sh && build/scripts/simple-build.sh",
     "build:recommended": "build/scripts/build-cleanup.sh && build/scripts/simple-build.sh",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
@@ -54,6 +53,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
+    "less": "^4.4.2",
     "terser": "^5.44.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.9"

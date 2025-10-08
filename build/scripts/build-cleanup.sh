@@ -34,6 +34,10 @@ get_available_memory() {
 cleanup_build_processes() {
     log_info "清理构建相关进程..."
     
+    # 显示清理前的进程信息
+    log_info "清理前的Node.js相关进程:"
+    ps aux | grep -v grep | grep -E "(node|vite|rollup)" || log_info "未找到相关进程"
+    
     # 清理可能存在的Vite进程
     pkill -f "vite" >/dev/null 2>&1 || true
     
@@ -43,8 +47,26 @@ cleanup_build_processes() {
     # 清理可能存在的Rollup进程
     pkill -f "rollup" >/dev/null 2>&1 || true
     
+    # 清理可能存在的Vite dev server进程
+    pkill -f "vite.*dev" >/dev/null 2>&1 || true
+    
+    # 清理可能存在的Node.js进程（更广泛的匹配）
+    pkill -f "node.*vite" >/dev/null 2>&1 || true
+    
+    # 清理可能存在的Node.js模块进程
+    pkill -f "node.*module" >/dev/null 2>&1 || true
+    
+    # 强制杀死所有Node.js进程（除了当前脚本进程）
+    # 注意：这里排除了当前脚本的进程ID，避免杀死自己
+    local current_pid=$$
+    pkill -f "node" | grep -v $current_pid >/dev/null 2>&1 || true
+    
     # 等待进程完全终止
-    sleep 1
+    sleep 3
+    
+    # 显示清理后的进程信息
+    log_info "清理后的Node.js相关进程:"
+    ps aux | grep -v grep | grep -E "(node|vite|rollup)" || log_info "未找到相关进程"
 }
 
 # 清理Node.js缓存
@@ -76,6 +98,12 @@ cleanup_node_cache() {
         rm -rf node_modules/.rollup
         log_info "已清理node_modules/.rollup目录"
     fi
+    
+    # 清理可能存在的.vite-temp目录
+    if [ -d ".vite-temp" ]; then
+        rm -rf .vite-temp
+        log_info "已清理.vite-temp目录"
+    fi
 }
 
 # 清理构建临时文件
@@ -101,6 +129,10 @@ cleanup_temp_files() {
     rm -rf .vite-temp >/dev/null 2>&1 || true
     rm -rf .rollup-temp >/dev/null 2>&1 || true
     rm -rf .build-temp >/dev/null 2>&1 || true
+    
+    # 清理可能存在的Node.js临时文件
+    rm -rf /tmp/vite-* >/dev/null 2>&1 || true
+    rm -rf /tmp/rollup-* >/dev/null 2>&1 || true
 }
 
 # 强制垃圾回收（如果支持）
@@ -135,6 +167,9 @@ main_cleanup() {
     
     # 清理构建相关进程
     cleanup_build_processes
+    
+    # 等待一段时间确保进程完全终止
+    sleep 5
     
     # 清理Node.js缓存
     cleanup_node_cache
