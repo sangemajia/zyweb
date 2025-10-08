@@ -112,7 +112,8 @@ force_garbage_collection() {
         sync
         if command -v echo >/dev/null 2>&1; then
             # 尝试释放页面缓存、目录项缓存和索引节点缓存
-            echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+            # 在容器环境中可能没有权限，所以忽略错误
+            echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || log_info "在容器环境中无法执行drop_caches，跳过此步骤"
         fi
     fi
 }
