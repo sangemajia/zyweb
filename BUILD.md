@@ -5,11 +5,7 @@
 zyweb 采用分层构建架构，将前端应用拆分为多个层次，以提高构建效率和组件复用性：
 
 1. **基础组件层** - 共享的基础UI组件
-2. **中型组件层** - 功能模块组件（如Film页面组件）
-3. **大型组件层** - 完整功能页面组件
-4. **功能页面层** - 特定功能页面
-5. **前端毛坯层** - 前端框架和基础结构
-6. **完整应用层** - 完整的Web应用
+2. **功能页面层** - 特定功能页面（Film、IPTV、Drive等）
 
 ## 构建方式
 
@@ -31,22 +27,31 @@ npm run build --use-recommended
 
 ```bash
 # 构建基础组件层
-./build/scripts/build-shared.sh
+./build/scripts/build-shared-components.sh
 
-# 构建Film中型组件层
-./build/scripts/build-film-medium.sh
+# 构建Film页面
+./build/scripts/build-film.sh
 
-# 构建Film大型组件层
-./build/scripts/build-film-large.sh
+# 构建IPTV页面
+./build/scripts/build-iptv.sh
 
-# 构建Film功能页面层
-./build/scripts/build-film-feature.sh
+# 构建Drive页面
+./build/scripts/build-drive.sh
 
-# 构建前端毛坯层
-./build/scripts/build-frontend-shell.sh
+# 构建Lab页面
+./build/scripts/build-lab.sh
 
-# 构建完整应用层
-./build/scripts/build-complete-app.sh
+# 构建Chase页面
+./build/scripts/build-chase.sh
+
+# 构建Play页面
+./build/scripts/build-play.sh
+
+# 构建Setting页面
+./build/scripts/build-setting.sh
+
+# 构建Analyze页面
+./build/scripts/build-analyze.sh
 ```
 
 ### 3. 完整构建
@@ -54,7 +59,7 @@ npm run build --use-recommended
 按顺序构建所有层次：
 
 ```bash
-./build/scripts/build-all-layers.sh
+npm run build
 ```
 
 ## 内存优化
@@ -70,12 +75,15 @@ npm run build --use-recommended
 
 构建完成后会在 `build/recommendations/` 目录下生成推荐内存方案文件：
 
-- `shared_recommendation.txt` - 基础组件层推荐方案
-- `film-medium_recommendation.txt` - Film中型组件层推荐方案
-- `film-large_recommendation.txt` - Film大型组件层推荐方案
-- `film-feature_recommendation.txt` - Film功能页面层推荐方案
-- `frontend-shell_recommendation.txt` - 前端毛坯层推荐方案
-- `complete-app_recommendation.txt` - 完整应用层推荐方案
+- `shared-components_recommendation.txt` - 基础组件层推荐方案
+- `film_recommendation.txt` - Film页面推荐方案
+- `iptv_recommendation.txt` - IPTV页面推荐方案
+- `drive_recommendation.txt` - Drive页面推荐方案
+- `lab_recommendation.txt` - Lab页面推荐方案
+- `chase_recommendation.txt` - Chase页面推荐方案
+- `play_recommendation.txt` - Play页面推荐方案
+- `setting_recommendation.txt` - Setting页面推荐方案
+- `analyze_recommendation.txt` - Analyze页面推荐方案
 
 ## 开发模式
 
