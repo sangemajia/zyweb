@@ -282,12 +282,15 @@ async function main() {
   
   // 按顺序执行分层构建
   const layers = [
-    { name: '基础组件层', script: './build/scripts/build-shared-components.sh' },
-    { name: 'Film中型组件层', script: './build/scripts/build-film-medium.sh' },
-    { name: 'Film大型组件层', script: './build/scripts/build-film-large.sh' },
-    { name: 'Film功能页面层', script: './build/scripts/build-film-feature.sh' },
-    { name: '前端毛坯层', script: './build/scripts/build-frontend-shell.sh' },
-    { name: '完整应用层', script: './build/scripts/build-complete-app.sh' }
+    { name: '基础组件', script: './build/scripts/build-shared-components.sh' },
+    { name: 'Film页面', script: './build/scripts/build-film.sh' },
+    { name: 'IPTV页面', script: './build/scripts/build-iptv.sh' },
+    { name: 'Drive页面', script: './build/scripts/build-drive.sh' },
+    { name: 'Lab页面', script: './build/scripts/build-lab.sh' },
+    { name: 'Chase页面', script: './build/scripts/build-chase.sh' },
+    { name: 'Play页面', script: './build/scripts/build-play.sh' },
+    { name: 'Setting页面', script: './build/scripts/build-setting.sh' },
+    { name: 'Analyze页面', script: './build/scripts/build-analyze.sh' }
   ];
   
   log.info("开始分层构建...");

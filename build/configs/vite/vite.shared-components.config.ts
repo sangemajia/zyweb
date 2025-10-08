@@ -1,7 +1,7 @@
 import { createViteConfig } from './vite.common.config';
 import path from 'path';
 
-// 基础组件层构建配置
+// 基础组件构建配置
 export default createViteConfig({
   name: 'shared-components',
   input: {

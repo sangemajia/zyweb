@@ -1,5 +1,5 @@
 #!/bin/bash
-# 基础组件构建脚本
+# Film页面构建脚本
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -164,4 +164,4 @@ build_component() {
 }
 
 # 执行构建
-build_component "shared-components" "build/configs/vite/vite.shared-components.config.ts"
+build_component "film" "build/configs/vite/vite.film.config.ts"
