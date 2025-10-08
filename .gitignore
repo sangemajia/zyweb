@@ -43,6 +43,7 @@ npm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+tsconfig.web.tsbuildinfo
 
 # Local storage files
 *.db
