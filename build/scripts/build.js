@@ -3,6 +3,11 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+// 获取当前文件的目录路径
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 颜色定义
 const colors = {
@@ -267,7 +272,7 @@ async function main() {
   }
   
   // 确保在项目根目录
-  process.chdir(path.join(import.meta.url, '../../..').replace('file://', ''));
+  process.chdir(path.join(__dirname, '../..'));
   
   // 检查是否是首次构建（没有推荐方案）
   const recommendationsDir = path.join(process.cwd(), 'build', 'recommendations');
