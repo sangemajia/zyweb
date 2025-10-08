@@ -185,6 +185,83 @@ sudo apt-get install libxss1
 [8] 打包编译发布
     yarn build:win[mac/linux]
 ```
+
+### Web版本构建
+
+Web版本采用分层构建架构，将前端应用拆分为多个层次，以提高构建效率和组件复用性：
+
+1. **基础组件层** - 共享的基础UI组件
+2. **中型组件层** - 功能模块组件（如Film页面组件）
+3. **大型组件层** - 完整功能页面组件
+4. **功能页面层** - 特定功能页面
+5. **前端毛坯层** - 前端框架和基础结构
+6. **完整应用层** - 完整的Web应用
+
+#### 构建方式
+
+##### 1. 智能构建（推荐）
+
+使用统一的构建入口，自动管理内存限制和推荐方案：
+
+```bash
+# 首次构建（生成推荐内存方案）
+npm run build
+
+# 使用推荐方案构建（更快）
+npm run build --use-recommended
+```
+
+##### 2. 分层构建
+
+可以单独构建特定层次：
+
+```bash
+# 构建基础组件层
+./build/scripts/build-shared.sh
+
+# 构建Film中型组件层
+./build/scripts/build-film-medium.sh
+
+# 构建Film大型组件层
+./build/scripts/build-film-large.sh
+
+# 构建Film功能页面层
+./build/scripts/build-film-feature.sh
+
+# 构建前端毛坯层
+./build/scripts/build-frontend-shell.sh
+
+# 构建完整应用层
+./build/scripts/build-complete-app.sh
+```
+
+##### 3. 完整构建
+
+按顺序构建所有层次：
+
+```bash
+./build/scripts/build-all-layers.sh
+```
+
+#### 内存优化
+
+构建系统会自动检测系统可用内存并动态调整Node.js内存限制：
+
+1. **首次构建** - 自动生成推荐内存方案
+2. **后续构建** - 可使用推荐方案加速构建
+
+构建完成后会在 `build/recommendations/` 目录下生成推荐内存方案文件。
+
+#### 开发模式
+
+```bash
+# 启动开发服务器
+npm run dev:web
+
+# 启动后端服务
+npm run dev:server
+```
+
 <details>
 <summary>展开查看依赖说明</summary>
 

@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev:web": "vite",
-    "build:web": "/workspace/zyweb/build/scripts/build.sh",
+    "build": "node --max-old-space-size=50 build/scripts/build.js",
+    "build:recommended": "node --max-old-space-size=50 build/scripts/build.js --use-recommended",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
     "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
     "format": "prettier --write ."
@@ -51,8 +52,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
-    "@vitejs/plugin-vue-jsx": "^5.1.1",
-    "less": "^4.4.1",
     "terser": "^5.44.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.9"
