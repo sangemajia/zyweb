@@ -111,10 +111,31 @@ build_component() {
     log_info "开始构建 ${component_name}..."
     
     # 动态计算内存限制
-    local memory_limit=1200
-    log_info "系统可用内存: $(get_available_memory)MB"
-    log_info "给iflow分配: 300MB"
-    log_info "给新的node进程分配: ${memory_limit}MB (默认值)"
+    local available_memory=$(get_available_memory)
+    local iflow_memory=300
+    local remaining_memory=$((available_memory - iflow_memory))
+    
+    # 确保剩余内存至少有50MB
+    if [ $remaining_memory -lt 50 ]; then
+        remaining_memory=50
+    fi
+    
+    # 给系统留50MB，然后分配80%给Node.js进程
+    local reserved_memory=50
+    local memory_limit=$((remaining_memory * 8 / 10 - reserved_memory))
+    
+    # 设置上限为800MB，下限为50MB
+    if [ $memory_limit -gt 800 ]; then
+        memory_limit=800
+    fi
+    
+    if [ $memory_limit -lt 50 ]; then
+        memory_limit=50
+    fi
+    
+    log_info "系统可用内存: ${available_memory}MB"
+    log_info "给iflow分配: ${iflow_memory}MB"
+    log_info "给新的node进程分配: ${memory_limit}MB"
     
     # 设置Node.js内存限制
     set_node_memory_limit "${component_name}"

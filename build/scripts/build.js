@@ -167,29 +167,7 @@ function executeBuildCommand(command, componentType) {
   
   // 获取构建前的内存信息
   const availableMemory = getAvailableMemory();
-  const memoryLimit = calculateMemoryLimit();
   log.info(`系统可用内存: ${availableMemory}MB`);
-  log.info(`给iflow分配: 300MB`);
-  log.info(`给新的node进程分配: ${memoryLimit}MB`);
-  
-  // 检查是否使用推荐内存方案
-  const useRecommended = process.argv.includes('--use-recommended');
-  let finalMemoryLimit = memoryLimit;
-  
-  if (useRecommended) {
-    const recommendedMemory = checkRecommendation(componentType);
-    if (recommendedMemory) {
-      finalMemoryLimit = recommendedMemory;
-      log.info(`使用推荐的Node.js内存限制: ${finalMemoryLimit}MB`);
-    } else {
-      log.warning(`未找到 ${componentType} 组件的推荐内存方案，使用动态计算的内存限制: ${finalMemoryLimit}MB`);
-    }
-  }
-  
-  // 设置Node.js内存限制
-  const nodeOptions = `--max-old-space-size=${finalMemoryLimit} --no-warnings --no-experimental-fetch`;
-  process.env.NODE_OPTIONS = nodeOptions;
-  log.info(`已设置Node.js内存限制: ${finalMemoryLimit}MB`);
   
   // 在构建前执行清理
   log.info("构建前执行内存清理...");
@@ -214,7 +192,8 @@ function executeBuildCommand(command, componentType) {
     log.info(`构建耗时: ${buildDuration}秒`);
     
     // 生成推荐内存方案
-    generateMemoryRecommendation(componentType, availableMemory, finalMemoryLimit, buildDuration);
+    // 注意：这里我们传入0作为内存限制，因为实际的内存限制由子脚本处理
+    generateMemoryRecommendation(componentType, availableMemory, 0, buildDuration);
     
     // 构建完成后执行清理
     log.info("构建完成后执行内存清理...");
