@@ -28,7 +28,7 @@ log_error() {
 # 构建基础组件层
 build_shared_components() {
     log_info "开始构建基础组件层..."
-    ./build/scripts/build-shared.sh
+    ./build/scripts/build-shared-components.sh
     local exit_code=$?
     if [ $exit_code -eq 0 ]; then
         log_success "基础组件层构建完成"

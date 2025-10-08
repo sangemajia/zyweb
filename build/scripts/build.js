@@ -282,7 +282,7 @@ async function main() {
   
   // 按顺序执行分层构建
   const layers = [
-    { name: '基础组件层', script: './build/scripts/build-shared.sh' },
+    { name: '基础组件层', script: './build/scripts/build-shared-components.sh' },
     { name: 'Film中型组件层', script: './build/scripts/build-film-medium.sh' },
     { name: 'Film大型组件层', script: './build/scripts/build-film-large.sh' },
     { name: 'Film功能页面层', script: './build/scripts/build-film-feature.sh' },

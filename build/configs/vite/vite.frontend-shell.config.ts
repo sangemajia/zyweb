@@ -1,14 +1,13 @@
 import { createViteConfig } from './vite.common.config';
 import path from 'path';
 
-// 完整应用层构建配置
+// 前端毛坯层构建配置
 export default createViteConfig({
-  name: 'complete-app',
+  name: 'frontend-shell',
   input: {
         'index': path.resolve(__dirname, '../../../src/renderer/src/index.html'),
   },
   external: [
-        './frontend-shell/assets/index-*.js',
         './film-feature/assets/index-*.js',
         './film-large/assets/FilmPage-*.js',
         './film-medium/assets/FilmHeader-*.js',
@@ -22,5 +21,5 @@ export default createViteConfig({
         '@vueuse/core/usePreferredDark',
         '@electron-uikit/titlebar/renderer',
   ],
-  outDir: '../../../dist/zyweb/complete-app'
+  outDir: '../../../dist/zyweb/frontend-shell'
 });

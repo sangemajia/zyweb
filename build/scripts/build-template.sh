@@ -1,10 +1,7 @@
 #!/bin/bash
-# 完整应用层构建脚本
+# 通用构建脚本模板
 
-# 导入通用构建函数
-# source "${BASH_SOURCE%/*}/build-template.sh"  # 这种方式在某些环境下可能不工作
-
-# 直接包含通用构建函数
+# 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -166,6 +163,3 @@ build_component() {
         return $exit_code
     fi
 }
-
-# 执行构建
-build_component "complete-app" "build/configs/vite/vite.complete-app.config.ts"

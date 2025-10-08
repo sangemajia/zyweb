@@ -1,5 +1,5 @@
 #!/bin/bash
-# 完整应用层构建脚本
+# Film功能页面层构建脚本
 
 # 导入通用构建函数
 # source "${BASH_SOURCE%/*}/build-template.sh"  # 这种方式在某些环境下可能不工作
@@ -168,4 +168,4 @@ build_component() {
 }
 
 # 执行构建
-build_component "complete-app" "build/configs/vite/vite.complete-app.config.ts"
+build_component "film-feature" "build/configs/vite/vite.film-feature.config.ts"

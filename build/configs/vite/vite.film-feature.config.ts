@@ -1,15 +1,13 @@
 import { createViteConfig } from './vite.common.config';
 import path from 'path';
 
-// 完整应用层构建配置
+// Film功能页面层构建配置
 export default createViteConfig({
-  name: 'complete-app',
+  name: 'film-feature',
   input: {
-        'index': path.resolve(__dirname, '../../../src/renderer/src/index.html'),
+        'index': path.resolve(__dirname, '../../../src/renderer/src/pages/film/index.html'),
   },
   external: [
-        './frontend-shell/assets/index-*.js',
-        './film-feature/assets/index-*.js',
         './film-large/assets/FilmPage-*.js',
         './film-medium/assets/FilmHeader-*.js',
         './film-medium/assets/FilmFilter-*.js',
@@ -17,10 +15,6 @@ export default createViteConfig({
         './shared-components/assets/SharedButton-*.js',
         './shared-components/assets/SharedCard-*.js',
         './shared-components/assets/SimpleShared-*.js',
-        '@vueuse/core/useLocalStorage',
-        '@vueuse/core/useScriptTag',
-        '@vueuse/core/usePreferredDark',
-        '@electron-uikit/titlebar/renderer',
   ],
-  outDir: '../../../dist/zyweb/complete-app'
+  outDir: '../../../dist/zyweb/film-feature'
 });
