@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@vueuse/core';
+import { useLocalStorage } from '@vueuse/core/useLocalStorage';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 

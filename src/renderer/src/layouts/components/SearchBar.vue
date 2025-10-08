@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { DeleteIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
@@ -120,7 +120,7 @@ const hotConfig = reactive({
   hotUrl: '',
   hotClass: 'episode', // 仅酷云[旧]生效
   hotSource: 1,
-  hotUpdateTime: moment().format('YYYY-MM-DD'),
+  hotUpdateTime: dayjs().format('YYYY-MM-DD'),
   hotData: [],
   hotOption: [],
 }) as any;
@@ -172,23 +172,23 @@ const clearSearchHistory = async () => {
 // 热播映射
 const hotTypeMappings = {
   komect: {
-    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
+    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
     hotSource: '电影',
   },
   douban: {
-    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
+    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
     hotSource: 'tv_hot',
   },
   enlightent: {
-    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
+    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
     hotSource: 'tv',
   },
   kuyun: {
-    hotUpdateTime: () => moment().format('YYYY-MM-DD'),
+    hotUpdateTime: () => dayjs().format('YYYY-MM-DD'),
     hotSource: 1,
   },
   kylive: {
-    hotUpdateTime: () => moment().format('YYYY-MM-DD'),
+    hotUpdateTime: () => dayjs().format('YYYY-MM-DD'),
     hotSource: 0,
   },
 };
@@ -241,7 +241,7 @@ const changeHotSource = (flag) => {
 const getHotList = async (retryCount = 1) => {
   try {
     const retryLimit = 4; // 重试次数 实际为 3 次
-    const date = moment().subtract(retryCount, 'days');
+    const date = dayjs().subtract(retryCount, 'days');
     const type = active.value.hotType;
     const dateFormat = type === 'enlightent' ? date.format('YYYY/MM/DD') : date.format('YYYY-MM-DD');
 
@@ -303,7 +303,7 @@ const searchEvent = async (item) => {
   if (activeRouteName.value === 'FilmIndex' || activeRouteName.value === 'AnalyzeIndex') {
     if (item && searchList.value.findIndex((doc) => doc.videoName === item) === -1) {
       const doc = {
-        date: moment().unix(),
+        date: dayjs().unix(),
         videoName: item,
         type: 'search',
       };

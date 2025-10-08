@@ -1,4 +1,4 @@
-import { useBroadcastChannel } from '@vueuse/core';
+import { useBroadcastChannel } from '@vueuse/core/useBroadcastChannel';
 import { watch } from 'vue';
 
 // 根据 key 更新 state 的值，特别处理 Map 类型的字段

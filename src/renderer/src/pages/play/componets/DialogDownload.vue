@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core';
+import { useClipboard } from '@vueuse/core/useClipboard';
 import { ref, watch } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 

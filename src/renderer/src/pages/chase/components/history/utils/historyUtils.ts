@@ -1,5 +1,6 @@
-import { size, reject } from 'lodash-es';
-import moment from 'moment';
+import size from 'lodash-es/size';
+import reject from 'lodash-es/reject';
+import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { delHistory, fetchHistoryPage } from '@/api/history';
 import { fetchCmsDetail, fetchCmsInit } from '@/api/site';
@@ -173,9 +174,9 @@ export const clearEvent = async (defaultSet: Function) => {
 
 // 日期计算
 export const filterDate = (date: number) => {
-  const timeToday = moment().format('YYYY-MM-DD');
-  const timeSource = moment.unix(date).format('YYYY-MM-DD'); // Parse Unix timestamp
-  const timeDiff = moment(timeToday).diff(timeSource, 'days');
+  const timeToday = dayjs().format('YYYY-MM-DD');
+  const timeSource = dayjs.unix(date).format('YYYY-MM-DD'); // Parse Unix timestamp
+  const timeDiff = dayjs(timeToday).diff(timeSource, 'days');
   return timeDiff;
 };
 

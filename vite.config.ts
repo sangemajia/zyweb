@@ -20,6 +20,22 @@ export default defineConfig({
       },
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: false,
+        modifyVars: {
+          'primary-color': '#45c58b',
+        },
+        // 增加Less编译超时时间
+        timeout: 120000,
+      },
+    },
+    // 禁用CSS处理
+    postcss: {
+      plugins: [],
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 3000,
@@ -32,56 +48,51 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../../dist/client/web',
+    outDir: '../dist/zyweb',
     emptyOutDir: true,
-    // 构建优化选项 - 进一步减少内存使用
-    rollupOptions: {
-      output: {
-        // 分割代码 - 减少每个chunk的大小
-        manualChunks: {
-          // 将核心框架库单独打包
-          framework: ['vue', 'vue-router', 'pinia'],
-          // 将 UI 组件库单独打包
-          ui: ['tdesign-vue-next'],
-          // 将工具库进一步细分打包
-          utils: ['axios', 'lodash-es'],
-          date: ['moment'],
-          vueuse: ['@vueuse/core'],
-        },
-      },
-    },
-    // 启用 CSS 代码分割
-    cssCodeSplit: true,
-    // 禁用 CSS 压缩以减少内存使用
-    cssMinify: false,
     // 禁用压缩以减少内存使用
     minify: false,
-    // 禁用 brotli 压缩以减少内存使用
-    brotliSize: false,
+    // 构建优化选项
+    rollupOptions: {
+      // 将electron相关的模块外部化
+      external: ['@electron-uikit/titlebar/renderer'],
+      output: {
+        // 禁用代码分割以减少内存使用
+        manualChunks: undefined,
+        // 进一步优化输出
+        compact: false,
+        // 禁用生成额外的文件以减少内存使用
+        inlineDynamicImports: false,
+        // 禁用生成额外的块
+        hoistTransitiveImports: false,
+      },
+      // 禁用构建缓存以减少内存使用
+      cache: false,
+      // 禁用插件以减少内存使用
+      treeshake: false,
+    },
+    // 禁用 CSS 代码分割
+    cssCodeSplit: false,
     // 降低 chunk 大小警告限制
-    chunkSizeWarningLimit: 500,
-    // 减少内存使用
-    sourcemap: false,
-    // 禁用实验性选项以减少内存使用
+    chunkSizeWarningLimit: 1000,
+    // 添加构建性能优化
+    brotliSize: false, // 不计算 brotli 大小，提高构建速度
+    sourcemap: false,  // 不生成 sourcemap，减少内存占用
+    // 添加更多构建优化选项
+    reportCompressedSize: false, // 不计算压缩大小，提高构建速度
+    // 减少并行处理以降低内存使用
+    parallel: false,
+    // 禁用预加载以减少内存使用
     modulePreload: false,
+    // 禁用terser选项以减少内存使用
+    terserOptions: undefined,
+    // 进一步减少内存使用
+    cssMinify: false,
+    assetsInlineLimit: 1000000,
+    // 添加更多内存优化选项
+    write: true,
+    manifest: false,
+    // 禁用其他优化选项以减少内存使用
+    copyPublicDir: false,
   },
-  // 减少内存使用
-  optimizeDeps: {
-    // 禁用依赖发现
-    noDiscovery: true,
-    // 不包含任何依赖
-    include: undefined,
-    // 禁用预打包以减少内存使用
-    disabled: true,
-  },
-  // 实验性选项
-  experimental: {
-    // 渲染构建 URL
-    renderBuiltUrl: (filename, { hostType }) => {
-      if (hostType === 'js') {
-        return { runtime: `window.__assetsPath(${JSON.stringify(filename)})` }
-      }
-      return filename
-    }
-  }
 })

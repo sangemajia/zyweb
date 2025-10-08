@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import './index.less';
-import { uniqBy } from 'lodash-es';
+import uniqBy from 'lodash-es/uniqBy';
 import { computed, ref, watch, useTemplateRef, onMounted } from 'vue';
 import { CaretDownSmallIcon } from 'tdesign-icons-vue-next';
 
