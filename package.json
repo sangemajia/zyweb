@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev:web": "vite",
-    "build": "build/scripts/build-cleanup.sh && node build/scripts/build.js",
-    "build:recommended": "build/scripts/build-cleanup.sh && node build/scripts/build.js --use-recommended",
+    "build": "build/scripts/build-cleanup.sh && ./build/scripts/build-shared-components.sh && ./build/scripts/build-film.sh && ./build/scripts/build-iptv.sh && ./build/scripts/build-drive.sh && ./build/scripts/build-lab.sh && ./build/scripts/build-chase.sh && ./build/scripts/build-play.sh && ./build/scripts/build-setting.sh && ./build/scripts/build-analyze.sh",
+    "build:recommended": "build/scripts/build-cleanup.sh && ./build/scripts/build-shared-components.sh && ./build/scripts/build-film.sh && ./build/scripts/build-iptv.sh && ./build/scripts/build-drive.sh && ./build/scripts/build-lab.sh && ./build/scripts/build-chase.sh && ./build/scripts/build-play.sh && ./build/scripts/build-setting.sh && ./build/scripts/build-analyze.sh",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
     "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
     "format": "prettier --write ."
