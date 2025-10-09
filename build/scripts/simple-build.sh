@@ -221,6 +221,9 @@ main() {
             "analyze")
                 components=("Analyze页面:build/configs/vite/vite.analyze.config.ts")
                 ;;
+            "home")
+                components=("Home页面:build/configs/vite/vite.home.config.ts")
+                ;;
             *)
                 log_error "未知组件: $COMPONENT"
                 exit 1
@@ -238,6 +241,7 @@ main() {
             "Play页面:build/configs/vite/vite.play.config.ts"
             "Setting页面:build/configs/vite/vite.setting.config.ts"
             "Analyze页面:build/configs/vite/vite.analyze.config.ts"
+            "Home页面:build/configs/vite/vite.home.config.ts"
         )
     fi
     

@@ -112,6 +112,8 @@ const selectEpisode = (episode: any) => {
 </script>
 
 <style lang="less" scoped>
+@import '@/style/variables.less';
+
 .player-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -119,7 +121,7 @@ const selectEpisode = (episode: any) => {
 
   .player-container {
     background-color: #000;
-    border-radius: 8px;
+    border-radius: var(--td-radius-default);
     overflow: hidden;
     margin-bottom: 20px;
 
@@ -138,11 +140,11 @@ const selectEpisode = (episode: any) => {
   }
 
   .video-info {
-    background-color: #fff;
-    border-radius: 8px;
+    background-color: var(--td-bg-color-container);
+    border-radius: var(--td-radius-default);
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--td-shadow-3);
 
     h2 {
       margin-top: 0;
@@ -160,13 +162,13 @@ const selectEpisode = (episode: any) => {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #666;
+        color: var(--td-text-color-secondary);
         font-size: 14px;
       }
     }
 
     .video-description {
-      color: #333;
+      color: var(--td-text-color-primary);
       line-height: 1.6;
     }
   }
@@ -184,10 +186,10 @@ const selectEpisode = (episode: any) => {
   }
 
   .episode-section {
-    background-color: #fff;
-    border-radius: 8px;
+    background-color: var(--td-bg-color-container);
+    border-radius: var(--td-radius-default);
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--td-shadow-3);
 
     h3 {
       margin-top: 0;
@@ -204,18 +206,18 @@ const selectEpisode = (episode: any) => {
         display: flex;
         gap: 12px;
         padding: 12px;
-        border-radius: 6px;
+        border-radius: var(--td-radius-default);
         cursor: pointer;
         transition: all 0.3s ease;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--td-border-level-1-color);
 
         &:hover {
-          border-color: #45c58b;
+          border-color: var(--td-brand-color);
           box-shadow: 0 4px 8px rgba(69, 197, 139, 0.2);
         }
 
         &.active {
-          border-color: #45c58b;
+          border-color: var(--td-brand-color);
           background-color: rgba(69, 197, 139, 0.05);
         }
 
@@ -224,7 +226,7 @@ const selectEpisode = (episode: any) => {
             width: 120px;
             height: 80px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: var(--td-radius-small);
           }
         }
 
@@ -238,12 +240,27 @@ const selectEpisode = (episode: any) => {
 
           p {
             margin: 0;
-            color: #666;
+            color: var(--td-text-color-secondary);
             font-size: 14px;
           }
         }
       }
     }
   }
+}
+
+:root,
+:root[theme-mode='light'] {
+  --td-text-color-primary: rgba(37, 38, 43, 1);
+  --td-text-color-secondary: rgba(37, 38, 43, 0.72);
+  --td-border-level-1-color: #e7e7e7;
+  --td-shadow-3: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+:root[theme-mode='dark'] {
+  --td-text-color-primary: rgba(255, 255, 255, 1);
+  --td-text-color-secondary: rgba(255, 255, 255, 0.72);
+  --td-border-level-1-color: #383838;
+  --td-shadow-3: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 </style>

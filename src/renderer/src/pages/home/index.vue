@@ -1,14 +1,5 @@
 <template>
   <div class="home-page">
-    <!-- 搜索区域 -->
-    <div class="search-section">
-      <SearchBox 
-        placeholder="搜索电影、电视剧、综艺..." 
-        show-search-button
-        @search="handleSearch"
-      />
-    </div>
-
     <!-- banner区域 -->
     <div class="banner">
       <h2>欢迎使用 ZYWeb</h2>
@@ -17,7 +8,7 @@
 
     <!-- 功能卡片区域 -->
     <div class="features">
-      <h3>主要功能</h3>
+      <h3 class="section-title">主要功能</h3>
       <div class="card-grid">
         <t-card 
           v-for="feature in features" 
@@ -39,7 +30,7 @@
     <!-- 推荐内容 -->
     <div class="recommend-section">
       <div class="section-header">
-        <h3>热门推荐</h3>
+        <h3 class="section-title">热门推荐</h3>
         <t-button theme="default" variant="text">查看更多</t-button>
       </div>
       <div class="media-grid">
@@ -60,7 +51,7 @@
     <!-- 最近观看 -->
     <div class="recent-section" v-if="recentItems.length > 0">
       <div class="section-header">
-        <h3>最近观看</h3>
+        <h3 class="section-title">最近观看</h3>
         <t-button theme="default" variant="text">查看更多</t-button>
       </div>
       <div class="recent-grid">
@@ -82,7 +73,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { SearchBox, MediaCard } from '@/components/shared';
+import { MediaCard } from '@/components/shared';
 
 const router = useRouter();
 
@@ -141,14 +132,14 @@ const features = [
 // 推荐项目
 const recommendItems = ref([
   {
-    id: 1,
-    title: '复仇者联盟',
-    subtitle: '动作 / 科幻',
-    poster: 'https://via.placeholder.com/200x300/45c58b/ffffff?text=Movie',
-    meta: ['2012', '美国'],
-    type: 'movie',
-    isFavorite: false
-  },
+      id: 1,
+      title: '复仇者联盟',
+      subtitle: '动作 / 科幻',
+      poster: 'https://via.placeholder.com/200x300/45c58b/ffffff?text=Movie',
+      meta: ['2012', '美国'],
+      type: 'movie',
+      isFavorite: false
+    },,
   {
     id: 2,
     title: '权力的游戏',
@@ -218,12 +209,6 @@ const recentItems = ref([
   }
 ]);
 
-// 搜索处理
-const handleSearch = (keyword: string) => {
-  console.log('搜索关键词:', keyword);
-  // 这里可以添加搜索逻辑
-};
-
 // 跳转到功能页面
 const goToFeature = (route: string) => {
   router.push(route);
@@ -242,23 +227,36 @@ const toggleFavorite = (item: any) => {
 </script>
 
 <style lang="less" scoped>
+@import '@/style/variables.less';
+
 .home-page {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
 
-  .search-section {
-    margin-bottom: 30px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+  .section-title {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--td-text-color-primary);
+    
+    &::before {
+      content: "";
+      border: 1px solid var(--td-brand-color);
+      height: 0.6rem;
+      border-radius: var(--td-radius-default);
+      display: inline-block;
+      opacity: 1;
+      transition: all 0.4s ease-in-out;
+      margin-right: var(--td-comp-paddingLR-xs);
+    }
   }
 
   .banner {
-    background: linear-gradient(135deg, #45c58b, #6dd5a8);
+    background: linear-gradient(135deg, #45c58b, #94dab2);
     color: white;
     padding: 60px 20px;
-    border-radius: 12px;
+    border-radius: var(--td-radius-default);
     margin-bottom: 30px;
     text-align: center;
 
@@ -277,12 +275,6 @@ const toggleFavorite = (item: any) => {
   .features {
     margin-bottom: 40px;
 
-    h3 {
-      margin-top: 0;
-      margin-bottom: 24px;
-      font-size: 28px;
-    }
-
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -291,10 +283,13 @@ const toggleFavorite = (item: any) => {
       .feature-card {
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: var(--td-radius-default);
+        background: var(--td-bg-color-container);
+        border: 1px solid var(--td-border-level-1-color);
 
         &:hover {
           transform: translateY(-4px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+          box-shadow: var(--td-shadow-3);
         }
 
         .card-icon {
@@ -319,11 +314,6 @@ const toggleFavorite = (item: any) => {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
-
-      h3 {
-        margin: 0;
-        font-size: 28px;
-      }
     }
 
     .media-grid,
@@ -333,5 +323,18 @@ const toggleFavorite = (item: any) => {
       gap: 24px;
     }
   }
+}
+
+:root,
+:root[theme-mode='light'] {
+  --td-text-color-primary: rgba(37, 38, 43, 1);
+  --td-border-level-1-color: #e7e7e7;
+  --td-shadow-3: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+:root[theme-mode='dark'] {
+  --td-text-color-primary: rgba(255, 255, 255, 1);
+  --td-border-level-1-color: #383838;
+  --td-shadow-3: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 </style>

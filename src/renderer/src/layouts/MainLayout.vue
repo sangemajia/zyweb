@@ -1,67 +1,82 @@
 <template>
-  <div class="main-layout">
-    <!-- 顶部导航栏 -->
-    <header class="header">
-      <div class="logo">
-        <h1>ZYWeb</h1>
-      </div>
-      <nav class="nav">
-        <ul>
-          <li v-for="item in navItems" :key="item.name" 
-              :class="{ active: activeNav === item.name }"
-              @click="setActiveNav(item.name)">
-            <t-icon v-if="item.icon" :name="item.icon" />
-            <span>{{ item.label }}</span>
-          </li>
-        </ul>
-      </nav>
-      <div class="user-actions">
-        <t-button theme="default" variant="text">
-          <t-icon name="search" />
-        </t-button>
-        <t-button theme="default" variant="text">
-          <t-icon name="setting" />
-        </t-button>
-      </div>
-    </header>
-
-    <!-- 主要内容区域 -->
-    <main class="main-content">
-      <!-- 侧边栏 -->
-      <aside class="sidebar" v-if="showSidebar">
-        <div class="sidebar-content">
-          <div class="sidebar-item" 
-               v-for="item in sidebarItems" 
-               :key="item.name"
-               :class="{ active: activeSidebar === item.name }"
-               @click="setActiveSidebar(item.name)">
-            <t-icon v-if="item.icon" :name="item.icon" />
-            <span>{{ item.label }}</span>
-          </div>
+  <div class="zy-layout">
+    <t-layout>
+      <t-aside key="side" class="zy-aside">
+        <div class="zy-side-nav-logo-wrapper">
+          <img class="logo" src="@/assets/img/icons/logo.png" alt="logo" />
+          <div class="line"></div>
         </div>
-      </aside>
-
-      <!-- 页面内容 -->
-      <section class="content">
-        <router-view />
-      </section>
-    </main>
+        <t-menu 
+          :class="['zy-default-menu', 't-menu--dark']" 
+          :value="activeNav"
+          theme="dark"
+          @change="setActiveNav"
+        >
+          <t-menu-item 
+            v-for="item in navItems" 
+            :key="item.name" 
+            :value="item.name"
+          >
+            <template #icon>
+              <t-icon :name="item.icon" />
+            </template>
+            <span>{{ item.label }}</span>
+          </t-menu-item>
+        </t-menu>
+      </t-aside>
+      <t-layout>
+        <t-header height="56" class="zy-header">
+          <div class="header-content">
+            <div class="header-left">
+              <div class="system-functions">
+                <t-button theme="default" variant="text" class="system-function" @click="goBack">
+                  <t-icon name="chevron-left" />
+                </t-button>
+                <t-button theme="default" variant="text" class="system-function" @click="goForward">
+                  <t-icon name="chevron-right" />
+                </t-button>
+                <t-button theme="default" variant="text" class="system-function" @click="refresh">
+                  <t-icon name="refresh" />
+                </t-button>
+              </div>
+              <div class="search-container">
+                <t-input
+                  v-model="searchValue"
+                  placeholder="搜索..."
+                  clearable
+                  @enter="handleSearch"
+                >
+                  <template #prefix-icon>
+                    <t-icon name="search" />
+                  </template>
+                </t-input>
+              </div>
+            </div>
+            <div class="header-right">
+              <div class="system-functions">
+                <t-button theme="default" variant="text" class="system-function">
+                  <t-icon name="help-circle" />
+                </t-button>
+                <t-button theme="default" variant="text" class="system-function">
+                  <t-icon name="setting" />
+                </t-button>
+              </div>
+            </div>
+          </div>
+        </t-header>
+        <t-content class="zy-content">
+          <div class="zy-content-layout">
+            <router-view />
+          </div>
+        </t-content>
+      </t-layout>
+    </t-layout>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { 
-  HomeIcon, 
-  PlayIcon, 
-  FilmIcon, 
-  TvIcon, 
-  CloudIcon, 
-  SearchIcon, 
-  ExperimentIcon,
-  SettingIcon
-} from 'tdesign-icons-vue-next';
 
 const router = useRouter();
 
@@ -77,41 +92,9 @@ const navItems = [
   { name: 'setting', label: '设置', icon: 'setting' }
 ];
 
-// 侧边栏项（根据当前导航动态变化）
-const sidebarItems = computed(() => {
-  switch(activeNav.value) {
-    case 'film':
-      return [
-        { name: 'hot', label: '热门', icon: 'fire' },
-        { name: 'recommend', label: '推荐', icon: 'recommend' },
-        { name: 'category', label: '分类', icon: 'category' },
-        { name: 'history', label: '历史', icon: 'time' }
-      ];
-    case 'iptv':
-      return [
-        { name: 'live', label: '直播', icon: 'live' },
-        { name: 'channel', label: '频道', icon: 'tv' },
-        { name: 'epg', label: '节目单', icon: 'calendar' },
-        { name: 'favorite', label: '收藏', icon: 'heart' }
-      ];
-    case 'drive':
-      return [
-        { name: 'files', label: '文件', icon: 'file' },
-        { name: 'shared', label: '分享', icon: 'share' },
-        { name: 'recent', label: '最近', icon: 'time' },
-        { name: 'trash', label: '回收站', icon: 'delete' }
-      ];
-    default:
-      return [];
-  }
-});
-
-// 活动状态
+// 状态
 const activeNav = ref('home');
-const activeSidebar = ref('hot');
-const showSidebar = computed(() => 
-  ['film', 'iptv', 'drive'].includes(activeNav.value)
-);
+const searchValue = ref('');
 
 // 设置活动导航
 const setActiveNav = (name: string) => {
@@ -120,122 +103,246 @@ const setActiveNav = (name: string) => {
   router.push(`/${name}`);
 };
 
-// 设置活动侧边栏
-const setActiveSidebar = (name: string) => {
-  activeSidebar.value = name;
+// 浏览器历史操作
+const goBack = () => {
+  router.go(-1);
+};
+
+const goForward = () => {
+  router.go(1);
+};
+
+const refresh = () => {
+  window.location.reload();
+};
+
+// 搜索处理
+const handleSearch = () => {
+  if (searchValue.value.trim()) {
+    // 这里可以添加搜索逻辑
+    console.log('搜索:', searchValue.value);
+  }
 };
 </script>
 
 <style lang="less" scoped>
-.main-layout {
-  display: flex;
-  flex-direction: column;
+@import '@/style/variables.less';
+
+.zy-layout {
   height: 100vh;
-  background-color: #f5f5f5;
-}
+  background: var(--td-bg-color-container);
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  height: 60px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-
-  .logo {
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      color: #45c58b;
-    }
-  }
-
-  .nav {
-    flex: 1;
-    margin: 0 20px;
-
-    ul {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      li {
-        display: flex;
-        align-items: center;
-        padding: 8px 16px;
-        margin: 0 4px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-
-        &:hover {
-          background-color: #f0f0f0;
-        }
-
-        &.active {
-          background-color: #45c58b;
-          color: white;
-        }
-
-        .t-icon {
-          margin-right: 4px;
-        }
-      }
-    }
-  }
-
-  .user-actions {
-    display: flex;
-    gap: 8px;
-  }
-}
-
-.main-content {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-.sidebar {
-  width: 200px;
-  background-color: #fff;
-  border-right: 1px solid #e0e0e0;
-  overflow-y: auto;
-
-  .sidebar-content {
-    padding: 16px 0;
-
-    .sidebar-item {
+  .zy-aside {
+    background: var(--td-gray-color-13);
+    width: 64px;
+    transition: all 0.3s;
+    
+    .zy-side-nav-logo-wrapper {
       display: flex;
       align-items: center;
-      padding: 12px 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover {
-        background-color: #f5f5f5;
+      justify-content: center;
+      width: 100%;
+      
+      .logo {
+        width: var(--td-size-10);
+        height: var(--td-size-10);
+        margin: var(--td-comp-paddingTB-l) 0 var(--td-comp-paddingTB-m) 0;
       }
-
-      &.active {
-        background-color: #e6f7ff;
-        color: #1890ff;
-        border-right: 3px solid #1890ff;
+      
+      .line {
+        width: 24px;
+        height: 1px;
+        background-color: var(--td-bg-content-active-2);
+        border-radius: 12px;
+        margin-bottom: var(--td-comp-paddingTB-xs);
+        cursor: pointer;
       }
-
-      .t-icon {
-        margin-right: 8px;
+    }
+    
+    .zy-default-menu {
+      background: transparent;
+      
+      :deep(.t-menu__item) {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--td-radius-large);
+        padding: 0;
+        margin: 0 0 var(--td-comp-margin-xs) 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        line-height: 22px;
+        font-size: var(--td-font-size-body-small);
+        color: var(--td-context-secondary) !important;
+        
+        .t-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--td-context-secondary) !important;
+        }
+        
+        span {
+          font-weight: 700;
+        }
+        
+        &.t-is-active {
+          background-color: var(--td-bg-color-container-active);
+          color: var(--td-brand-color) !important;
+          
+          .t-icon {
+            color: var(--td-brand-color) !important;
+          }
+        }
       }
+      
+      :deep(.t-menu__item:last-child) {
+        margin-bottom: var(--td-comp-paddingTB-l);
+      }
+    }
+  }
+  
+  .zy-header {
+    background: var(--td-bg-color-container);
+    border-bottom: 1px solid var(--td-border-level-1-color);
+    padding: 0 var(--td-comp-paddingLR-xs);
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--td-comp-margin-l);
+        
+        .system-functions {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          background: var(--td-bg-color-container);
+          border-radius: var(--td-radius-default);
+          
+          .system-function {
+            margin-left: var(--td-comp-margin-xs);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            :deep(.t-button__text) {
+              svg {
+                color: var(--td-text-color-placeholder);
+              }
+            }
+            
+            :deep(.t-button--variant-text) {
+              &:hover {
+                border-color: transparent;
+                background-color: transparent;
+                
+                .t-button__text {
+                  svg {
+                    color: var(--td-brand-color);
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        .search-container {
+          .t-input {
+            border-radius: 19px;
+            width: 300px;
+          }
+        }
+      }
+      
+      .header-right {
+        display: flex;
+        align-items: center;
+        
+        .system-functions {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          background: var(--td-bg-color-container);
+          border-radius: var(--td-radius-default);
+          
+          .system-function {
+            margin-left: var(--td-comp-margin-xs);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            :deep(.t-button__text) {
+              svg {
+                color: var(--td-text-color-placeholder);
+              }
+            }
+            
+            :deep(.t-button--variant-text) {
+              &:hover {
+                border-color: transparent;
+                background-color: transparent;
+                
+                .t-button__text {
+                  svg {
+                    color: var(--td-brand-color);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .zy-content {
+    position: relative;
+    height: calc(100vh - 56px);
+    background: var(--td-bg-container);
+    margin: 0 var(--td-comp-margin-xs) var(--td-comp-margin-xs) 0;
+    border-radius: var(--td-radius-default);
+    
+    .zy-content-layout {
+      padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+      height: 100%;
+      overflow: auto;
     }
   }
 }
 
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+:root,
+:root[theme-mode='light'] {
+  --td-bg-container: #fefefe;
+  --td-bg-color-container: #ffffff;
+  --td-bg-color-container-active: rgba(255, 122, 0, 0.1);
+  --td-bg-color-container-hover: #f3f3f3;
+  --td-context-secondary: rgba(37, 38, 43, 0.72);
+  --td-border-level-1-color: #e7e7e7;
+  --td-text-color-placeholder: #999;
 }
-</style>
+
+:root[theme-mode='dark'] {
+  --td-bg-container: #242424;
+  --td-bg-color-container: #101010;
+  --td-bg-color-container-active: rgba(255, 122, 0, 0.2);
+  --td-bg-color-container-hover: #1a1a1a;
+  --td-context-secondary: rgba(255, 255, 255, 0.72);
+  --td-border-level-1-color: #383838;
+  --td-text-color-placeholder: #666;
+}
