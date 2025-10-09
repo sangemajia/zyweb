@@ -47,7 +47,7 @@ export default defineConfig({
         // 优化输出结构
         assetFileNames: (assetInfo) => {
           if (assetInfo.name.endsWith('.css')) {
-            return 'style.css';
+            return 'shared-components.css';
           }
           return assetInfo.name;
         },

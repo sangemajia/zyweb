@@ -9,11 +9,9 @@ export default createViteConfig({
   },
   external: [
     // 添加对基础组件的引用
-    '../shared-components/assets/SharedButton-*.js',
-    '../shared-components/assets/SharedCard-*.js',
-    '../shared-components/assets/SimpleShared-*.js',
-    '../shared-components/assets/MediaCard-*.js',
-    '../shared-components/assets/SearchBox-*.js',
+    '../shared-components/index.es.js',
+    '../shared-components/index.umd.js',
+    '../shared-components/shared-components.css',
   ],
   outDir: path.resolve(__dirname, '../../../dist/zyweb/iptv')
 });
