@@ -5,8 +5,7 @@ import path from 'path';
 export default createViteConfig({
   name: 'lab',
   input: {
-
-        'index': path.resolve(__dirname, '../../../src/renderer/src/pages/lab/index.vue'),
+    'index': path.resolve(__dirname, '../../../src/renderer/src/pages/lab/entry.js'),
   },
   external: [
     // 添加对基础组件的引用
