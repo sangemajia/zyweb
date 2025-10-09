@@ -29,25 +29,73 @@ get_available_memory() {
     free -m | awk '/^Mem:/{print $7}'
 }
 
-# 设置Node.js内存限制
-set_node_memory_limit() {
-    local memory_limit_mb=1200
+# 获取推荐内存限制（基于清理后的最大可用内存）
+get_recommended_memory_limit() {
+    local component_name=$1
     
-    # 检查是否存在推荐内存方案并应用
-    local component_type=$1
-    local recommendation_file="./build/recommendations/${component_type}_recommendation.txt"
+    # 检查是否存在推荐内存方案
+    local recommendation_file="./build/recommendations/${component_name}_recommendation.txt"
     if [ -f "$recommendation_file" ]; then
         # 读取推荐的Node.js内存限制
         local recommended_node_memory=$(grep "推荐Node.js内存限制" "$recommendation_file" | awk '{print $NF}' | sed 's/MB//')
         if [ -n "$recommended_node_memory" ] && [ "$recommended_node_memory" -ge 50 ] && [ "$recommended_node_memory" -le 2000 ]; then
-            memory_limit_mb=$recommended_node_memory
-            log_info "已应用推荐的Node.js内存限制: ${memory_limit_mb}MB"
+            # 检查主机性能是否匹配
+            local host_performance=$(nproc)c_$(free -m | awk '/^Mem:/{print $2}')m
+            local file_host_performance=$(grep "构建主机性能" "$recommendation_file" | awk '{print $NF}')
+            
+            if [ "$host_performance" = "$file_host_performance" ]; then
+                log_info "已找到匹配的推荐内存方案: ${recommended_node_memory}MB"
+                echo $recommended_node_memory
+                return
+            else
+                log_info "主机性能差异较大，将重新生成推荐内存方案"
+            fi
+        else
+            log_info "推荐内存方案无效，将重新生成推荐内存方案"
         fi
     fi
     
+    # 如果没有找到推荐方案或主机性能差异较大，使用动态计算的内存限制
+    # 动态计算内存限制（基于清理后的最大可用内存）
+    local available_memory=$(get_available_memory)
+    
+    # 计算真实可用内存：
+    # - iflow和监控进程合用至少300M
+    # - 系统保留50M
+    # - 剩下的才是真实的可用内存
+    local real_available_memory=$((available_memory - 300 - 50))
+    
+    # 确保真实可用内存不低于0
+    if [ $real_available_memory -lt 0 ]; then
+        real_available_memory=0
+    fi
+    
+    # 在真实可用内存基础上分配80%给Node.js进程
+    local memory_limit=$((real_available_memory * 8 / 10))
+    
+    # 设置下限为250MB（确保有足够的内存进行构建）
+    if [ $memory_limit -lt 250 ]; then
+        memory_limit=250
+    fi
+    
+    # 设置上限为1100MB（避免过度分配）
+    if [ $memory_limit -gt 1100 ]; then
+        memory_limit=1100
+    fi
+    
+    echo $memory_limit
+}
+
+# 设置Node.js内存限制（纯动态方案）
+set_node_memory_limit() {
+    local component_name=$1
+    
+    # 获取推荐内存限制（基于清理后的最大可用内存）
+    local memory_limit_mb=$(get_recommended_memory_limit "${component_name}")
+    
     # 设置Node.js内存限制
     export NODE_OPTIONS="--max-old-space-size=${memory_limit_mb} --no-warnings --no-experimental-fetch"
-    log_info "已设置Node.js内存限制: ${memory_limit_mb}MB"
+    log_info "已设置Node.js内存限制: ${memory_limit_mb}MB (基于清理后的最大可用内存动态计算)"
 }
 
 # 生成推荐内存方案
@@ -110,18 +158,17 @@ build_component() {
     
     log_info "开始构建 ${component_name}..."
     
-    # 动态计算内存限制
-    local memory_limit=1200
-    log_info "系统可用内存: $(get_available_memory)MB"
-    log_info "给iflow分配: 300MB"
-    log_info "给新的node进程分配: ${memory_limit}MB (默认值)"
-    
-    # 设置Node.js内存限制
-    set_node_memory_limit "${component_name}"
-    
     # 在构建前先执行一次清理
     log_info "构建前执行内存清理..."
     ./build/scripts/build-cleanup.sh
+    
+    # 获取组件的推荐内存限制（基于清理后的最大可用内存）
+    local memory_limit=$(get_recommended_memory_limit "${component_name}")
+    log_info "当前可用内存: $(get_available_memory)MB"
+    log_info "计算得出的内存限制: ${memory_limit}MB"
+    
+    # 设置Node.js内存限制
+    set_node_memory_limit "${component_name}"
     
     # 记录构建开始时间
     local start_time=$(date +%s)

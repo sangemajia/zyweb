@@ -1,5 +1,5 @@
 #!/bin/bash
-# 基础组件构建脚本
+# shared-components页面构建脚本
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -29,25 +29,28 @@ get_available_memory() {
     free -m | awk '/^Mem:/{print $7}'
 }
 
-# 设置Node.js内存限制
+# 设置Node.js内存限制（纯动态方案）
 set_node_memory_limit() {
+    # 基础内存限制
     local memory_limit_mb=1200
     
-    # 检查是否存在推荐内存方案并应用
-    local component_type=$1
-    local recommendation_file="./build/recommendations/${component_type}_recommendation.txt"
-    if [ -f "$recommendation_file" ]; then
-        # 读取推荐的Node.js内存限制
-        local recommended_node_memory=$(grep "推荐Node.js内存限制" "$recommendation_file" | awk '{print $NF}' | sed 's/MB//')
-        if [ -n "$recommended_node_memory" ] && [ "$recommended_node_memory" -ge 50 ] && [ "$recommended_node_memory" -le 2000 ]; then
-            memory_limit_mb=$recommended_node_memory
-            log_info "已应用推荐的Node.js内存限制: ${memory_limit_mb}MB"
-        fi
+    # 获取系统可用内存
+    local available_memory=$(get_available_memory)
+    
+    # 根据可用内存动态调整Node.js内存限制
+    # 分配可用内存的60%给Node.js进程
+    memory_limit_mb=$((available_memory * 6 / 10))
+    
+    # 确保内存限制在合理范围内
+    if [ $memory_limit_mb -lt 500 ]; then
+        memory_limit_mb=500
+    elif [ $memory_limit_mb -gt 2000 ]; then
+        memory_limit_mb=2000
     fi
     
     # 设置Node.js内存限制
     export NODE_OPTIONS="--max-old-space-size=${memory_limit_mb} --no-warnings --no-experimental-fetch"
-    log_info "已设置Node.js内存限制: ${memory_limit_mb}MB"
+    log_info "已设置Node.js内存限制: ${memory_limit_mb}MB (基于系统可用内存动态计算)"
 }
 
 # 生成推荐内存方案
@@ -74,7 +77,7 @@ generate_memory_recommendation() {
         recommended_node_memory=100
     fi
     
-    cat > "$recommendation_file" << EOF
+    cat > "$recommendation_file" << EOF2
 # ${component_type} 组件构建推荐内存方案
 
 ## 构建环境信息
@@ -89,16 +92,16 @@ generate_memory_recommendation() {
 
 ## 使用建议
 在相似环境下构建时，可以使用以下命令来加快构建速度：
-\`\`\`
+```
 export NODE_OPTIONS="--max-old-space-size=${recommended_node_memory}"
 # 然后执行相应的构建命令
-\`\`\`
+```
 
 ## 注意事项
 1. 如果系统可用内存低于${recommended_system_memory}MB，建议增加系统内存或使用更小的组件进行构建
 2. 如果构建过程中出现内存不足错误，可以适当降低Node.js内存限制
 3. 推荐定期更新此推荐方案，以适应项目规模的变化
-EOF
+EOF2
 
     log_info "已生成 ${component_type} 组件构建推荐内存方案: ${recommendation_file}"
 }
@@ -111,38 +114,17 @@ build_component() {
     log_info "开始构建 ${component_name}..."
     
     # 动态计算内存限制
-    local available_memory=$(get_available_memory)
-    local iflow_memory=300
-    local remaining_memory=$((available_memory - iflow_memory))
+    local memory_limit=1200
+    log_info "系统可用内存: $(get_available_memory)MB"
+    log_info "给iflow分配: 300MB"
+    log_info "给新的node进程分配: ${memory_limit}MB (默认值)"
     
-    # 确保剩余内存至少有50MB
-    if [ $remaining_memory -lt 50 ]; then
-        remaining_memory=50
-    fi
-    
-    # 给系统留50MB，然后分配80%给Node.js进程
-    local reserved_memory=50
-    local memory_limit=$((remaining_memory * 8 / 10 - reserved_memory))
-    
-    # 设置上限为800MB，下限为50MB
-    if [ $memory_limit -gt 800 ]; then
-        memory_limit=800
-    fi
-    
-    if [ $memory_limit -lt 50 ]; then
-        memory_limit=50
-    fi
-    
-    log_info "系统可用内存: ${available_memory}MB"
-    log_info "给iflow分配: ${iflow_memory}MB"
-    log_info "给新的node进程分配: ${memory_limit}MB"
-    
-    # 设置Node.js内存限制
+    # 设置Node.js内存限制（纯动态方案）
     set_node_memory_limit "${component_name}"
     
     # 在构建前先执行一次清理
     log_info "构建前执行内存清理..."
-    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
+    ./build/scripts/build-cleanup.sh
     
     # 记录构建开始时间
     local start_time=$(date +%s)
@@ -169,7 +151,7 @@ build_component() {
         
         # 构建完成后执行内存清理
         log_info "构建完成后执行内存清理..."
-        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
+        ./build/scripts/build-cleanup.sh
         return 0
     else
         log_error "错误: ${component_name} 构建失败 (退出码: $exit_code)"
@@ -179,7 +161,7 @@ build_component() {
         
         # 构建失败后也执行内存清理
         log_info "构建失败后执行内存清理..."
-        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
+        ./build/scripts/build-cleanup.sh
         return $exit_code
     fi
 }
