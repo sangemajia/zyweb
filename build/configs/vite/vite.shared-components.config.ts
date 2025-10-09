@@ -5,12 +5,10 @@ import path from 'path';
 export default createViteConfig({
   name: 'shared-components',
   input: {
-        'SharedButton': path.resolve(__dirname, '../../../src/renderer/src/components/shared/SharedButton.vue'),
-        'SharedCard': path.resolve(__dirname, '../../../src/renderer/src/components/shared/SharedCard.vue'),
-        'SimpleShared': path.resolve(__dirname, '../../../src/renderer/src/components/shared/SimpleShared.vue'),
+    'index': path.resolve(__dirname, '../../../src/renderer/src/components/shared/entry.js'),
   },
   external: [
-
+    // 移除 'vue'，让它被打包进去
   ],
   outDir: path.resolve(__dirname, '../../../dist/zyweb/shared-components')
 });
