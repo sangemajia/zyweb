@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "build": "build/scripts/build-cleanup.sh && build/scripts/simple-build.sh",
-    "build:recommended": "build/scripts/build-cleanup.sh && build/scripts/simple-build.sh",
     "dev:server": "node --max-old-space-size=50 src/main/core/server/index.ts",
     "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
     "format": "prettier --write ."

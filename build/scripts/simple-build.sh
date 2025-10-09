@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 简化的构建脚本，避免容器环境终止问题
+# 智能构建脚本，支持动态内存和推荐内存两种模式
 
 # 颜色定义
 RED='\033[0;31m'
@@ -26,6 +26,69 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 显示帮助信息
+show_help() {
+    echo "用法: $0 [选项]"
+    echo "选项:"
+    echo "  -h, --help              显示此帮助信息"
+    echo "  -m, --mode <mode>       内存模式: dynamic(动态内存)"
+    echo "  -p, --pause             启动后暂停5秒"
+    echo "  -c, --component <name>  构建指定组件"
+    echo ""
+    echo "示例:"
+    echo "  $0                      # 使用动态内存模式构建所有组件"
+    echo "  $0 -p                   # 使用动态内存模式并启动后暂停5秒"
+    echo "  $0 -c film              # 构建film组件"
+}
+
+# 解析命令行参数
+parse_arguments() {
+    MEMORY_MODE="dynamic"  # 默认模式
+    PAUSE=false
+    COMPONENT=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -m|--mode)
+                if [[ "$2" == "dynamic" ]]; then
+                    MEMORY_MODE="$2"
+                else
+                    log_error "无效的内存模式: $2 (应为 dynamic)"
+                    exit 1
+                fi
+                shift 2
+                ;;
+            -p|--pause)
+                PAUSE=true
+                shift
+                ;;
+            -c|--component)
+                COMPONENT="$2"
+                shift 2
+                ;;
+            *)
+                log_error "未知选项: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# 获取主机性能信息
+get_host_performance() {
+    # 获取CPU核心数
+    local cpu_cores=$(nproc)
+    # 获取总内存（MB）
+    local total_memory=$(free -m | awk '/^Mem:/{print $2}')
+    # 生成性能标识（基于CPU核心数和总内存）
+    echo "${cpu_cores}c_${total_memory}m"
+}
+
 # 获取可用内存（MB）
 get_available_memory() {
     free -m | awk '/^Mem:/{print $7}'
@@ -38,37 +101,65 @@ wait_seconds() {
     sleep $seconds
 }
 
+
+
+
+
 # 获取组件的推荐内存限制
-get_recommended_memory_limit() {
-    local name=$1
-    local recommendation_file="./build/recommendations/${name}_recommendation.txt"
+
+
+# 获取组件的动态内存限制
+get_dynamic_memory_limit() {
+    local component_name=$1
     
-    # 检查是否存在推荐内存方案并应用
-    if [ -f "$recommendation_file" ]; then
-        # 读取推荐的Node.js内存限制
-        local recommended_node_memory=$(grep "推荐Node.js内存限制" "$recommendation_file" | awk '{print $NF}' | sed 's/MB//')
-        if [ -n "$recommended_node_memory" ] && [ "$recommended_node_memory" -ge 50 ] && [ "$recommended_node_memory" -le 2000 ]; then
-            echo $recommended_node_memory
-            return
-        fi
-    fi
-    
-    # 如果没有找到推荐方案，使用动态计算的内存限制
     # 动态计算内存限制（基于清理后的最大可用内存）
     local available_memory=$(get_available_memory)
     
-    # 给系统留100MB，然后分配90%给Node.js进程（最大化利用可用内存）
-    local reserved_memory=100
-    local memory_limit=$((available_memory * 9 / 10 - reserved_memory))
+    # 计算真实可用内存：
+    # - iflow和监控进程合用至少300M
+    # - 系统保留50M
+    # - 剩下的才是真实的可用内存
+    local real_available_memory=$((available_memory - 300 - 50))
     
-    # 设置下限为200MB（确保有足够的内存进行构建）
-    if [ $memory_limit -lt 200 ]; then
-        memory_limit=200
+    # 检查真实可用内存是否过低
+    if [ $real_available_memory -lt 230 ]; then
+        log_error "当前系统内存可用过低: ${real_available_memory}MB < 230MB"
+        log_error "请手动释放内存，或更换开发环境"
+        exit 1
     fi
     
-    # 设置上限为1000MB（避免过度分配）
-    if [ $memory_limit -gt 1000 ]; then
-        memory_limit=1000
+    # 根据组件类型分配不同的内存限制
+    local memory_limit
+    case $component_name in
+        "film"|"iptv"|"drive"|"chase")
+            # 复杂组件需要更多内存
+            memory_limit=$((real_available_memory * 9 / 10))
+            # 确保复杂组件至少有300MB内存
+            if [ $memory_limit -lt 300 ]; then
+                memory_limit=300
+            fi
+            ;;
+        "analyze"|"lab"|"play"|"setting")
+            # 中等复杂度组件
+            memory_limit=$((real_available_memory * 8 / 10))
+            # 确保中等复杂度组件至少有275MB内存
+            if [ $memory_limit -lt 275 ]; then
+                memory_limit=275
+            fi
+            ;;
+        *)
+            # 简单组件
+            memory_limit=$((real_available_memory * 7 / 10))
+            # 确保简单组件至少有250MB内存
+            if [ $memory_limit -lt 250 ]; then
+                memory_limit=250
+            fi
+            ;;
+    esac
+    
+    # 设置下限为250MB（确保有足够的内存进行构建）
+    if [ $memory_limit -lt 250 ]; then
+        memory_limit=250
     fi
     
     echo $memory_limit
@@ -78,64 +169,109 @@ get_recommended_memory_limit() {
 build_component() {
     local name=$1
     local config_file=$2
-    local timeout_duration=180  # 默认超时时间3分钟
     
     log_info "开始构建 ${name}..."
     
-    # 在构建前先执行一次清理，确保获得最大的可用内存
-    log_info "构建前执行内存清理..."
-    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
+    # 获取动态内存限制
+    local memory_limit=$(get_dynamic_memory_limit "$name")
     
-    # 等待清理完成（保持2秒）
-    wait_seconds 2
-    
-    # 获取组件的推荐内存限制（基于清理后的最大可用内存）
-    local memory_limit=$(get_recommended_memory_limit "$name")
     log_info "当前可用内存: $(get_available_memory)MB"
     log_info "计算得出的内存限制: ${memory_limit}MB"
+    
+    # 记录构建开始时间
+    local start_time=$(date +%s)
     
     # 等待一会儿（保持2秒）
     wait_seconds 2
     
-    # 执行构建（移除timeout命令以避免可能的内存问题）
+    # 执行构建
     log_info "执行 ${name} 构建..."
-    # 使用独立的命令设置Node.js内存限制，避免环境变量传递问题
-    if node --max-old-space-size=${memory_limit} --no-warnings --no-experimental-fetch ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development --ssrManifest false; then
+    if node --max-old-space-size=${memory_limit} ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development --ssrManifest false; then
+        local end_time=$(date +%s)
+        local build_duration=$((end_time - start_time))
         log_success "${name} 构建完成!"
-        
-        # 构建完成后执行内存清理
-        log_info "构建完成后执行内存清理..."
-        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
-        
         return 0
     else
         local exit_code=$?
+        local end_time=$(date +%s)
+        local build_duration=$((end_time - start_time))
         log_error "构建 ${name} 失败 (退出码: $exit_code)"
-        
-        # 构建失败后也执行内存清理
-        log_info "构建失败后执行内存清理..."
-        "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/build-cleanup.sh
-        
         return 1
     fi
 }
 
+
+
 # 主函数
 main() {
-    log_info "开始构建组件..."
+    log_info "智能构建脚本启动"
+    log_info "内存模式: $MEMORY_MODE"
     
-    # 按顺序执行构建
-    local components=(
-        "基础组件:build/configs/vite/vite.shared-components.config.ts"
-        "Film页面:build/configs/vite/vite.film.config.ts"
-        "IPTV页面:build/configs/vite/vite.iptv.config.ts"
-        "Drive页面:build/configs/vite/vite.drive.config.ts"
-        "Lab页面:build/configs/vite/vite.lab.config.ts"
-        "Chase页面:build/configs/vite/vite.chase.config.ts"
-        "Play页面:build/configs/vite/vite.play.config.ts"
-        "Setting页面:build/configs/vite/vite.setting.config.ts"
-        "Analyze页面:build/configs/vite/vite.analyze.config.ts"
-    )
+    # 启动后暂停5秒（如果指定了-p选项）
+    if [ "$PAUSE" == "true" ]; then
+        log_info "启动后暂停5秒..."
+        wait_seconds 5
+    fi
+    
+    # 在构建开始前先执行一次清理
+    log_info "构建开始前执行内存清理..."
+    ./build/scripts/build-cleanup.sh
+    
+    # 等待清理完成（保持2秒）
+    wait_seconds 2
+
+    
+    # 定义要构建的组件
+    local components
+    if [ -n "$COMPONENT" ]; then
+        # 构建指定组件
+        case $COMPONENT in
+            "shared-components")
+                components=("基础组件:build/configs/vite/vite.shared-components.config.ts")
+                ;;
+            "film")
+                components=("Film页面:build/configs/vite/vite.film.config.ts")
+                ;;
+            "iptv")
+                components=("IPTV页面:build/configs/vite/vite.iptv.config.ts")
+                ;;
+            "drive")
+                components=("Drive页面:build/configs/vite/vite.drive.config.ts")
+                ;;
+            "lab")
+                components=("Lab页面:build/configs/vite/vite.lab.config.ts")
+                ;;
+            "chase")
+                components=("Chase页面:build/configs/vite/vite.chase.config.ts")
+                ;;
+            "play")
+                components=("Play页面:build/configs/vite/vite.play.config.ts")
+                ;;
+            "setting")
+                components=("Setting页面:build/configs/vite/vite.setting.config.ts")
+                ;;
+            "analyze")
+                components=("Analyze页面:build/configs/vite/vite.analyze.config.ts")
+                ;;
+            *)
+                log_error "未知组件: $COMPONENT"
+                exit 1
+                ;;
+        esac
+    else
+        # 构建所有组件
+        components=(
+            "基础组件:build/configs/vite/vite.shared-components.config.ts"
+            "Film页面:build/configs/vite/vite.film.config.ts"
+            "IPTV页面:build/configs/vite/vite.iptv.config.ts"
+            "Drive页面:build/configs/vite/vite.drive.config.ts"
+            "Lab页面:build/configs/vite/vite.lab.config.ts"
+            "Chase页面:build/configs/vite/vite.chase.config.ts"
+            "Play页面:build/configs/vite/vite.play.config.ts"
+            "Setting页面:build/configs/vite/vite.setting.config.ts"
+            "Analyze页面:build/configs/vite/vite.analyze.config.ts"
+        )
+    fi
     
     local total_components=${#components[@]}
     local current_index=0
@@ -147,20 +283,59 @@ main() {
         local name="${component%%:*}"
         local config_file="${component#*:}"
         
-        if ! build_component "${name}" "${config_file}"; then
+        # 转换组件名为英文用于文件名
+        local component_name=""
+        case $name in
+            "基础组件")
+                component_name="shared-components"
+                ;;
+            "Film页面")
+                component_name="film"
+                ;;
+            "IPTV页面")
+                component_name="iptv"
+                ;;
+            "Drive页面")
+                component_name="drive"
+                ;;
+            "Lab页面")
+                component_name="lab"
+                ;;
+            "Chase页面")
+                component_name="chase"
+                ;;
+            "Play页面")
+                component_name="play"
+                ;;
+            "Setting页面")
+                component_name="setting"
+                ;;
+            "Analyze页面")
+                component_name="analyze"
+                ;;
+        esac
+        
+        if ! build_component "${component_name}" "${config_file}"; then
             log_error "构建失败: ${name}"
             exit 1
         fi
         
-        # 在组件之间等待（根据用户反馈调整为2秒）
+        # 在组件之间等待（保持2秒）
         if [ $current_index -lt $total_components ]; then
             log_info "组件间等待2秒..."
             wait_seconds 2
         fi
     done
     
+    # 在所有组件构建完成后执行一次内存清理
+    log_info "所有组件构建完成后执行内存清理..."
+    ./build/scripts/build-cleanup.sh
+    
     log_success "所有组件构建完成!"
 }
+
+# 解析命令行参数
+parse_arguments "$@"
 
 # 执行主函数
 main
