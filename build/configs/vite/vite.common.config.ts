@@ -51,11 +51,33 @@ export function createViteConfig(options) {
         output: {
           // 启用代码分割以优化构建
           manualChunks: manualChunks || ((id) => {
-            if (id.includes('node_modules')) {
-              return 'vendor';
-            }
-            if (id.includes('src/renderer/src')) {
-              return 'app';
+            // 对于特定页面的构建，只打包该页面相关的代码
+            if (name !== 'shared-components') {
+              // 如果是特定页面，将该页面相关的代码打包在一起
+              if (id.includes(`src/renderer/src/pages/${name}/`)) {
+                return `${name}-page`;
+              }
+              // 将共享组件打包到vendor中
+              if (id.includes('src/renderer/src/components/shared/')) {
+                return 'shared-components';
+              }
+              // 将node_modules打包到vendor中
+              if (id.includes('node_modules')) {
+                return 'vendor';
+              }
+              // 将其他代码打包到app中
+              if (id.includes('src/renderer/src')) {
+                return 'app';
+              }
+            } else {
+              // 对于共享组件，只打包共享组件相关的代码
+              if (id.includes('src/renderer/src/components/shared/')) {
+                return 'shared-components';
+              }
+              // 将node_modules打包到vendor中
+              if (id.includes('node_modules')) {
+                return 'vendor';
+              }
             }
           }),
         },

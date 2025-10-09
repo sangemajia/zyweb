@@ -5,16 +5,15 @@ import path from 'path';
 export default createViteConfig({
   name: 'drive',
   input: {
-        'DriveHeader': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/components/DriveHeader.vue'),
-        'DriveList': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/components/DriveList.vue'),
-        'DriveCard': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/components/DriveCard.vue'),
-        'index': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/index.vue'),
+        'drive': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/entry.js'),
   },
   external: [
     // 添加对基础组件的引用
-    './shared-components/assets/SharedButton-*.js',
-    './shared-components/assets/SharedCard-*.js',
-    './shared-components/assets/SimpleShared-*.js',
+    '../shared-components/assets/SharedButton-*.js',
+    '../shared-components/assets/SharedCard-*.js',
+    '../shared-components/assets/SimpleShared-*.js',
+    '../shared-components/assets/MediaCard-*.js',
+    '../shared-components/assets/SearchBox-*.js',
   ],
   outDir: path.resolve(__dirname, '../../../dist/zyweb/drive')
 });

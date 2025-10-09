@@ -20,11 +20,8 @@ export const useSettingStore = defineStore('setting', {
     },
     displayMode: (state): ModeType => {
       if (state.mode === 'auto') {
-        const media = window.matchMedia('(prefers-color-scheme:dark)');
-        if (media.matches) {
-          return 'dark';
-        }
-        return 'light';
+        // 使用系统主题检测
+        return getSystemTheme();
       }
       return state.mode as ModeType;
     },
@@ -44,12 +41,8 @@ export const useSettingStore = defineStore('setting', {
       document.documentElement.setAttribute('theme-mode', isDarkMode ? 'dark' : 'light');
     },
     getMediaColor() {
-      const media = window.matchMedia('(prefers-color-scheme:dark)');
-
-      if (media.matches) {
-        return 'dark';
-      }
-      return 'light';
+      // 使用系统主题检测
+      return getSystemTheme();
     },
     updateConfig(payload: Partial<TState>) {
       for (const key in payload) {
@@ -65,6 +58,14 @@ export const useSettingStore = defineStore('setting', {
   },
   persist: true, // 数据持久化
 });
+
+// 获取系统主题
+const getSystemTheme = (): 'light' | 'dark' => {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+};
 
 export function getSettingStore() {
   return useSettingStore(store);

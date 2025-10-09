@@ -11,12 +11,7 @@
           </div>
         </t-radio-group>
       </t-form-item>
-      <t-form-item :label="$t('pages.setting.base.bossKey')" name="shortcutKey">
-        <t-space align="center">
-          <shortcut-input v-model="formData.recordShortcut" class="shortcut-content" :style="{ width: '255px' }" />
-          <span class="title" @click="handleReset('recordShortcut')">{{ $t('pages.setting.base.reset') }}</span>
-        </t-space>
-      </t-form-item>
+      
       <t-form-item :label="$t('pages.setting.base.timeout')" name="timeout">
         <div class="timeout">
           <t-space align="center">
@@ -343,25 +338,7 @@ watch(
 watch(
   () => formData.value.recordShortcut,
   async (val) => {
-    await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
-      action: 'unRegister',
-      config: { name: 'boss' },
-    });
-    if (!val) return;
-
-    const isAvailable = await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
-      action: 'isRegistered',
-      config: { shortcut: val },
-    });
-    if (isAvailable) {
-      formData.value.recordShortcut = '';
-      MessagePlugin.error(t('pages.setting.placeholder.shortcutErrRegistered'));
-    } else {
-      await window.electron.ipcRenderer.invoke('manage-boss-shortcut', {
-        action: 'register',
-        config: { shortcut: val, name: 'boss' },
-      });
-    }
+    // 老板键功能已移除
   },
 );
 

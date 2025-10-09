@@ -158,7 +158,7 @@ build_component() {
     
     # 执行构建
     log_info "执行 ${name} 构建..."
-    if node --max-old-space-size=${memory_limit} ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development --ssrManifest false; then
+    if node --max-old-space-size=${memory_limit} ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development; then
         local end_time=$(date +%s)
         local build_duration=$((end_time - start_time))
         log_success "${name} 构建完成!"

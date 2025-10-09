@@ -1,0 +1,82 @@
+/* 为Web环境优化的共享组件样式 */
+:root {
+  --zyweb-primary-color: #007bff;
+  --zyweb-secondary-color: #6c757d;
+  --zyweb-success-color: #28a745;
+  --zyweb-warning-color: #ffc107;
+  --zyweb-danger-color: #dc3545;
+  --zyweb-text-color: #212529;
+  --zyweb-bg-color: #f8f9fa;
+  --zyweb-border-color: #dee2e6;
+  --zyweb-border-radius: 6px;
+  --zyweb-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --zyweb-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 响应式设计优化 */
+@media (max-width: 768px) {
+  .zyweb-shared-button.large {
+    padding: 10px 20px;
+    font-size: 15px;
+    height: 44px;
+  }
+  
+  .zyweb-shared-button.medium {
+    padding: 6px 12px;
+    font-size: 13px;
+    height: 32px;
+  }
+  
+  .zyweb-shared-button.small {
+    padding: 4px 8px;
+    font-size: 11px;
+    height: 24px;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .zyweb-shared-button.primary {
+    background-color: #0056b3;
+    border: 2px solid #003d80;
+  }
+  
+  .zyweb-shared-button.secondary {
+    background-color: #545b62;
+    border: 2px solid #3d4247;
+  }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+  .zyweb-shared-button {
+    transition: none;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+/* 焦点可见性优化 */
+.zyweb-shared-button:focus-visible {
+  outline: 2px solid var(--zyweb-primary-color);
+  outline-offset: 2px;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --zyweb-text-color: #f8f9fa;
+    --zyweb-bg-color: #212529;
+    --zyweb-border-color: #495057;
+  }
+  
+  .zyweb-shared-button.text {
+    color: #6ea8fe;
+  }
+  
+  .zyweb-shared-button.text:hover:not(.disabled):not(:disabled) {
+    background-color: rgba(110, 168, 254, 0.1);
+  }
+}

@@ -41,6 +41,25 @@ const active = ref({
   disclaimer: false,
 });
 
+// 监听系统主题变化
+const watchSystemTheme = (callback: (theme: 'light' | 'dark') => void) => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    callback(e.matches ? 'dark' : 'light');
+  });
+};
+
+onMounted(() => {
+  // 监听系统主题变化
+  watchSystemTheme((theme) => {
+    if (storeSetting.mode === 'auto') {
+      storeSetting.updateConfig({ theme });
+      storeSetting.changeMode('auto');
+    }
+  });
+  
+  initConfig();
+});
+
 watch(
   () => useLocalStorage(localeConfigKey, 'zh_CN').value,
   (val) => changeLocale(val),
@@ -64,22 +83,27 @@ watch(
   },
 );
 
-onMounted(() => {
-  initConfig();
-});
-
 const initConfig = async () => {
-  const { agreementMask, theme, playerMode, barrage, timeout, debug } = await fetchSetup();
+  try {
+    const { agreementMask, theme, playerMode, barrage, timeout, debug } = await fetchSetup();
 
-  storeSetting.updateConfig({
-    mode: theme,
-    timeout: timeout || 5000,
-  });
-  active.value.disclaimer = !agreementMask;
+    storeSetting.updateConfig({
+      mode: theme,
+      timeout: timeout || 5000,
+    });
+    active.value.disclaimer = !agreementMask;
 
-  const init = Object.assign({ ...PLAY_CONFIG.setting }, { playerMode, barrage });
-  storePlayer.updateConfig({ setting: init });
+    const init = Object.assign({ ...PLAY_CONFIG.setting }, { playerMode, barrage });
+    storePlayer.updateConfig({ setting: init });
 
-  if (debug) await pagespySrcipt.load();
+    if (debug) await pagespySrcipt.load();
+  } catch (error) {
+    console.error('[App] Failed to initialize config:', error);
+    // 使用默认配置
+    storeSetting.updateConfig({
+      mode: 'light',
+      timeout: 5000,
+    });
+  }
 };
 </script>

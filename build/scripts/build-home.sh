@@ -65,7 +65,7 @@ build_component() {
     
     # 构建组件
     log_info "执行 ${component_name} 构建..."
-    node --no-warnings --no-compilation-cache ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development --ssrManifest false
+    node --no-warnings --no-compilation-cache ./node_modules/vite/bin/vite.js build --config "${config_file}" --minify false --mode development
     
     local exit_code=$?
     local end_time=$(date +%s)

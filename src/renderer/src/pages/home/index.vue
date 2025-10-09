@@ -132,14 +132,14 @@ const features = [
 // 推荐项目
 const recommendItems = ref([
   {
-      id: 1,
-      title: '复仇者联盟',
-      subtitle: '动作 / 科幻',
-      poster: 'https://via.placeholder.com/200x300/45c58b/ffffff?text=Movie',
-      meta: ['2012', '美国'],
-      type: 'movie',
-      isFavorite: false
-    },,
+    id: 1,
+    title: '复仇者联盟',
+    subtitle: '动作 / 科幻',
+    poster: 'https://via.placeholder.com/200x300/45c58b/ffffff?text=Movie',
+    meta: ['2012', '美国'],
+    type: 'movie',
+    isFavorite: false
+  },
   {
     id: 2,
     title: '权力的游戏',
