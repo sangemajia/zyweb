@@ -53,58 +53,7 @@ set_node_memory_limit() {
     log_info "已设置Node.js内存限制: ${memory_limit_mb}MB (基于系统可用内存动态计算)"
 }
 
-# 生成推荐内存方案
-generate_memory_recommendation() {
-    local component_type=$1
-    local available_memory=$2
-    local memory_limit=$3
-    local build_duration=$4
-    
-    # 确保推荐目录存在
-    mkdir -p "./build/recommendations"
-    
-    # 生成推荐内存方案
-    local recommendation_file="./build/recommendations/${component_type}_recommendation.txt"
-    local recommended_system_memory=$((available_memory * 6 / 10))  # 推荐系统可用内存为构建时的60%
-    local recommended_node_memory=$((memory_limit * 6 / 10))  # 推荐Node.js内存限制为分配内存的60%
-    
-    # 确保推荐值不低于最小值
-    if [ $recommended_system_memory -lt 200 ]; then
-        recommended_system_memory=200
-    fi
-    
-    if [ $recommended_node_memory -lt 100 ]; then
-        recommended_node_memory=100
-    fi
-    
-    cat > "$recommendation_file" << EOF2
-# ${component_type} 组件构建推荐内存方案
 
-## 构建环境信息
-- 构建时间: $(date)
-- 构建耗时: ${build_duration}秒
-- 构建时系统可用内存: ${available_memory}MB
-- 分配给node进程的内存: ${memory_limit}MB
-
-## 推荐内存配置
-- 推荐系统可用内存: ${recommended_system_memory}MB
-- 推荐Node.js内存限制: ${recommended_node_memory}MB
-
-## 使用建议
-在相似环境下构建时，可以使用以下命令来加快构建速度：
-```
-export NODE_OPTIONS="--max-old-space-size=${recommended_node_memory}"
-# 然后执行相应的构建命令
-```
-
-## 注意事项
-1. 如果系统可用内存低于${recommended_system_memory}MB，建议增加系统内存或使用更小的组件进行构建
-2. 如果构建过程中出现内存不足错误，可以适当降低Node.js内存限制
-3. 推荐定期更新此推荐方案，以适应项目规模的变化
-EOF2
-
-    log_info "已生成 ${component_type} 组件构建推荐内存方案: ${recommendation_file}"
-}
 
 # 通用构建函数
 build_component() {
@@ -146,8 +95,7 @@ build_component() {
         log_info "构建时可用内存: ${available_memory}MB"
         log_info "分配给node进程的内存: ${memory_limit}MB"
         
-        # 生成推荐内存构建方案
-        generate_memory_recommendation "${component_name}" $available_memory $memory_limit $build_duration
+        
         
         # 构建完成后执行内存清理
         log_info "构建完成后执行内存清理..."

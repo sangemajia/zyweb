@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 智能构建脚本，支持动态内存和推荐内存两种模式
+# 智能构建脚本，支持动态内存模式
 
 # 颜色定义
 RED='\033[0;31m'
@@ -31,7 +31,6 @@ show_help() {
     echo "用法: $0 [选项]"
     echo "选项:"
     echo "  -h, --help              显示此帮助信息"
-    echo "  -m, --mode <mode>       内存模式: dynamic(动态内存)"
     echo "  -p, --pause             启动后暂停5秒"
     echo "  -c, --component <name>  构建指定组件"
     echo ""
@@ -43,7 +42,6 @@ show_help() {
 
 # 解析命令行参数
 parse_arguments() {
-    MEMORY_MODE="dynamic"  # 默认模式
     PAUSE=false
     COMPONENT=""
     
@@ -52,15 +50,6 @@ parse_arguments() {
             -h|--help)
                 show_help
                 exit 0
-                ;;
-            -m|--mode)
-                if [[ "$2" == "dynamic" ]]; then
-                    MEMORY_MODE="$2"
-                else
-                    log_error "无效的内存模式: $2 (应为 dynamic)"
-                    exit 1
-                fi
-                shift 2
                 ;;
             -p|--pause)
                 PAUSE=true
@@ -79,16 +68,6 @@ parse_arguments() {
     done
 }
 
-# 获取主机性能信息
-get_host_performance() {
-    # 获取CPU核心数
-    local cpu_cores=$(nproc)
-    # 获取总内存（MB）
-    local total_memory=$(free -m | awk '/^Mem:/{print $2}')
-    # 生成性能标识（基于CPU核心数和总内存）
-    echo "${cpu_cores}c_${total_memory}m"
-}
-
 # 获取可用内存（MB）
 get_available_memory() {
     free -m | awk '/^Mem:/{print $7}'
@@ -100,13 +79,6 @@ wait_seconds() {
     log_info "等待 ${seconds} 秒..."
     sleep $seconds
 }
-
-
-
-
-
-# 获取组件的推荐内存限制
-
 
 # 获取组件的动态内存限制
 get_dynamic_memory_limit() {
@@ -200,12 +172,9 @@ build_component() {
     fi
 }
 
-
-
 # 主函数
 main() {
     log_info "智能构建脚本启动"
-    log_info "内存模式: $MEMORY_MODE"
     
     # 启动后暂停5秒（如果指定了-p选项）
     if [ "$PAUSE" == "true" ]; then
@@ -220,7 +189,6 @@ main() {
     # 等待清理完成（保持2秒）
     wait_seconds 2
 
-    
     # 定义要构建的组件
     local components
     if [ -n "$COMPONENT" ]; then
