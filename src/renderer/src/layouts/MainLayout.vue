@@ -13,7 +13,7 @@
           @change="setActiveNav"
         >
           <t-menu-item 
-            v-for="item in filteredNavItems" 
+            v-for="item in navItems" 
             :key="item.name" 
             :value="item.name"
           >
@@ -75,13 +75,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-// 导航项
-const allNavItems = [
+// 导航项（根据部署模式在服务端控制显示）
+const navItems = [
   { name: 'home', label: '首页', icon: 'home' },
   { name: 'play', label: '播放', icon: 'play-circle' },
   { name: 'film', label: '电影', icon: 'film' },
@@ -91,24 +91,6 @@ const allNavItems = [
   { name: 'lab', label: '实验室', icon: 'experiment' },
   { name: 'setting', label: '设置', icon: 'setting' }
 ];
-
-// 判断是否为后端服务访问
-const isBackendAccess = () => {
-  // 通过全局变量判断是否为后端服务访问
-  // @ts-ignore
-  return window.IS_BACKEND_ACCESS === true;
-};
-
-// 根据访问方式过滤导航项
-const filteredNavItems = computed(() => {
-  if (isBackendAccess()) {
-    // 通过后端服务访问时只显示设置功能
-    return allNavItems.filter(item => item.name === 'setting');
-  } else {
-    // 外部前端访问时显示所有功能
-    return allNavItems;
-  }
-});
 
 // 状态
 const activeNav = ref('home');
