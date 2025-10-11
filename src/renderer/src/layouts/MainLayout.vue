@@ -92,17 +92,20 @@ const allNavItems = [
   { name: 'setting', label: '设置', icon: 'setting' }
 ];
 
-// 根据部署模式过滤导航项
+// 根据访问方式过滤导航项
 const filteredNavItems = computed(() => {
-  // 通过URL参数或全局变量判断是否为外部前端访问
+  // 通过URL参数判断访问方式
   const urlParams = new URLSearchParams(window.location.search);
-  const isExternalFrontend = urlParams.get('external') === 'true';
+  const accessMode = urlParams.get('access');
   
-  if (isExternalFrontend) {
+  if (accessMode === 'backend') {
+    // 通过后端服务访问时只显示设置功能（用于恢复配置）
+    return allNavItems.filter(item => item.name === 'setting');
+  } else if (accessMode === 'external') {
     // 外部前端访问时只显示设置功能
     return allNavItems.filter(item => item.name === 'setting');
   } else {
-    // 通过后端服务访问时显示所有功能
+    // 直接访问或通过其他方式访问时显示所有功能
     return allNavItems;
   }
 });
