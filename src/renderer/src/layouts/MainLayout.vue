@@ -13,7 +13,7 @@
           @change="setActiveNav"
         >
           <t-menu-item 
-            v-for="item in navItems" 
+            v-for="item in filteredNavItems" 
             :key="item.name" 
             :value="item.name"
           >
@@ -75,13 +75,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { fetchDeploymentMode } from '@/api/system';
 
 const router = useRouter();
 
+// 部署模式
+const deploymentMode = ref<'standalone' | 'separate'>('standalone');
+
 // 导航项
-const navItems = [
+const allNavItems = [
   { name: 'home', label: '首页', icon: 'home' },
   { name: 'play', label: '播放', icon: 'play-circle' },
   { name: 'film', label: '电影', icon: 'film' },
@@ -91,6 +95,17 @@ const navItems = [
   { name: 'lab', label: '实验室', icon: 'experiment' },
   { name: 'setting', label: '设置', icon: 'setting' }
 ];
+
+// 根据部署模式过滤导航项
+const filteredNavItems = computed(() => {
+  if (deploymentMode.value === 'standalone') {
+    // 一体化部署时显示所有功能
+    return allNavItems;
+  } else {
+    // 前后端分离部署时只显示设置功能
+    return allNavItems.filter(item => item.name === 'setting');
+  }
+});
 
 // 状态
 const activeNav = ref('home');
@@ -123,6 +138,25 @@ const handleSearch = () => {
     console.log('搜索:', searchValue.value);
   }
 };
+
+// 获取部署模式
+const getDeploymentMode = async () => {
+  try {
+    const response = await fetchDeploymentMode();
+    if (response.code === 0) {
+      deploymentMode.value = response.data.mode === 'separate' ? 'separate' : 'standalone';
+    }
+  } catch (error) {
+    console.error('获取部署模式失败:', error);
+    // 默认使用一体化部署模式
+    deploymentMode.value = 'standalone';
+  }
+};
+
+// 组件挂载时获取部署模式
+onMounted(() => {
+  getDeploymentMode();
+});
 </script>
 
 <style lang="less" scoped>

@@ -236,7 +236,9 @@ prepare_backend() {
     
     # 复制后端文件
     if [ -d "src/backend" ]; then
+        # 复制src目录中的所有文件
         cp -r src/backend/src dist/server/
+        # 复制根目录文件
         cp src/backend/index.js dist/server/
         cp src/backend/package.json dist/server/
         cp src/backend/.env dist/server/ 2>/dev/null || true
