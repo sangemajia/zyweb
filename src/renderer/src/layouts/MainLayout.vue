@@ -75,18 +75,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// 获取部署模式（从环境变量或全局变量中获取）
-const getDeploymentMode = () => {
-  // 在一体化部署模式下，前端可以直接访问全局变量或环境变量
-  // 在前后端分离模式下，这个值会被设置为'separate'
-  // @ts-ignore
-  return window.DEPLOYMENT_MODE || 'standalone';
-};
 
 // 导航项
 const allNavItems = [
@@ -102,13 +94,16 @@ const allNavItems = [
 
 // 根据部署模式过滤导航项
 const filteredNavItems = computed(() => {
-  const deploymentMode = getDeploymentMode();
-  if (deploymentMode === 'standalone') {
-    // 一体化部署时显示所有功能
-    return allNavItems;
-  } else {
-    // 前后端分离部署时只显示设置功能
+  // 通过URL参数或全局变量判断是否为外部前端访问
+  const urlParams = new URLSearchParams(window.location.search);
+  const isExternalFrontend = urlParams.get('external') === 'true';
+  
+  if (isExternalFrontend) {
+    // 外部前端访问时只显示设置功能
     return allNavItems.filter(item => item.name === 'setting');
+  } else {
+    // 通过后端服务访问时显示所有功能
+    return allNavItems;
   }
 });
 
