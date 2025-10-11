@@ -42,13 +42,54 @@ export function createViteConfig(options) {
     ],
     build: {
       outDir: outDir || path.resolve(__dirname, `../../../dist/zyweb/${name}`),
-      emptyOutDir: true,
+      emptyOutDir: false,
       // 禁用压缩以减少内存使用
       minify: false,
       // 构建优化选项
       rollupOptions: {
         input: input,
         output: {
+          // 三段式文件命名规则
+          entryFileNames: (chunkInfo) => {
+            // 获取模块名
+            const moduleName = name;
+            // 获取文件名（不包括扩展名）
+            const fileName = chunkInfo.name;
+            
+            // 如果模块名和文件名相同，则只使用模块名，避免重复
+            if (moduleName === fileName) {
+              return `${moduleName}-[hash].js`;
+            } else {
+              return `${moduleName}-${fileName}-[hash].js`;
+            }
+          },
+          chunkFileNames: (chunkInfo) => {
+            // 获取模块名
+            const moduleName = name;
+            // 获取文件名（不包括扩展名）
+            const fileName = chunkInfo.name;
+            
+            // 如果模块名和文件名相同，则只使用模块名，避免重复
+            if (moduleName === fileName) {
+              return `${moduleName}-[hash].js`;
+            } else {
+              return `${moduleName}-${fileName}-[hash].js`;
+            }
+          },
+          assetFileNames: (assetInfo) => {
+            // 获取模块名
+            const moduleName = name;
+            // 获取文件名（不包括扩展名）
+            const fileName = assetInfo.name.replace(/\.[^/.]+$/, "");
+            const extension = assetInfo.name.split('.').pop();
+            
+            // 如果模块名和文件名相同，则只使用模块名，避免重复
+            if (moduleName === fileName) {
+              return `${moduleName}-[hash].${extension}`;
+            } else {
+              return `${moduleName}-${fileName}-[hash].${extension}`;
+            }
+          },
           // 启用代码分割以优化构建
           manualChunks: manualChunks || ((id) => {
             // 对于特定页面的构建，只打包该页面相关的代码
