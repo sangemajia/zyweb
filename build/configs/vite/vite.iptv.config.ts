@@ -5,7 +5,7 @@ import path from 'path';
 export default createViteConfig({
   name: 'iptv',
   input: {
-        'iptv': path.resolve(__dirname, '../../../src/renderer/src/pages/iptv/entry.js'),
+        'main': path.resolve(__dirname, '../../../src/renderer/src/pages/iptv/entry.js'),
   },
   external: [
     // 添加对基础组件的引用

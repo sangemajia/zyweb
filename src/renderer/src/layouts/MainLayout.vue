@@ -3,7 +3,7 @@
     <t-layout>
       <t-aside key="side" class="zy-aside">
         <div class="zy-side-nav-logo-wrapper">
-          <img class="logo" src="@/assets/img/icons/logo.png" alt="logo" />
+          <img class="logo" src="/resources/img/icons/logo.png" alt="logo" />
           <div class="line"></div>
         </div>
         <t-menu 
@@ -346,3 +346,4 @@ const handleSearch = () => {
   --td-border-level-1-color: #383838;
   --td-text-color-placeholder: #666;
 }
+</style>

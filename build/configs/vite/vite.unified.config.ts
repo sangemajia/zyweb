@@ -2,56 +2,60 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
-// 为zyweb优化的shared-components构建配置
+// 导入外部依赖
+const { readExternalDeps } = require('./external-deps.cjs');
+
+// 统一应用程序构建配置
 export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '../../../src/renderer/src'),
       '@renderer': path.resolve(__dirname, '../../../src/renderer'),
+      '@main': path.resolve(__dirname, '../../../src/main'),
     },
   },
   plugins: [
     vue({
       template: {
         compilerOptions: {
-          isCustomElement: (tag) => tag === 'webview',
+          isCustomElement: (tag) => tag === 'webview' || tag === 'title-bar',
         },
       },
     }),
   ],
   build: {
-    outDir: path.resolve(__dirname, '../../../dist/zyweb/shared-components'),
+    outDir: path.resolve(__dirname, '../../../dist/ui'),
     emptyOutDir: false,
     // 禁用压缩以减少内存使用
     minify: false,
-    lib: {
-      entry: path.resolve(__dirname, '../../../src/renderer/src/components/shared/index.ts'),
-      name: 'ZyWebSharedComponents',
-      formats: ['es', 'umd'],
-      fileName: (format) => `shared-components-${format}-[hash].js`
-    },
     rollupOptions: {
-      external: [
-        'vue',
-        'vue-router',
-        'pinia',
-        'tdesign-vue-next'
-      ],
+      input: {
+        'main': path.resolve(__dirname, '../../../src/renderer/src/main.ts'),
+      },
       output: {
-        globals: {
-          vue: 'Vue',
-          'vue-router': 'VueRouter',
-          pinia: 'Pinia',
-          'tdesign-vue-next': 'TDesign'
-        },
-        // 优化输出结构
+        // 使用固定文件名并保持目录结构
+        entryFileNames: `js/[name].js`,
+        chunkFileNames: `js/[name].js`,
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name.endsWith('.css')) {
-            return 'shared-components-[hash].css';
+          const extension = assetInfo.name.split('.').pop();
+          if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(extension)) {
+            return `images/[name].[ext]`;
           }
-          return 'shared-components-[name]-[hash].[ext]';
+          if (extension === 'css') {
+            return `css/[name].[ext]`;
+          }
+          return `[name].[ext]`;
         },
       },
+      external: [
+        ...readExternalDeps(),
+        // 添加对基础组件的引用
+        './shared-components/assets/SharedButton-*.js',
+        './shared-components/assets/SharedCard-*.js',
+        './shared-components/assets/SimpleShared-*.js',
+        './shared-components/assets/MediaCard-*.js',
+        './shared-components/assets/SearchBox-*.js',
+      ],
     },
     // 禁用 CSS 代码分割
     cssCodeSplit: false,
@@ -73,4 +77,4 @@ export default defineConfig({
   server: {
     hmr: false,
   },
-})
+});

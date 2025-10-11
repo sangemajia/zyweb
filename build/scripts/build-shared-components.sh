@@ -73,7 +73,7 @@ build_shared_components() {
     
     # 构建组件库
     log_info "执行共享组件库构建..."
-    node --no-warnings ../../../../../node_modules/vite/bin/vite.js build --minify false --mode development
+    node --no-warnings ../../../../../node_modules/vite/bin/vite.js build --config ../../../../../build/configs/vite/vite.shared-components.config.ts --minify false --mode development
     
     local exit_code=$?
     local end_time=$(date +%s)
@@ -105,7 +105,7 @@ build_shared_components() {
         log_info "构建时可用内存: ${available_memory}MB"
         
         # 返回项目根目录
-        cd ../../../../
+        cd ../../../../../
         
         # 构建失败后也执行内存清理
         log_info "构建失败后执行内存清理..."

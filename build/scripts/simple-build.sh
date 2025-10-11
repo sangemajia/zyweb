@@ -137,10 +137,64 @@ get_dynamic_memory_limit() {
     echo $memory_limit
 }
 
+# 检查组件是否已存在
+check_component_exists() {
+    local component_name=$1
+    
+    # 根据组件名确定对应的构建产物目录
+    local component_dir=""
+    case $component_name in
+        "shared-components")
+            component_dir="dist/zyweb/shared-components"
+            ;;
+        "film")
+            component_dir="dist/zyweb/film"
+            ;;
+        "iptv")
+            component_dir="dist/zyweb/iptv"
+            ;;
+        "drive")
+            component_dir="dist/zyweb/drive"
+            ;;
+        "lab")
+            component_dir="dist/zyweb/lab"
+            ;;
+        "chase")
+            component_dir="dist/zyweb/chase"
+            ;;
+        "play")
+            component_dir="dist/zyweb/play"
+            ;;
+        "setting")
+            component_dir="dist/zyweb/setting"
+            ;;
+        "analyze")
+            component_dir="dist/zyweb/analyze"
+            ;;
+        "home")
+            component_dir="dist/zyweb/home"
+            ;;
+    esac
+    
+    # 检查目录是否存在且不为空
+    if [ -d "$component_dir" ] && [ -n "$(ls -A "$component_dir")" ]; then
+        return 0  # 组件存在
+    else
+        return 1  # 组件不存在
+    fi
+}
+
 # 构建单个组件
 build_component() {
     local name=$1
     local config_file=$2
+    local component_name=$3
+    
+    # 检查组件是否已存在
+    if check_component_exists "$component_name"; then
+        log_info "组件 ${name} 已存在，跳过构建..."
+        return 0
+    fi
     
     log_info "开始构建 ${name}..."
     
@@ -170,6 +224,50 @@ build_component() {
         log_error "构建 ${name} 失败 (退出码: $exit_code)"
         return 1
     fi
+}
+
+# 组装UI
+# 准备后端服务
+prepare_backend() {
+    log_info "准备后端服务..."
+    
+    # 创建server目录
+    mkdir -p dist/server
+    
+    # 复制后端文件
+    if [ -d "src/backend" ]; then
+        cp -r src/backend/src dist/server/
+        cp src/backend/index.js dist/server/
+        cp src/backend/package.json dist/server/
+        cp src/backend/.env dist/server/ 2>/dev/null || true
+        log_success "后端服务准备完成"
+    else
+        log_warning "后端服务源码目录不存在，跳过后端服务准备"
+    fi
+}
+
+# 组装UI
+assemble_ui() {
+    log_info "开始组装UI..."
+    
+    if ! ./build/scripts/assemble-ui.sh; then
+        log_error "UI组装失败"
+        return 1
+    fi
+    
+    log_success "UI组装完成"
+}
+
+# 集成应用
+integrate_app() {
+    log_info "开始集成应用..."
+    
+    if ! ./build/scripts/integrate-app.sh; then
+        log_error "应用集成失败"
+        return 1
+    fi
+    
+    log_success "应用集成完成"
 }
 
 # 主函数
@@ -287,7 +385,7 @@ main() {
                 ;;
         esac
         
-        if ! build_component "${component_name}" "${config_file}"; then
+        if ! build_component "${name}" "${config_file}" "${component_name}"; then
             log_error "构建失败: ${name}"
             exit 1
         fi
@@ -304,6 +402,31 @@ main() {
     ./build/scripts/build-cleanup.sh
     
     log_success "所有组件构建完成!"
+    
+    # 如果是完整构建（没有指定特定组件），则继续执行UI组装和应用集成
+    if [ -z "$COMPONENT" ]; then
+        log_info "开始执行生产环境构建后续步骤..."
+        
+        # 准备后端服务
+        prepare_backend
+        
+        # 组装UI
+        if ! assemble_ui; then
+            log_error "UI组装阶段失败"
+            exit 1
+        fi
+        
+        # 集成应用
+        if ! integrate_app; then
+            log_error "应用集成阶段失败"
+            exit 1
+        fi
+        
+        log_success "生产环境构建完成!"
+        log_info "集成应用程序位于: $(pwd)/dist/app"
+    else
+        log_info "指定组件构建完成，跳过UI组装和应用集成步骤"
+    fi
 }
 
 # 解析命令行参数

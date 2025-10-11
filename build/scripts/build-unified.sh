@@ -1,0 +1,96 @@
+#!/bin/bash
+# 统一构建脚本
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# 日志函数
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# 获取可用内存（MB）
+get_available_memory() {
+    free -m | awk '/^Mem:/{print $7}'
+}
+
+# 设置Node.js内存限制
+set_node_memory_limit() {
+    local memory_limit_mb=1200
+    
+    # 设置Node.js内存限制
+    export NODE_OPTIONS="--max-old-space-size=${memory_limit_mb} --no-warnings --no-experimental-fetch"
+    log_info "已设置Node.js内存限制: ${memory_limit_mb}MB"
+}
+
+# 构建函数
+build_unified() {
+    log_info "开始统一构建..."
+    
+    # 动态计算内存限制
+    local memory_limit=1200
+    log_info "系统可用内存: $(get_available_memory)MB"
+    log_info "给iflow分配: 300MB"
+    log_info "给新的node进程分配: ${memory_limit}MB (默认值)"
+    
+    # 设置Node.js内存限制
+    set_node_memory_limit
+    
+    # 在构建前先执行一次清理
+    log_info "构建前执行内存清理..."
+    ./build/scripts/build-cleanup.sh
+    
+    # 记录构建开始时间
+    local start_time=$(date +%s)
+    
+    # 构建统一应用
+    log_info "执行统一构建..."
+    node --no-warnings --no-compilation-cache ./node_modules/vite/bin/vite.js build --config "build/configs/vite/vite.unified.config.ts" --minify false --mode development
+    
+    local exit_code=$?
+    local end_time=$(date +%s)
+    local build_duration=$((end_time - start_time))
+    
+    # 记录构建内存使用情况
+    local available_memory=$(get_available_memory)
+    
+    if [ $exit_code -eq 0 ]; then
+        log_success "统一构建成功!"
+        log_info "构建耗时: ${build_duration}秒"
+        log_info "构建时可用内存: ${available_memory}MB"
+        log_info "分配给node进程的内存: ${memory_limit}MB"
+        
+        # 构建完成后执行内存清理
+        log_info "构建完成后执行内存清理..."
+        ./build/scripts/build-cleanup.sh
+        return 0
+    else
+        log_error "错误: 统一构建失败 (退出码: $exit_code)"
+        log_info "构建耗时: ${build_duration}秒"
+        log_info "构建时可用内存: ${available_memory}MB"
+        log_info "分配给node进程的内存: ${memory_limit}MB"
+        
+        # 构建失败后也执行内存清理
+        log_info "构建失败后执行内存清理..."
+        ./build/scripts/build-cleanup.sh
+        return $exit_code
+    fi
+}
+
+# 执行构建
+build_unified

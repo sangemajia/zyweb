@@ -56,10 +56,11 @@ cleanup_build_processes() {
     # 清理可能存在的Node.js模块进程
     pkill -f "node.*module" >/dev/null 2>&1 || true
     
-    # 强制杀死所有Node.js进程（除了当前脚本进程）
+    # 强制杀死所有Node.js进程（除了当前脚本进程和构建相关进程）
     # 注意：这里排除了当前脚本的进程ID，避免杀死自己
-    local current_pid=$$
-    pkill -f "node" | grep -v $current_pid >/dev/null 2>&1 || true
+    local current_pid=$
+    # 排除构建相关进程，避免中断构建流程
+    pkill -f "node" | grep -v $current_pid | grep -v "simple-build.sh" | grep -v "assemble-ui.sh" | grep -v "integrate-app.sh" >/dev/null 2>&1 || true
     
     # 等待进程完全终止
     sleep 3
@@ -110,20 +111,8 @@ cleanup_node_cache() {
 cleanup_temp_files() {
     log_info "清理构建临时文件..."
     
-    # 清理可能存在的构建输出目录
-    if [ -d "dist" ]; then
-        # 只清理特定的子目录，保留其他内容
-        if [ -d "dist/zyweb/feature-pages" ]; then
-            rm -rf dist/zyweb/feature-pages/*
-        fi
-        if [ -d "dist/zyweb/shared-components" ]; then
-            rm -rf dist/zyweb/shared-components/*
-        fi
-        if [ -d "dist/zyweb/large-components" ]; then
-            rm -rf dist/zyweb/large-components/*
-        fi
-        log_info "已清理构建输出目录"
-    fi
+    # 不再清理构建输出目录，避免删除已构建的组件
+    # 仅清理临时文件和缓存
     
     # 清理可能存在的临时文件
     rm -rf .vite-temp >/dev/null 2>&1 || true
@@ -133,6 +122,8 @@ cleanup_temp_files() {
     # 清理可能存在的Node.js临时文件
     rm -rf /tmp/vite-* >/dev/null 2>&1 || true
     rm -rf /tmp/rollup-* >/dev/null 2>&1 || true
+    
+    log_info "已清理临时文件和缓存"
 }
 
 # 强制垃圾回收（如果支持）

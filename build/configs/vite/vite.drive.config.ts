@@ -5,7 +5,7 @@ import path from 'path';
 export default createViteConfig({
   name: 'drive',
   input: {
-        'drive': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/entry.js'),
+        'main': path.resolve(__dirname, '../../../src/renderer/src/pages/drive/entry.js'),
   },
   external: [
     // 添加对基础组件的引用
