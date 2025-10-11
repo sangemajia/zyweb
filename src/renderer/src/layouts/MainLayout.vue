@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -92,20 +92,20 @@ const allNavItems = [
   { name: 'setting', label: '设置', icon: 'setting' }
 ];
 
+// 判断是否为后端服务访问
+const isBackendAccess = () => {
+  // 通过全局变量判断是否为后端服务访问
+  // @ts-ignore
+  return window.IS_BACKEND_ACCESS === true;
+};
+
 // 根据访问方式过滤导航项
 const filteredNavItems = computed(() => {
-  // 通过URL参数判断访问方式
-  const urlParams = new URLSearchParams(window.location.search);
-  const accessMode = urlParams.get('access');
-  
-  if (accessMode === 'backend') {
-    // 通过后端服务访问时只显示设置功能（用于恢复配置）
-    return allNavItems.filter(item => item.name === 'setting');
-  } else if (accessMode === 'external') {
-    // 外部前端访问时只显示设置功能
+  if (isBackendAccess()) {
+    // 通过后端服务访问时只显示设置功能
     return allNavItems.filter(item => item.name === 'setting');
   } else {
-    // 直接访问或通过其他方式访问时显示所有功能
+    // 外部前端访问时显示所有功能
     return allNavItems;
   }
 });
