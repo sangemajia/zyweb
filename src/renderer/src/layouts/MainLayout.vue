@@ -77,12 +77,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchDeploymentMode } from '@/api/system';
 
 const router = useRouter();
 
-// 部署模式
-const deploymentMode = ref<'standalone' | 'separate'>('standalone');
+// 获取部署模式（从环境变量或全局变量中获取）
+const getDeploymentMode = () => {
+  // 在一体化部署模式下，前端可以直接访问全局变量或环境变量
+  // 在前后端分离模式下，这个值会被设置为'separate'
+  // @ts-ignore
+  return window.DEPLOYMENT_MODE || 'standalone';
+};
 
 // 导航项
 const allNavItems = [
@@ -98,7 +102,8 @@ const allNavItems = [
 
 // 根据部署模式过滤导航项
 const filteredNavItems = computed(() => {
-  if (deploymentMode.value === 'standalone') {
+  const deploymentMode = getDeploymentMode();
+  if (deploymentMode === 'standalone') {
     // 一体化部署时显示所有功能
     return allNavItems;
   } else {
@@ -138,25 +143,6 @@ const handleSearch = () => {
     console.log('搜索:', searchValue.value);
   }
 };
-
-// 获取部署模式
-const getDeploymentMode = async () => {
-  try {
-    const response = await fetchDeploymentMode();
-    if (response.code === 0) {
-      deploymentMode.value = response.data.mode === 'separate' ? 'separate' : 'standalone';
-    }
-  } catch (error) {
-    console.error('获取部署模式失败:', error);
-    // 默认使用一体化部署模式
-    deploymentMode.value = 'standalone';
-  }
-};
-
-// 组件挂载时获取部署模式
-onMounted(() => {
-  getDeploymentMode();
-});
 </script>
 
 <style lang="less" scoped>
