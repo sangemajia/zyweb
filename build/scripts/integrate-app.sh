@@ -104,10 +104,22 @@ copy_resources() {
 create_env_file() {
     log_info "创建环境变量文件..."
     
-    cat > "$APP_DIR/.env" << EOF
+    # 从后端源码复制.env文件
+    if [ -f "$PROJECT_ROOT/src/backend/.env" ]; then
+        cp "$PROJECT_ROOT/src/backend/.env" "$APP_DIR/.env"
+        log_success "环境变量文件从后端源码复制完成"
+    else
+        log_warning "后端源码中未找到.env文件，使用默认配置"
+        cat > "$APP_DIR/.env" << EOF
 # 部署方案设置
 # 一体化部署 (standalone) 或 前后端分离部署 (separate)
 DEPLOYMENT_MODE=standalone
+
+# 前端路径配置
+# 在一体化部署模式下，可以设置前端资源的访问路径前缀
+# 例如设置为 /web 表示前端资源通过 http://host:port/web/ 访问
+# 留空表示使用根路径 /
+FRONTEND_PATH_PREFIX=
 
 # 数据库设置
 # 支持 pglite, pg, mysql
@@ -128,6 +140,7 @@ MYSQL_PASSWORD=root
 # 服务端口
 PORT=8819
 EOF
+    fi
     
     log_success "环境变量文件创建完成"
 }
@@ -298,8 +311,11 @@ load_env() {
         # 只加载有效的环境变量（忽略注释和空行）
         while IFS= read -r line || [[ -n "$line" ]]; do
             # 跳过注释和空行
-            if [[ -n "$line" && ! "$line" =~ ^[[:space:]]*# ]]; then
-                export "$line"
+            if [[ -n "$line" && ! "$line" =~ ^[[:space:]*#] ]]; then
+                # 分割键值对并正确导出
+                key=$(echo "$line" | cut -d'=' -f1)
+                value=$(echo "$line" | cut -d'=' -f2-)
+                export "$key=$value"
             fi
         done < ".env"
         log_info "环境变量加载完成"
@@ -312,8 +328,21 @@ load_env() {
 main() {
     log_info "启动ZYWeb应用程序..."
     
+    # 保存命令行设置的环境变量
+    local cmd_deployment_mode="$DEPLOYMENT_MODE"
+    local cmd_port="$PORT"
+    
     # 加载环境变量
     load_env
+    
+    # 如果命令行设置了环境变量，则优先使用命令行设置的值
+    if [ -n "$cmd_deployment_mode" ]; then
+        DEPLOYMENT_MODE="$cmd_deployment_mode"
+    fi
+    
+    if [ -n "$cmd_port" ]; then
+        PORT="$cmd_port"
+    fi
     
     # 检查依赖是否已安装且完整，如果未安装则安装依赖
     if ! check_dependencies; then
@@ -325,18 +354,8 @@ main() {
         log_info "部署模式: 一体化部署"
         # 启动后端服务
         start_backend
-        
-        # 等待后端服务启动完成
-        sleep 3
-        
-        # 启动前端服务
-        start_frontend
     elif [ "$DEPLOYMENT_MODE" = "separate" ]; then
         log_info "部署模式: 前后端分离部署"
-        # 只启动后端服务
-        start_backend
-    else
-        log_warning "未知的部署模式: $DEPLOYMENT_MODE，默认使用一体化部署"
         # 启动后端服务
         start_backend
         
@@ -345,11 +364,15 @@ main() {
         
         # 启动前端服务
         start_frontend
+    else
+        log_warning "未知的部署模式: $DEPLOYMENT_MODE，默认使用一体化部署"
+        # 启动后端服务
+        start_backend
     fi
     
     log_info "应用程序启动完成"
-    log_info "后端服务地址: http://localhost:$PORT"
-    if [ "$DEPLOYMENT_MODE" = "standalone" ] || [ "$DEPLOYMENT_MODE" != "separate" ]; then
+    log_info "服务地址: http://localhost:$PORT"
+    if [ "$DEPLOYMENT_MODE" = "separate" ]; then
         log_info "前端服务地址: http://localhost:8820"
     fi
     
@@ -402,6 +425,24 @@ ZYWeb应用程序部署说明
 EOF
     
     log_success "README文件创建完成"
+}
+
+# 清理中间产物
+cleanup_intermediate_artifacts() {
+    log_info "清理中间产物..."
+    
+    # 删除dist目录中的ui和server目录
+    if [ -d "$UI_DIR" ]; then
+        rm -rf "$UI_DIR"
+        log_info "已删除UI中间产物目录: $UI_DIR"
+    fi
+    
+    if [ -d "$SERVER_DIR" ]; then
+        rm -rf "$SERVER_DIR"
+        log_info "已删除Server中间产物目录: $SERVER_DIR"
+    fi
+    
+    log_success "中间产物清理完成"
 }
 
 # 验证集成结果
@@ -472,6 +513,9 @@ main() {
     
     # 验证集成结果
     verify_integration
+    
+    # 清理中间产物
+    cleanup_intermediate_artifacts
     
     log_success "前后端集成完成!"
     log_info "集成应用程序位于: $APP_DIR"

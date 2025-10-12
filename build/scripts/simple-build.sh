@@ -272,6 +272,29 @@ integrate_app() {
     log_success "应用集成完成"
 }
 
+# 清理中间产物
+cleanup_intermediate_artifacts() {
+    log_info "清理中间产物..."
+    
+    # 定义目录路径
+    local DIST_DIR="$(pwd)/dist"
+    local UI_DIR="$DIST_DIR/ui"
+    local SERVER_DIR="$DIST_DIR/server"
+    
+    # 删除dist目录中的ui和server目录
+    if [ -d "$UI_DIR" ]; then
+        rm -rf "$UI_DIR"
+        log_info "已删除UI中间产物目录: $UI_DIR"
+    fi
+    
+    if [ -d "$SERVER_DIR" ]; then
+        rm -rf "$SERVER_DIR"
+        log_info "已删除Server中间产物目录: $SERVER_DIR"
+    fi
+    
+    log_success "中间产物清理完成"
+}
+
 # 主函数
 main() {
     log_info "智能构建脚本启动"
@@ -426,6 +449,9 @@ main() {
         
         log_success "生产环境构建完成!"
         log_info "集成应用程序位于: $(pwd)/dist/app"
+        
+        # 清理中间产物
+        cleanup_intermediate_artifacts
     else
         log_info "指定组件构建完成，跳过UI组装和应用集成步骤"
     fi
