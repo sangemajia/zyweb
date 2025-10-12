@@ -208,9 +208,17 @@ copy_js_file() {
         
         # 更新JavaScript文件中的引用
         # 处理共享组件引用
-        sed -i 's|"\./[^"]*-shared-components-[a-zA-Z0-9_]\+\.js"|"\./home-shared-components.js"|g' "$temp_js_file"
-        # 处理主文件引用
-        sed -i 's|"\./[^"]*-main-[a-zA-Z0-9_]\+\.js"|"\./home-main.js"|g' "$temp_js_file"
+        sed -i 's|"\./[^"]*-shared-components-[a-zA-Z0-9_]\+\.js"|"\./shared.js"|g' "$temp_js_file"
+        # 处理共享组件的导入语句
+        sed -i 's|import { M as MediaCard } from "\.\/shared\.js"|\/\/ import "\.\/shared\.js";|g' "$temp_js_file"
+        sed -i 's|import { MediaCard } from "\.\/shared\.js"|\/\/ import "\.\/shared\.js";|g' "$temp_js_file"
+        sed -i 's|import sharedComponents from "\.\/shared\.js"|\/\/ import "\.\/shared\.js"|g' "$temp_js_file"
+        # 处理home页面的共享组件导入语句
+        sed -i 's|import { M as MediaCard } from "\.\/home-shared-components-[a-zA-Z0-9_]\+\.js"|\/\/ import "\.\/shared\.js";|g' "$temp_js_file"
+        # 在文件中添加获取MediaCard的代码
+        sed -i 's|\/\/ import "\.\/shared\.js";|import "\.\/shared\.js";\nconst MediaCard = window.ZyWebSharedComponents.MediaCard;|g' "$temp_js_file"
+        # 处理主文件引用（移除整个import语句而不是留下空字符串）
+        sed -i 's|import[^;]*"\./[^"]*-main-[a-zA-Z0-9_]\+\.js"[^;]*;||g' "$temp_js_file"
         # 处理其他模块引用
         sed -i 's|"\./[^"]*-\([^"]*-[a-zA-Z0-9_]\+\.js\)"|"\./\1"|g' "$temp_js_file"
         # 移除Vue相关引用
@@ -218,14 +226,21 @@ copy_js_file() {
         sed -i 's|import {[^}]*} from "vue-router";||g' "$temp_js_file"
         sed -i 's|import {[^}]*} from "pinia";||g' "$temp_js_file"
         sed -i 's|import {[^}]*} from "tdesign-vue-next";||g' "$temp_js_file"
+        # 移除导出语句
+        sed -i 's|export {.*};;||g' "$temp_js_file"
         
-        # 在文件开头添加全局变量声明
-        sed -i '1i\
-// 使用全局变量替代模块导入\
-const { defineComponent, ref, resolveComponent, createElementBlock, openBlock, createElementVNode, createCommentVNode, Fragment, renderList, createVNode, withCtx, normalizeStyle, createTextVNode, createBlock, unref, createApp } = Vue;\
-const { useRouter } = VueRouter;\
-const { defineStore, storeToRefs } = Pinia;\
+        # 检查并添加全局变量声明（如果尚未存在）
+        if ! grep -q "\/\/ 使用全局变量替代模块导入" "$temp_js_file"; then
+            sed -i '1i\
+\/\/ 使用全局变量替代模块导入\
+const { defineComponent, ref, resolveComponent, createElementBlock, openBlock, createElementVNode, createCommentVNode, Fragment, renderList, createVNode, withCtx, normalizeStyle, createTextVNode, createBlock, unref, createApp, toDisplayString } = Vue;\
+\/\/ 检查VueRouter是否存在\
+const useRouter = VueRouter && typeof VueRouter.useRouter === "function" ? VueRouter.useRouter : () => ({ push: () => {} });\
+\/\/ 检查Pinia是否存在\
+const defineStore = Pinia && typeof Pinia.defineStore === "function" ? Pinia.defineStore : () => ({});\
+const storeToRefs = Pinia && typeof Pinia.storeToRefs === "function" ? Pinia.storeToRefs : () => ({});\
 ' "$temp_js_file"
+        fi
         
         # 复制处理后的文件
         cp "$temp_js_file" "$JS_DIR/$final_filename"
@@ -242,6 +257,8 @@ const { defineStore, storeToRefs } = Pinia;\
         sed -i 's|import {[^}]*} from "vue-router";||g' "$temp_js_file"
         sed -i 's|import {[^}]*} from "pinia";||g' "$temp_js_file"
         sed -i 's|import {[^}]*} from "tdesign-vue-next";||g' "$temp_js_file"
+        # 移除导出语句
+        sed -i 's|export {.*};;||g' "$temp_js_file"
         
         # 复制处理后的文件
         cp "$temp_js_file" "$JS_DIR/$final_filename"
@@ -334,7 +351,7 @@ copy_image_file() {
     local final_filename="$filename"
     if [[ "$final_filename" == *-*.* ]] && [[ "$final_filename" != *-raincloud.* ]] && [[ "$final_filename" != *-sp.* ]] && [[ "$final_filename" != *-bg-player.* ]]; then
         # 移除最后的哈希值部分
-        final_filename=$(echo "$final_filename" | sed -E 's/-[a-zA-Z0-9_]+\.(.*)$/.\1/')
+        final_filename=$(echo "$final_filename" | sed -E 's/-[a-zA-Z0-9_]+\.(.*)$/\.\1/')
     fi
     
     # 复制文件
@@ -356,38 +373,53 @@ update_index_html() {
         return 1
     fi
     
+    # 获取前端路径前缀（如果设置）
+    local frontend_path_prefix="${FRONTEND_PATH_PREFIX:-}"
+    
+    # 根据前端路径前缀设置资源路径
+    local js_path_prefix="${frontend_path_prefix}/js"
+    local css_path_prefix="${frontend_path_prefix}/css"
+    
+    # 如果没有设置前缀，则使用默认路径
+    if [ -z "$frontend_path_prefix" ]; then
+        js_path_prefix="/js"
+        css_path_prefix="/css"
+    fi
+    
     # 添加Vue和其他依赖的CDN引用
     if ! grep -q 'cdn.jsdelivr.net/npm/vue@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue@3.4.21\/dist\/vue.global.prod.js"><\/script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/vue-router@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.5.1/dist/vue-router.global.prod.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue-router@4.5.1\/dist\/vue-router.global.prod.js"><\/script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/pinia@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/pinia@3.0.3/dist/pinia.iife.prod.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/pinia@3.0.3\/dist\/pinia.iife.prod.js"><\/script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/tdesign-vue-next@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/tdesign-vue-next@1.17.0/dist/tdesign.min.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/tdesign-vue-next@1.17.0\/dist\/tdesign.min.js"><\/script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/axios@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/axios@1.9.0\/dist\/axios.min.js"><\/script>' "$index_file"
     fi
     
-    # 更新CSS引用 - 添加共享组件的CSS链接
-    if ! grep -q '<link rel="stylesheet" href="/css/shared.css">' "$index_file"; then
-        sed -i '/<head>/a\    <link rel="stylesheet" href="/css/shared.css">' "$index_file"
+    # 更新CSS引用 - 添加共享组件的CSS链接和home页面的CSS链接
+    if ! grep -q "<link rel=\"stylesheet\" href=\"${css_path_prefix}\/shared.css\">" "$index_file"; then
+        sed -i '/<head>/a\
+    <link rel="stylesheet" href="'"${css_path_prefix}"'/shared.css">\
+    <link rel="stylesheet" href="'"${css_path_prefix}"'/home-style.css">' "$index_file"
     fi
     
     # 更新JS引用 - 替换原有的main.ts引用为home.js（主入口文件）
-    sed -i 's|<script type="module" src="/src/renderer/src/main.ts"></script>|<script type="module" src="/js/home.js"></script>|' "$index_file"
+    sed -i "s|<script type=\"module\" src=\"\/src\/renderer\/src\/main.ts\"><\/script>|<script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>|" "$index_file"
     
     # 如果没有找到原有的引用，则添加新的JS引用
-    if ! grep -q '<script type="module" src="/js/home.js"></script>' "$index_file"; then
-        sed -i 's|<div id="app"></div>|<div id="app"></div>\n    <script type="module" src="/js/home.js"></script>|' "$index_file"
+    if ! grep -q "<script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>" "$index_file"; then
+        sed -i "s|<div id=\"app\"><\/div>|<div id=\"app\"><\/div>\n    <script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>|" "$index_file"
     fi
     
     log_success "index.html更新完成"
