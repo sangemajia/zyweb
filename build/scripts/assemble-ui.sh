@@ -411,25 +411,30 @@ update_index_html() {
         css_path_prefix="/css"
     fi
     
-    # 添加Vue和其他依赖的CDN引用
+    # 添加Vue和其他依赖的CDN引用（按正确顺序）
+    # 首先添加Vue
     if ! grep -q 'cdn.jsdelivr.net/npm/vue@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue@3.4.21\/dist\/vue.global.prod.js"><\/script>' "$index_file"
     fi
     
+    # 然后添加Vue Router（在Vue之后）
     if ! grep -q 'cdn.jsdelivr.net/npm/vue-router@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.5.1/dist/vue-router.global.prod.js"></script>' "$index_file"
+        sed -i '/vue@3.4.21\/dist\/vue.global.prod.js/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue-router@4.5.1\/dist\/vue-router.global.prod.js"><\/script>' "$index_file"
     fi
     
+    # 然后添加Pinia（在Vue Router之后）
     if ! grep -q 'cdn.jsdelivr.net/npm/pinia@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/pinia@3.0.3/dist/pinia.iife.prod.js"></script>' "$index_file"
+        sed -i '/vue-router@4.5.1\/dist\/vue-router.global.prod.js/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/pinia@3.0.3\/dist\/pinia.iife.prod.js"><\/script>' "$index_file"
     fi
     
+    # 然后添加TDesign Vue Next（在Pinia之后）
     if ! grep -q 'cdn.jsdelivr.net/npm/tdesign-vue-next@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/tdesign-vue-next@1.17.0/dist/tdesign.min.js"></script>' "$index_file"
+        sed -i '/pinia@3.0.3\/dist\/pinia.iife.prod.js/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/tdesign-vue-next@1.17.0\/dist\/tdesign.min.js"><\/script>' "$index_file"
     fi
     
+    # 最后添加Axios（在TDesign Vue Next之后）
     if ! grep -q 'cdn.jsdelivr.net/npm/axios@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>' "$index_file"
+        sed -i '/tdesign-vue-next@1.17.0\/dist\/tdesign.min.js/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/axios@1.9.0\/dist\/axios.min.js"><\/script>' "$index_file"
     fi
     
     # 更新CSS引用 - 添加共享组件的CSS链接
