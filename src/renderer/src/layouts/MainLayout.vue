@@ -75,10 +75,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 
 // 导航项（根据部署模式在服务端控制显示）
 const navItems = [
@@ -95,6 +96,24 @@ const navItems = [
 // 状态
 const activeNav = ref('home');
 const searchValue = ref('');
+
+// 监听路由变化，更新激活的导航项
+watch(
+  () => route.path,
+  (newPath) => {
+    // 根据当前路径设置激活的导航项
+    if (newPath === '/' || newPath === '/home') {
+      activeNav.value = 'home';
+    } else {
+      // 从路径中提取导航项名称
+      const pathParts = newPath.split('/').filter(part => part);
+      if (pathParts.length > 0) {
+        activeNav.value = pathParts[0];
+      }
+    }
+  },
+  { immediate: true }
+);
 
 // 设置活动导航
 const setActiveNav = (name: string) => {

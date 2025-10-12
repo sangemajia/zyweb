@@ -4,5 +4,5 @@ import HomePage from './index.vue';
 // 创建应用实例
 const app = createApp(HomePage);
 
-// 挂载应用
-app.mount('#app');
+// 挂载应用到home-container
+app.mount('#home-container');

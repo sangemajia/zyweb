@@ -40,10 +40,17 @@ set_node_memory_limit() {
 
 
 
+# 获取脚本所在目录和项目根目录
+get_project_root() {
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    echo "$(dirname "$(dirname "$script_dir")")"
+}
+
 # 通用构建函数
 build_component() {
     local component_name=$1
     local config_file=$2
+    local PROJECT_ROOT=$(get_project_root)
     
     log_info "开始构建 ${component_name}..."
     
@@ -83,6 +90,24 @@ build_component() {
         # 构建完成后执行内存清理
         log_info "构建完成后执行内存清理..."
         ./build/scripts/build-cleanup.sh
+        
+        # 如果是home页面，提前处理修改主入口文件的挂载点
+        if [ "$component_name" = "home" ]; then
+            log_info "处理home页面主入口文件的挂载点..."
+            # 获取构建产物目录
+            local home_dist_dir="$PROJECT_ROOT/dist/zyweb/home"
+            # 查找生成的主JS文件
+            local main_js_file=$(find "$home_dist_dir" -name "home-main-*.js" | head -n 1)
+            
+            if [ -n "$main_js_file" ]; then
+                # 修改挂载点
+                sed -i 's/app.mount("#app")/app.mount("#home-container")/g' "$main_js_file"
+                log_success "home页面主入口文件挂载点修改完成"
+            else
+                log_warning "未找到home页面主JS文件，跳过挂载点修改"
+            fi
+        fi
+        
         return 0
     else
         log_error "错误: ${component_name} 构建失败 (退出码: $exit_code)"

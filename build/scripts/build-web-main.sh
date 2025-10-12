@@ -1,5 +1,6 @@
 #!/bin/bash
-# 统一构建脚本
+
+# 构建web主入口文件脚本
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -39,8 +40,8 @@ set_node_memory_limit() {
 }
 
 # 构建函数
-build_unified() {
-    log_info "开始统一构建..."
+build_web_main() {
+    log_info "开始构建web主入口文件..."
     
     # 动态计算内存限制
     local memory_limit=1200
@@ -58,9 +59,9 @@ build_unified() {
     # 记录构建开始时间
     local start_time=$(date +%s)
     
-    # 构建统一应用
-    log_info "执行统一构建..."
-    node --no-warnings --no-compilation-cache ./node_modules/vite/bin/vite.js build --config "build/configs/vite/vite.unified.config.ts" --minify false --mode development
+    # 构建web主入口文件
+    log_info "执行web主入口文件构建..."
+    node --no-warnings --no-compilation-cache ./node_modules/vite/bin/vite.js build --config "build/configs/vite/vite.web-main.config.ts" --minify false --mode development
     
     local exit_code=$?
     local end_time=$(date +%s)
@@ -70,7 +71,7 @@ build_unified() {
     local available_memory=$(get_available_memory)
     
     if [ $exit_code -eq 0 ]; then
-        log_success "统一构建成功!"
+        log_success "web主入口文件构建成功!"
         log_info "构建耗时: ${build_duration}秒"
         log_info "构建时可用内存: ${available_memory}MB"
         log_info "分配给node进程的内存: ${memory_limit}MB"
@@ -80,7 +81,7 @@ build_unified() {
         ./build/scripts/build-cleanup.sh
         return 0
     else
-        log_error "错误: 统一构建失败 (退出码: $exit_code)"
+        log_error "错误: web主入口文件构建失败 (退出码: $exit_code)"
         log_info "构建耗时: ${build_duration}秒"
         log_info "构建时可用内存: ${available_memory}MB"
         log_info "分配给node进程的内存: ${memory_limit}MB"
@@ -93,4 +94,4 @@ build_unified() {
 }
 
 # 执行构建
-build_unified
+build_web_main

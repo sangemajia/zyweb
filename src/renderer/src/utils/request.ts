@@ -4,8 +4,10 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { getPinia } from '@/utils/tool';
 
 // 基础URL配置
+// 在一体化部署模式下，前端和后端运行在同一域名下，使用相对路径
+// 在前后端分离部署模式下，使用环境变量配置的API地址
 const baseURL = String(
-  import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_URL_PREFIX}`,
+  import.meta.env.DEV ? '/api' : '/api'
 );
 const TIMEOUT = 5000;
 

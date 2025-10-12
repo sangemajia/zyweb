@@ -225,7 +225,7 @@ const playHelper = async (
     // 直链直接获取数据类型
     if (play.url && play.parse === 0) {
       // 设置代理
-      if (playRes.url.indexOf('http://127.0.0.1:9978/proxy') > -1) {
+      if (playRes.url.indexOf('/proxy') > -1) {
         const formatProxyUrl = new URL(playRes.url);
         const proxyParams = Object.fromEntries(formatProxyUrl.searchParams.entries());
         const proxyData = await fetchCmsProxy({ sourceId: site.id, ...proxyParams });
@@ -256,12 +256,12 @@ const playHelper = async (
   } catch (err) {
     console.error(`[film_common][playHelper][error]`, err);
   } finally {
-    if (adFlag && data.url && !data.url.startsWith('http://127.0.0.1') && data.mediaType.includes('m3u8')) {
+    if (adFlag && data.url && !data.url.startsWith(window.location.origin) && data.mediaType.includes('m3u8')) {
       console.log('[film_common][removeAd][start]开始移除广告流程');
-      // data.url = `http://127.0.0.1:9978/api/v1/lab/ad?url=${encodeURI(data.url)}&headers=${JSON.stringify(data.headers || {})}`;
+      // data.url = `/api/v1/lab/ad?url=${encodeURI(data.url)}&headers=${JSON.stringify(data.headers || {})}`;
       const url = encodeURI(data.url);
       const headers = JSON.stringify(data.headers || {});
-      data.url = `http://127.0.0.1:9978/api/v1/lab/ad?url=${url}&headers=${headers}`;
+      data.url = `/api/v1/lab/ad?url=${url}&headers=${headers}`;
       console.log('[film_common][removeAd][end]结束移除广告流程');
     }
     console.log(`[film_common][playHelper][return]`, data);

@@ -38,33 +38,40 @@ RESOURCES_DIR="$UI_DIR/resources"
 # 创建目标目录
 create_directories() {
     log_info "创建目标目录..."
-    mkdir -p "$JS_DIR" "$CSS_DIR" "$IMAGES_DIR" "$AD_IMAGES_DIR" "$RESOURCES_DIR"
+    mkdir -p "$JS_DIR" "$CSS_DIR" "$IMAGES_DIR" "$AD_IMAGES_DIR"
     log_success "目标目录创建完成"
 }
 
 # 复制入口文件
 copy_entry_file() {
     log_info "复制入口文件..."
-    if [ -f "$PROJECT_ROOT/src/renderer/src/index.html" ]; then
-        cp "$PROJECT_ROOT/src/renderer/src/index.html" "$UI_DIR/"
+    local source_index="$PROJECT_ROOT/src/renderer/src/index.html"
+    if [ -f "$source_index" ]; then
+        cp "$source_index" "$UI_DIR/"
         log_success "入口文件复制完成"
+        
+        # 验证文件是否成功复制
+        if [ ! -f "$UI_DIR/index.html" ]; then
+            log_error "入口文件复制失败"
+            return 1
+        fi
+        
+        # 检查并更新挂载点
+        if grep -q '<div id="app"></div>' "$UI_DIR/index.html"; then
+            sed -i 's|<div id="app"></div>|<div id="home-container"></div>|g' "$UI_DIR/index.html"
+            log_info "挂载点已更新为 home-container"
+        elif grep -q '<div id="home-container"></div>' "$UI_DIR/index.html"; then
+            log_info "挂载点已经是 home-container"
+        else
+            log_warning "未找到预期的挂载点元素"
+        fi
     else
-        log_error "入口文件不存在: $PROJECT_ROOT/src/renderer/src/index.html"
+        log_error "入口文件不存在: $source_index"
         return 1
     fi
 }
 
-# 复制公共资源
-copy_resources() {
-    log_info "复制公共资源..."
-    local project_resources_dir="$PROJECT_ROOT/resources"
-    if [ -d "$project_resources_dir" ]; then
-        cp -r "$project_resources_dir"/* "$RESOURCES_DIR/"
-        log_success "公共资源复制完成"
-    else
-        log_info "项目公共资源目录不存在，跳过复制"
-    fi
-}
+
 
 # 组装构建产物
 assemble_build_artifacts() {
@@ -72,6 +79,18 @@ assemble_build_artifacts() {
     
     # 记录开始时间
     local start_time=$(date +%s)
+    
+    # 检查源目录是否存在
+    if [ ! -d "$ZYWEB_DIST_DIR" ]; then
+        log_error "源构建目录不存在: $ZYWEB_DIST_DIR"
+        return 1
+    fi
+    
+    # 检查源目录是否为空
+    if [ -z "$(ls -A "$ZYWEB_DIST_DIR")" ]; then
+        log_error "源构建目录为空: $ZYWEB_DIST_DIR"
+        return 1
+    fi
     
     # 创建用于跟踪已复制文件的临时目录
     local temp_dir="$UI_DIR/.temp"
@@ -82,6 +101,12 @@ assemble_build_artifacts() {
         if [ -d "$module_dir" ]; then
             local module_name=$(basename "$module_dir")
             log_info "处理模块: $module_name"
+            
+            # 检查模块目录是否为空
+            if [ -z "$(ls -A "$module_dir")" ]; then
+                log_warning "模块目录为空，跳过: $module_name"
+                continue
+            fi
             
             # 遍历模块中的所有文件
             for file in "$module_dir"/*; do
@@ -201,7 +226,7 @@ copy_js_file() {
     fi
     
     # 如果是主入口文件，特殊处理引用
-    if [[ "$final_filename" == *-main.js ]] || [[ "$final_filename" == home.js ]]; then
+    if [[ "$final_filename" == *-main.js ]] || [[ "$final_filename" == home.js ]] || [[ "$filename" == home-main-* ]]; then
         # 创建临时文件
         local temp_js_file="$UI_DIR/.temp/$(basename "$source_file")"
         cp "$source_file" "$temp_js_file"
@@ -220,7 +245,7 @@ copy_js_file() {
         # 处理主文件引用（移除整个import语句而不是留下空字符串）
         sed -i 's|import[^;]*"\./[^"]*-main-[a-zA-Z0-9_]\+\.js"[^;]*;||g' "$temp_js_file"
         # 处理其他模块引用
-        sed -i 's|"\./[^"]*-\([^"]*-[a-zA-Z0-9_]\+\.js\)"|"\./\1"|g' "$temp_js_file"
+        sed -i 's|"\./[^"]*-\([^"]*-[a-zA-Z0-9_]\+\.js\)"|"\.\/\1"|g' "$temp_js_file"
         # 移除Vue相关引用
         sed -i 's|import {[^}]*} from "vue";||g' "$temp_js_file"
         sed -i 's|import {[^}]*} from "vue-router";||g' "$temp_js_file"
@@ -388,63 +413,228 @@ update_index_html() {
     
     # 添加Vue和其他依赖的CDN引用
     if ! grep -q 'cdn.jsdelivr.net/npm/vue@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue@3.4.21\/dist\/vue.global.prod.js"><\/script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/vue-router@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/vue-router@4.5.1\/dist\/vue-router.global.prod.js"><\/script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.5.1/dist/vue-router.global.prod.js"></script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/pinia@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/pinia@3.0.3\/dist\/pinia.iife.prod.js"><\/script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/pinia@3.0.3/dist/pinia.iife.prod.js"></script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/tdesign-vue-next@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/tdesign-vue-next@1.17.0\/dist\/tdesign.min.js"><\/script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/tdesign-vue-next@1.17.0/dist/tdesign.min.js"></script>' "$index_file"
     fi
     
     if ! grep -q 'cdn.jsdelivr.net/npm/axios@' "$index_file"; then
-        sed -i '/<head>/a\    <script src="https:\/\/cdn.jsdelivr.net\/npm\/axios@1.9.0\/dist\/axios.min.js"><\/script>' "$index_file"
+        sed -i '/<head>/a\    <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>' "$index_file"
     fi
     
-    # 更新CSS引用 - 添加共享组件的CSS链接和home页面的CSS链接
-    if ! grep -q "<link rel=\"stylesheet\" href=\"${css_path_prefix}\/shared.css\">" "$index_file"; then
+    # 更新CSS引用 - 添加共享组件的CSS链接
+    if ! grep -q "<link rel=\"stylesheet\" href=\"${css_path_prefix}/shared.css\">" "$index_file"; then
         sed -i '/<head>/a\
-    <link rel="stylesheet" href="'"${css_path_prefix}"'/shared.css">\
-    <link rel="stylesheet" href="'"${css_path_prefix}"'/home-style.css">' "$index_file"
+    <link rel="stylesheet" href="'"${css_path_prefix}"'/shared.css">' "$index_file"
     fi
     
-    # 更新JS引用 - 替换原有的main.ts引用为home.js（主入口文件）
-    sed -i "s|<script type=\"module\" src=\"\/src\/renderer\/src\/main.ts\"><\/script>|<script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>|" "$index_file"
+    # 更新JS引用 - 使用主入口文件
+    sed -i "s|<script type=\"module\" src=\"/src/renderer/src/main.ts\"></script>|<script type=\"module\" src=\"${js_path_prefix}/main.js\"></script>|" "$index_file"
     
     # 如果没有找到原有的引用，则添加新的JS引用
-    if ! grep -q "<script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>" "$index_file"; then
-        sed -i "s|<div id=\"app\"><\/div>|<div id=\"app\"><\/div>\n    <script type=\"module\" src=\"${js_path_prefix}\/home.js\"><\/script>|" "$index_file"
+    if ! grep -q "<script type=\"module\" src=\"${js_path_prefix}/main.js\"></script>" "$index_file"; then
+        sed -i "s|<div id=\"home-container\"></div>|<div id=\"home-container\"></div>\n    <script type=\"module\" src=\"${js_path_prefix}/main.js\"></script>|" "$index_file"
     fi
     
     log_success "index.html更新完成"
+}
+
+# 创建主入口文件
+create_main_entry() {
+    log_info "创建主入口文件..."
+    
+    local main_file="$JS_DIR/main.js"
+    
+    cat > "$main_file" << 'EOF'
+// 使用全局变量替代模块导入
+const { createApp, defineAsyncComponent } = Vue;
+
+// 检查VueRouter是否存在并正确获取API
+console.log('VueRouter:', VueRouter);
+if (!VueRouter) {
+  throw new Error('VueRouter is not loaded');
+}
+
+console.log('VueRouter.createRouter:', typeof VueRouter.createRouter);
+console.log('VueRouter.createWebHashHistory:', typeof VueRouter.createWebHashHistory);
+
+const createRouter = VueRouter.createRouter;
+const createWebHashHistory = VueRouter.createWebHashHistory;
+
+// 检查VueRouter是否正确加载
+if (!createRouter) {
+  throw new Error('createRouter is not available');
+}
+if (!createWebHashHistory) {
+  throw new Error('createWebHashHistory is not available');
+}
+
+// 导入共享组件
+import "./shared.js";
+const MediaCard = window.ZyWebSharedComponents.MediaCard;
+
+// 创建异步组件导入函数
+const loadComponent = (path) => {
+  return defineAsyncComponent(() => import(path));
+};
+
+// 固定路由
+const defaultRouterList = [
+  {
+    path: '/',
+    redirect: '/home',
+  },
+];
+
+// homepage路由
+const homepageRouterList = [
+  {
+    path: '/home',
+    name: 'home',
+    component: () => loadComponent('./home.js'),
+  },
+  {
+    path: '/film',
+    name: 'film',
+    component: () => loadComponent('./film.js'),
+  },
+  {
+    path: '/iptv',
+    name: 'iptv',
+    component: () => loadComponent('./iptv.js'),
+  },
+  {
+    path: '/drive',
+    name: 'drive',
+    component: () => loadComponent('./drive.js'),
+  },
+  {
+    path: '/play',
+    name: 'play',
+    component: () => loadComponent('./play.js'),
+  },
+  {
+    path: '/analyze',
+    name: 'analyze',
+    component: () => loadComponent('./analyze.js'),
+  },
+  {
+    path: '/chase',
+    name: 'chase',
+    component: () => loadComponent('./chase.js'),
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    component: () => loadComponent('./setting.js'),
+  },
+  {
+    path: '/lab',
+    name: 'lab',
+    component: () => loadComponent('./lab.js'),
+  },
+];
+
+// 所有路由
+const allRoutes = [...homepageRouterList, ...defaultRouterList];
+
+// 创建路由实例
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: allRoutes,
+});
+
+// 创建应用实例
+const app = createApp({
+  template: `
+    <div class="zy-layout">
+      <router-view />
+    </div>
+  `
+});
+
+// 使用路由
+app.use(router);
+
+// 挂载应用
+app.mount('#home-container');
+EOF
+    
+    log_success "主入口文件创建完成"
 }
 
 # 验证组装结果
 verify_assembly() {
     log_info "验证组装结果..."
     
-    local js_count=$(ls -1 "$JS_DIR" | wc -l)
-    local css_count=$(ls -1 "$CSS_DIR" | wc -l)
-    local image_count=$(ls -1 "$IMAGES_DIR" | wc -l)
-    local resource_count=$(ls -1 "$RESOURCES_DIR" 2>/dev/null | wc -l || echo "0")
+    # 检查目标目录是否存在
+    if [ ! -d "$UI_DIR" ]; then
+        log_error "UI目录不存在: $UI_DIR"
+        return 1
+    fi
+    
+    local js_count=$(ls -1 "$JS_DIR" 2>/dev/null | wc -l)
+    local css_count=$(ls -1 "$CSS_DIR" 2>/dev/null | wc -l)
+    local image_count=$(ls -1 "$IMAGES_DIR" 2>/dev/null | wc -l)
     
     log_info "JavaScript文件数量: $js_count"
     log_info "CSS文件数量: $css_count"
     log_info "图片文件数量: $image_count"
-    log_info "公共资源文件数量: $resource_count"
     
     # 检查关键文件是否存在
-    if [ -f "$UI_DIR/index.html" ]; then
-        log_success "入口文件存在"
+    local required_files=(
+        "$UI_DIR/index.html"
+        "$JS_DIR/home.js"
+        "$JS_DIR/shared.js"
+        "$CSS_DIR/shared.css"
+    )
+    
+    local missing_files=()
+    for file in "${required_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            missing_files+=("$file")
+        fi
+    done
+    
+    if [ ${#missing_files[@]} -eq 0 ]; then
+        log_success "所有必需文件都存在"
     else
-        log_error "入口文件不存在"
+        log_error "以下文件缺失:"
+        for file in "${missing_files[@]}"; do
+            log_error "  - $file"
+        done
         return 1
+    fi
+    
+    # 验证入口文件中的关键元素
+    if grep -q '<div id="home-container"></div>' "$UI_DIR/index.html"; then
+        log_info "挂载点验证通过"
+    else
+        log_error "挂载点验证失败：未找到 home-container 元素"
+        return 1
+    fi
+    
+    # 验证JavaScript文件中的挂载点
+    local home_js_file="$JS_DIR/home.js"
+    if [ -f "$home_js_file" ]; then
+        if grep -q 'app.mount("#home-container")' "$home_js_file"; then
+            log_info "JavaScript挂载点验证通过"
+        else
+            log_error "JavaScript挂载点验证失败：未找到正确的挂载点"
+            return 1
+        fi
+    else
+        log_warning "未找到 home.js 文件，跳过JavaScript挂载点验证"
     fi
     
     log_success "组装结果验证完成"
@@ -467,11 +657,11 @@ main() {
     # 复制入口文件
     copy_entry_file
     
-    # 复制公共资源
-    copy_resources
-    
     # 组装构建产物
     assemble_build_artifacts
+    
+    # 创建主入口文件
+    create_main_entry
     
     # 更新index.html引用
     update_index_html

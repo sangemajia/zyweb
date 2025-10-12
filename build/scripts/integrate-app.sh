@@ -34,7 +34,6 @@ DIST_DIR="$PROJECT_ROOT/dist"
 UI_DIR="$DIST_DIR/ui"
 SERVER_DIR="$DIST_DIR/server"
 APP_DIR="$DIST_DIR/app"
-RESOURCES_DIR="$PROJECT_ROOT/resources"
 
 # 创建集成目录
 create_app_directory() {
@@ -69,14 +68,10 @@ copy_frontend() {
     # 创建UI目录
     mkdir -p "$APP_DIR/ui"
     
-    # 复制UI文件（排除resources目录，避免重复）
+    # 复制UI文件
     if [ -d "$UI_DIR" ]; then
-        # 先复制所有文件和目录
+        # 复制所有UI文件和目录
         cp -r "$UI_DIR"/* "$APP_DIR/ui/"
-        # 然后删除重复的resources目录
-        if [ -d "$APP_DIR/ui/resources" ]; then
-            rm -rf "$APP_DIR/ui/resources"
-        fi
         log_success "前端UI复制完成"
     else
         log_error "前端UI目录不存在: $UI_DIR"
@@ -84,21 +79,7 @@ copy_frontend() {
     fi
 }
 
-# 复制公共资源
-copy_resources() {
-    log_info "复制公共资源..."
-    
-    # 创建资源目录
-    mkdir -p "$APP_DIR/resources"
-    
-    # 复制公共资源文件
-    if [ -d "$RESOURCES_DIR" ]; then
-        cp -r "$RESOURCES_DIR"/* "$APP_DIR/resources/"
-        log_success "公共资源复制完成"
-    else
-        log_info "公共资源目录不存在，跳过复制"
-    fi
-}
+
 
 # 创建环境变量文件
 create_env_file() {
@@ -114,12 +95,6 @@ create_env_file() {
 # 部署方案设置
 # 一体化部署 (standalone) 或 前后端分离部署 (separate)
 DEPLOYMENT_MODE=standalone
-
-# 前端路径配置
-# 在一体化部署模式下，可以设置前端资源的访问路径前缀
-# 例如设置为 /web 表示前端资源通过 http://host:port/web/ 访问
-# 留空表示使用根路径 /
-FRONTEND_PATH_PREFIX=
 
 # 数据库设置
 # 支持 pglite, pg, mysql
@@ -404,7 +379,6 @@ ZYWeb应用程序部署说明
   - js/: JavaScript文件
   - css/: CSS样式文件
   - images/: 图片资源文件
-- resources/: 公共资源文件
 - .env: 环境变量配置文件
 - start.sh: 启动脚本
 
@@ -431,7 +405,7 @@ EOF
 cleanup_intermediate_artifacts() {
     log_info "清理中间产物..."
     
-    # 删除dist目录中的ui和server目录
+    # 删除dist目录中的ui和server目录，但保留zyweb目录
     if [ -d "$UI_DIR" ]; then
         rm -rf "$UI_DIR"
         log_info "已删除UI中间产物目录: $UI_DIR"
@@ -449,6 +423,12 @@ cleanup_intermediate_artifacts() {
 verify_integration() {
     log_info "验证集成结果..."
     
+    # 检查目标目录是否存在
+    if [ ! -d "$APP_DIR" ]; then
+        log_error "应用目录不存在: $APP_DIR"
+        return 1
+    fi
+    
     # 检查关键文件
     local required_files=(
         "$APP_DIR/server/index.js"
@@ -458,15 +438,6 @@ verify_integration() {
         "$APP_DIR/README.txt"
     )
     
-    # 检查UI目录中是否有JS和CSS文件
-    if [ -z "$(ls -A "$APP_DIR/ui/js/" 2>/dev/null)" ]; then
-        missing_files+=("$APP_DIR/ui/js/ (空目录)")
-    fi
-    
-    if [ -z "$(ls -A "$APP_DIR/ui/css/" 2>/dev/null)" ]; then
-        missing_files+=("$APP_DIR/ui/css/ (空目录)")
-    fi
-    
     local missing_files=()
     for file in "${required_files[@]}"; do
         if [ ! -f "$file" ]; then
@@ -474,13 +445,38 @@ verify_integration() {
         fi
     done
     
+    # 检查UI目录中是否有JS和CSS文件
+    if [ ! -d "$APP_DIR/ui/js/" ] || [ -z "$(ls -A "$APP_DIR/ui/js/" 2>/dev/null)" ]; then
+        missing_files+=("$APP_DIR/ui/js/ (空目录或不存在)")
+    fi
+    
+    if [ ! -d "$APP_DIR/ui/css/" ] || [ -z "$(ls -A "$APP_DIR/ui/css/" 2>/dev/null)" ]; then
+        missing_files+=("$APP_DIR/ui/css/ (空目录或不存在)")
+    fi
+    
     if [ ${#missing_files[@]} -eq 0 ]; then
         log_success "所有必需文件都存在"
     else
-        log_warning "以下文件缺失:"
+        log_error "以下文件缺失:"
         for file in "${missing_files[@]}"; do
-            log_warning "  - $file"
+            log_error "  - $file"
         done
+        return 1
+    fi
+    
+    # 验证入口文件中的关键元素
+    if grep -q '<div id="home-container"></div>' "$APP_DIR/ui/index.html"; then
+        log_info "挂载点验证通过"
+    else
+        log_error "挂载点验证失败：未找到 home-container 元素"
+        return 1
+    fi
+    
+    # 验证启动脚本权限
+    if [ -x "$APP_DIR/start.sh" ]; then
+        log_info "启动脚本权限验证通过"
+    else
+        log_warning "启动脚本权限验证失败：脚本可能无法执行"
     fi
     
     log_success "集成结果验证完成"
@@ -498,9 +494,6 @@ main() {
     
     # 复制前端UI
     copy_frontend
-    
-    # 复制公共资源
-    copy_resources
     
     # 创建环境变量文件
     create_env_file

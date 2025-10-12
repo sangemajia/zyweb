@@ -436,8 +436,8 @@ export const handleDataDebugProxy = async (
   }
 
   if (url && url.startsWith('http')) {
-    if (!url.startsWith('http://127.0.0.1:9978/')) {
-      const formatUrl = `http://127.0.0.1:9978/proxy?do=js&url=${url}`;
+    if (!url.startsWith(window.location.origin)) {
+      const formatUrl = `/proxy?do=js&url=${url}`;
       // setProxyUrl(formatUrl);
       url = formatUrl;
     }
