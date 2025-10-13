@@ -35,8 +35,8 @@ cleanup_build_processes() {
     log_info "清理构建相关进程..."
     
     # 显示清理前的进程信息
-    log_info "清理前的Node.js相关进程:"
-    ps aux | grep -v grep | grep -E "(node|vite|rollup)" || log_info "未找到相关进程"
+    log_info "清理前的相关进程:"
+    ps aux | grep -v grep | grep -E "(node|vite|rollup|python.*http|webkit)" || log_info "未找到相关进程"
     
     # 清理可能存在的Vite进程
     pkill -f "vite" >/dev/null 2>&1 || true
@@ -56,6 +56,12 @@ cleanup_build_processes() {
     # 清理可能存在的Node.js模块进程
     pkill -f "node.*module" >/dev/null 2>&1 || true
     
+    # 清理可能存在的Python HTTP服务器进程
+    pkill -f "python.*http.server" >/dev/null 2>&1 || true
+    
+    # 清理可能存在的webkit相关进程
+    pkill -f "webkit" >/dev/null 2>&1 || true
+    
     # 强制杀死所有Node.js进程（除了当前脚本进程和构建相关进程）
     # 注意：这里排除了当前脚本的进程ID，避免杀死自己
     local current_pid=$
@@ -65,9 +71,43 @@ cleanup_build_processes() {
     # 等待进程完全终止
     sleep 3
     
+    # 再次检查并强制杀死可能残留的HTTP服务器进程
+    kill_http_server
+    
     # 显示清理后的进程信息
-    log_info "清理后的Node.js相关进程:"
-    ps aux | grep -v grep | grep -E "(node|vite|rollup)" || log_info "未找到相关进程"
+    log_info "清理后的相关进程:"
+    ps aux | grep -v grep | grep -E "(node|vite|rollup|python.*http|webkit)" || log_info "未找到相关进程"
+}
+
+# 杀死HTTP服务器进程
+kill_http_server() {
+    log_info "检查并杀死HTTP服务器进程..."
+    
+    # 查找并杀死在8819端口运行的进程
+    local http_pids=$(lsof -i :8819 -t 2>/dev/null)
+    if [ ! -z "$http_pids" ]; then
+        log_info "发现HTTP服务器进程 PID: $http_pids"
+        kill $http_pids >/dev/null 2>&1 || true
+        sleep 2
+        
+        # 强制杀死如果仍然存在
+        kill -9 $http_pids >/dev/null 2>&1 || true
+        log_info "已发送终止信号给HTTP服务器进程"
+    else
+        log_info "未发现8819端口的HTTP服务器进程"
+    fi
+    
+    # 额外检查Python HTTP服务器进程
+    local python_http_pids=$(ps aux | grep "python.*http.server" | grep -v grep | awk '{print $2}')
+    if [ ! -z "$python_http_pids" ]; then
+        log_info "发现Python HTTP服务器进程 PID: $python_http_pids"
+        kill $python_http_pids >/dev/null 2>&1 || true
+        sleep 2
+        
+        # 强制杀死如果仍然存在
+        kill -9 $python_http_pids >/dev/null 2>&1 || true
+        log_info "已发送终止信号给Python HTTP服务器进程"
+    fi
 }
 
 # 清理Node.js缓存

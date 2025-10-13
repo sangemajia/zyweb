@@ -90,7 +90,11 @@ build_shared_components() {
         # 复制构建结果到正确位置
         log_info "复制构建结果到正确位置..."
         mkdir -p ../../../../../dist/zyweb/shared-components
-        cp -r dist/* ../../../../../dist/zyweb/shared-components/
+        if [ -d "dist" ] && [ -n "$(ls -A dist)" ]; then
+            cp -r dist/* ../../../../../dist/zyweb/shared-components/
+        else
+            log_warning "构建输出目录为空或不存在，跳过复制步骤"
+        fi
         
         # 返回项目根目录
         cd ../../../../../

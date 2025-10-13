@@ -2,7 +2,7 @@
   <t-config-provider :global-config="getComponentsLocale">
     <router-view />
     <!-- 需脱离文档流, 不然会影响后面dom渲染问题 -->
-    <disclaimer-view v-model:visible="active.disclaimer" style="position: fixed; z-index: 999" />
+    <disclaimer-view v-model:visible="active.disclaimer" style="position: fixed; z-index: 999"/>
   </t-config-provider>
 </template>
 

@@ -23,17 +23,13 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       less: {
-        javascriptEnabled: false,
+        javascriptEnabled: true,
         modifyVars: {
           'primary-color': '#45c58b',
         },
         // 增加Less编译超时时间
         timeout: 120000,
       },
-    },
-    // 禁用CSS处理
-    postcss: {
-      plugins: [],
     },
   },
   server: {

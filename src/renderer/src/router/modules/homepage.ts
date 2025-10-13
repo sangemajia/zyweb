@@ -1,24 +1,23 @@
-import { 
+import {
   HomeIcon,
+  ExtensionIcon,
   MovieClapperIcon,
   Tv1Icon,
   CloudIcon,
   ViewInArIcon,
   DataDisplayIcon,
   Setting1Icon,
-  ExtensionIcon,
   PlayCircleStrokeIcon,
 } from 'tdesign-icons-vue-next';
 
-// 导入我们的新布局
-import MainLayout from '@/layouts/MainLayout.vue';
+import Layout from '@/layouts/MainLayout.vue';
 
 export default [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
-    redirect: '/home',
-    component: MainLayout,
+    redirect: '/home/index',
+    component: Layout,
     meta: {
       title: {
         zh_CN: '首页',
@@ -28,7 +27,7 @@ export default [
     },
     children: [
       {
-        path: '/home',
+        path: 'index',
         name: 'HomeIndex',
         component: () => import('@/pages/home/index.vue'),
       },
@@ -105,6 +104,7 @@ export default [
         en_US: 'Play',
       },
       icon: PlayCircleStrokeIcon,
+      hidden: true,
     },
     children: [
       {
@@ -165,6 +165,7 @@ export default [
         en_US: 'Setting',
       },
       icon: Setting1Icon,
+      hidden: true,
     },
     children: [
       {
@@ -185,6 +186,7 @@ export default [
         en_US: 'Lab',
       },
       icon: ExtensionIcon,
+      hidden: true,
     },
     children: [
       {

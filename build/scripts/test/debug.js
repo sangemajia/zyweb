@@ -1,0 +1,1 @@
+console.log('测试Node.js是否正常工作');

@@ -25,4 +25,4 @@ app.use(router);
 app.use(i18n);
 app.use(TTooltip);
 
-app.mount('#home-container').$nextTick(removeLoading);
+app.mount('#app').$nextTick(removeLoading);

@@ -111,7 +111,7 @@ get_dynamic_memory_limit() {
                 memory_limit=300
             fi
             ;;
-        "analyze"|"lab"|"play"|"setting")
+        "analyze"|"lab"|"play"|"setting"|"test")
             # 中等复杂度组件
             memory_limit=$((real_available_memory * 8 / 10))
             # 确保中等复杂度组件至少有275MB内存
@@ -173,6 +173,12 @@ check_component_exists() {
             ;;
         "home")
             component_dir="dist/zyweb/home"
+            ;;
+        "main")
+            component_dir="dist/zyweb/main"
+            ;;
+        "test")
+            component_dir="dist/zyweb/test"
             ;;
     esac
     
@@ -347,6 +353,12 @@ main() {
             "home")
                 components=("Home页面:build/configs/vite/vite.home.config.ts")
                 ;;
+            "main")
+                components=("Main组件:build/configs/vite/vite.main.config.ts")
+                ;;
+            "test")
+                components=("Test页面:build/configs/vite/vite.test.config.ts")
+                ;;
             *)
                 log_error "未知组件: $COMPONENT"
                 exit 1
@@ -365,6 +377,8 @@ main() {
             "Setting页面:build/configs/vite/vite.setting.config.ts"
             "Analyze页面:build/configs/vite/vite.analyze.config.ts"
             "Home页面:build/configs/vite/vite.home.config.ts"
+            "Main组件:build/configs/vite/vite.main.config.ts"
+            "Test页面:build/configs/vite/vite.test.config.ts"
         )
     fi
     
@@ -407,6 +421,15 @@ main() {
                 ;;
             "Analyze页面")
                 component_name="analyze"
+                ;;
+            "Home页面")
+                component_name="home"
+                ;;
+            "Main组件")
+                component_name="main"
+                ;;
+            "Test页面")
+                component_name="test"
                 ;;
         esac
         

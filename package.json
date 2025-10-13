@@ -5,7 +5,7 @@
   "main": "./dist-electron/main/index.js",
   "type": "module",
   "scripts": {
-    "build": "build/scripts/build-cleanup.sh && build/scripts/simple-build.sh",
+    "build": "build/scripts/build-cleanup.sh && build/scripts/simple-build-optimized.sh",
     "dev:server": "node --max-old-space-size=50 dist/app/server/index.js",
     "dev:server:web": "npx ts-node --transpile-only src/main/core/server/index.web.ts",
     "format": "prettier --write ."
@@ -38,6 +38,8 @@
     "pako": "^2.1.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
+    "playwright-firefox": "^1.56.0",
+    "playwright-webkit": "^1.56.0",
     "shaka-player": "^4.16.3",
     "sm-crypto": "^0.3.13",
     "splitpanes": "^4.0.4",
@@ -54,7 +56,6 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "less": "^4.4.2",
     "playwright": "^1.56.0",
-    "puppeteer": "^24.24.0",
     "terser": "^5.44.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.9"

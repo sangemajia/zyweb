@@ -465,10 +465,10 @@ verify_integration() {
     fi
     
     # 验证入口文件中的关键元素
-    if grep -q '<div id="home-container"></div>' "$APP_DIR/ui/index.html"; then
+    if grep -q '<div id="app"></div>' "$APP_DIR/ui/index.html"; then
         log_info "挂载点验证通过"
     else
-        log_error "挂载点验证失败：未找到 home-container 元素"
+        log_error "挂载点验证失败：未找到 app 元素"
         return 1
     fi
     
