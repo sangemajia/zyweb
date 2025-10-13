@@ -227,14 +227,20 @@ install_dependencies() {
 start_backend() {
     log_info "启动后端服务..."
     
-    if [ -f "server/index.js" ]; then
+    if [ -f "server/src/index.js" ]; then
+        cd server
+        node src/index.js &
+        BACKEND_PID=$!
+        log_success "后端服务已启动 (PID: $BACKEND_PID)"
+        cd ..
+    elif [ -f "server/index.js" ]; then
         cd server
         node index.js &
         BACKEND_PID=$!
         log_success "后端服务已启动 (PID: $BACKEND_PID)"
         cd ..
     else
-        log_error "server/index.js文件不存在"
+        log_error "后端入口文件不存在"
         return 1
     fi
 }
