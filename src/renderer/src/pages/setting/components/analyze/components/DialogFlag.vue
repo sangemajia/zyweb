@@ -12,13 +12,7 @@
     <template #body>
       <t-form ref="formRef" :data="formData" :rules="RULES" :label-width="60" :requiredMark="false">
         <t-form-item name="flag" label-width="0px">
-          <t-tag-input
-            v-model="formData.data"
-            clearable
-            excess-tags-display-type="scroll"
-            :placeholder="$t('pages.setting.placeholder.enterConfirm')"
-            @change="handleFlagFilter"
-          />
+          <t-tag-input v-model="formData.data" clearable excess-tags-display-type="scroll" :placeholder="$t('pages.setting.placeholder.enterConfirm')" @change="handleFlagFilter" />
         </t-form-item>
       </t-form>
     </template>
@@ -93,7 +87,7 @@ const onSubmit: FormProps['onSubmit'] = async () => {
 };
 
 const onReset: FormProps['onReset'] = () => {
-  formData.value.data = [...formData.value.raw];
+  formData.value.data = [ ...formData.value.raw ];
 };
 
 const RULES = {

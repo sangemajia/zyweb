@@ -15,15 +15,8 @@
             <div class="left">
               <div class="info">
                 <div class="title mg-right">{{ urlTitle ? urlTitle : $t('pages.analyze.noPlay') }}</div>
-                <t-button
-                  shape="round"
-                  size="small"
-                  class="open mg-right"
-                  v-if="playFormData.url"
-                  @click="openCurrentUrl"
-                >
-                  {{ $t('pages.analyze.source') }}</t-button
-                >
+                <t-button shape="round" size="small" class="open mg-right" v-if="playFormData.url" @click="openCurrentUrl">
+                  {{ $t('pages.analyze.source') }}</t-button>
                 <div class="share mg-right" v-if="playFormData.url" @click="shareEvent">
                   <share-popup v-model:visible="active.share" :data="shareFromData">
                     <template #customize>
@@ -45,19 +38,13 @@
             </div>
           </div>
           <div class="player-content">
-            <div ref="playerRef" id="analyze-mse" class="player-container"></div>
+            <multi-player ref="playerRef" />
           </div>
         </div>
         <div class="analyze-setting">
           <div class="analyze-setting-group">
-            <t-input
-              v-model="analyzeUrl"
-              class="input-url"
-              :placeholder="$t('pages.analyze.inputUrl')"
-              size="large"
-              @change="formatUrlEvent"
-              @enter="analyzeEvent"
-            />
+            <t-input v-model="analyzeUrl" class="input-url" :placeholder="$t('pages.analyze.inputUrl')" size="large"
+              @change="formatUrlEvent" @enter="analyzeEvent" />
             <t-button class="analyze-play" size="large" @click="analyzeEvent">
               <p class="analyze-tip">{{ $t('pages.analyze.play') }}</p>
             </t-button>
@@ -66,18 +53,13 @@
       </div>
     </div>
     <dialog-iframem-view v-model:visible="active.platform" :data="platFormData" @platform-play="platformPlay" />
-    <dialog-search-view
-      v-model:visible="active.search"
-      :kw="searchText"
-      class="dialog-search-view"
-      @open-platform="openPlatform"
-    />
+    <dialog-search-view v-model:visible="active.search"  :kw="searchText" class="dialog-search-view" @open-platform="openPlatform" />
     <dialog-history-view v-model:visible="active.history" @history-play="historyPlayEvent" />
   </div>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import moment from 'moment';
 import { Share1Icon, CloseIcon, HistoryIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onActivated, onMounted, ref, watch, useTemplateRef } from 'vue';
@@ -89,7 +71,7 @@ import { putHistory, addHistory, findHistory } from '@/api/history';
 import { fetchAnalyzeHelper } from '@/utils/common/film';
 import emitter from '@/utils/emitter';
 
-import { ZwPlayer } from '@/components/player';
+import { MultiPlayer } from '@/components/player';
 import DialogHistoryView from './components/DialogHistory.vue';
 import DialogIframemView from './components/DialogIframe.vue';
 import DialogSearchView from './components/DialogSearch.vue';
@@ -101,7 +83,6 @@ const searchText = ref('');
 const urlTitle = ref(''); // 播放地址的标题
 const analyzeUrl = ref<string>(''); // 输入需要解析地址
 const playerRef = useTemplateRef('playerRef');
-const zwPlayer = ref<any>(null);
 const shareFromData = ref({
   name: '',
   url: '',
@@ -109,29 +90,29 @@ const shareFromData = ref({
 });
 const platFormData = ref({
   name: '',
-  url: '',
+  url: ''
 });
 const playFormData = ref({
   url: '',
   isLive: false,
   headers: {},
   type: '',
-  container: 'analyze-mse',
+  container: 'analyze-mse'
 });
-const analyzeConfig = ref<{ [key: string]: any }>({
+const analyzeConfig = ref<{ [key: string]: any } >({
   default: {
     id: '',
     name: '',
-    type: 0,
+    type: 0
   },
-  data: [],
+  data: []
 });
 const active = ref({
   nav: '',
   platform: false,
   history: false,
   search: false,
-  share: false,
+  share: false
 });
 
 onMounted(() => {
@@ -147,7 +128,7 @@ watch(
   () => active.value.search,
   (val) => {
     if (!val) emitter.emit('refreshSearchConfig');
-  },
+  }
 );
 
 // 获取解析接口及默认接口
@@ -155,14 +136,14 @@ const getSetting = async () => {
   try {
     const data = await fetchAnalyzeActive();
     if (data.hasOwnProperty('default')) {
-      analyzeConfig.value.default = data['default'];
-      active.value.nav = data['default']['id'];
+      analyzeConfig.value.default = data["default"];
+      active.value.nav = data["default"]["id"];
     }
     if (data.hasOwnProperty('data')) {
-      analyzeConfig.value.data = data['data'];
+      analyzeConfig.value.data = data["data"];
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
 };
 
@@ -178,14 +159,14 @@ const getVideoInfo = async (url: string, title: string) => {
   if (!(active.value.nav && analyzeUrl.value)) {
     MessagePlugin.error(t('pages.analyze.message.empty'));
     return;
-  }
+  };
 
   // 2.获取解析接口信息
-  const api = analyzeConfig.value.data.find((item) => item.id === active.value.nav);
+  const api = analyzeConfig.value.data.find(item => item.id === active.value.nav);
   if (!api) {
     MessagePlugin.error(t('pages.analyze.message.invalidApi'));
     return;
-  }
+  };
 
   // 3.显示解析信息
   urlTitle.value = title;
@@ -196,7 +177,7 @@ const getVideoInfo = async (url: string, title: string) => {
   if (!analyzeRes.url) {
     MessagePlugin.error(t('pages.analyze.message.error'));
     return;
-  }
+  };
   playFormData.value.type = analyzeRes.mediaType;
   playFormData.value.url = analyzeRes.url;
   playFormData.value.headers = analyzeRes.headers;
@@ -204,42 +185,28 @@ const getVideoInfo = async (url: string, title: string) => {
   if (playerMode.type === 'custom') {
     window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: playFormData.value.url });
   } else {
-    // 销毁现有的播放器实例
-    if (zwPlayer.value) {
-      zwPlayer.value.destroy();
-      zwPlayer.value = null;
-    }
-
-    // 创建新的ZwPlayer实例
     if (playerRef.value) {
-      zwPlayer.value = new ZwPlayer({
-        container: playerRef.value,
-        url: playFormData.value.url,
-        type: playFormData.value.type,
-        isLive: playFormData.value.isLive,
-        headers: playFormData.value.headers,
-      });
-    }
+      await playerRef.value.create(playFormData.value, playerMode.type);
+    };
   }
 
   // 5.记录播放记录
   const res = await findHistory({ relateId: active.value.nav, videoId: url });
 
-  if (res)
-        putHistory({
-          ids: [res.id],
-          doc: { date: dayjs().unix() },
-        });
-      else {
-        const doc = {
-          date: dayjs().unix(),
-          relateId: active.value.nav,
-          videoId: url,
-          videoName: urlTitle.value,
-          type: 'analyze',
-        };
-        addHistory(doc);
-      }
+  if (res) putHistory({
+    ids: [res.id],
+    doc: { date: moment().unix() }
+  });
+  else {
+    const doc = {
+      date: moment().unix(),
+      relateId: active.value.nav,
+      videoId: url,
+      videoName: urlTitle.value,
+      type: "analyze"
+    };
+    addHistory(doc);
+  }
 };
 
 // input 变化
@@ -253,7 +220,7 @@ const analyzeEvent = async () => {
   if (!(active.value.nav && analyzeUrl.value)) {
     MessagePlugin.error(t('pages.analyze.message.empty'));
     return;
-  }
+  };
   const url = analyzeUrl.value!;
   const res = (await fetchAnalyzeTitle(url))?.title;
   await getVideoInfo(url!, res);
@@ -296,32 +263,28 @@ const openCurrentUrl = () => {
 
 // 分享
 const shareEvent = () => {
-  const provider = analyzeConfig.value.data.find((item) => item.id === active.value.nav);
+  const provider = analyzeConfig.value.data.find(item => item.id === active.value.nav);
   if (Object.keys(provider).length === 0) return;
   shareFromData.value = {
     name: urlTitle.value,
     url: playFormData.value.url,
-    provider: provider['name'],
+    provider: provider["name"],
   };
   active.value.share = true;
 };
 
 const defaultPlay = async () => {
   urlTitle.value = '';
-  playFormData.value = { ...playFormData.value, ...{ url: '', headers: {}, type: '' } };
+  playFormData.value = { ...playFormData.value, ...{ url: '', headers: {}, type: ''} }
 };
 
-const clearContent = async () => {
+const clearContent = async ()=> {
   defaultPlay();
   analyzeUrl.value = '';
-  // 销毁播放器实例
-  if (zwPlayer.value) {
-    zwPlayer.value.destroy();
-    zwPlayer.value = null;
-  }
+  if (playerRef.value) await playerRef.value.destroy();
 };
 
-const defaultConf = () => {
+const defaultConf = ()=>{
   active.value.nav = '';
   searchText.value = '';
   emitter.emit('refreshSearchConfig');
@@ -334,9 +297,9 @@ const refreshConf = () => {
     default: {
       id: '',
       name: '',
-      type: 0,
+      type: 0
     },
-    data: [],
+    data: []
   };
   getSetting();
 };
@@ -353,7 +316,7 @@ emitter.on('searchAnalyze', (kw) => {
   if (kw) {
     searchText.value = kw as string;
     active.value.search = true;
-  }
+  };
 });
 </script>
 
@@ -406,12 +369,12 @@ emitter.on('searchAnalyze', (kw) => {
 
           .mg-right {
             margin-right: 6px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, .9);
           }
 
           .mg-left {
             margin-left: 6px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, .9);
           }
 
           .left {
@@ -421,7 +384,7 @@ emitter.on('searchAnalyze', (kw) => {
             .info {
               height: 32px;
               cursor: pointer;
-              background: rgba(0, 0, 0, 0.2);
+              background: rgba(0, 0, 0, .2);
               border-radius: 33px;
               align-items: center;
               padding: 2px;
@@ -434,7 +397,7 @@ emitter.on('searchAnalyze', (kw) => {
                 img {
                   width: 100%;
                   height: 100%;
-                  border: 2px solid rgba(22, 24, 35, 0.06);
+                  border: 2px solid rgba(22, 24, 35, .06);
                   border-radius: 50%;
                 }
               }
@@ -471,7 +434,7 @@ emitter.on('searchAnalyze', (kw) => {
             .action {
               height: 32px;
               cursor: pointer;
-              background: rgba(0, 0, 0, 0.2);
+              background: rgba(0, 0, 0, .2);
               border-radius: 33px;
               align-items: center;
               padding: 2px 6px 2px 2px;
@@ -550,6 +513,7 @@ emitter.on('searchAnalyze', (kw) => {
     }
   }
 }
+
 
 :deep(.t-dialog__ctx) {
   .t-dialog__wrap {

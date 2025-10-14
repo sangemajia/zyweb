@@ -157,9 +157,13 @@ export default {
     player: '播放器',
     barrage: '彈幕',
     veplayer: '火山播放器',
-    zwplayer: 'ZW播放器',
+    xgplayer: '西瓜播放器',
     tcplayer: '騰訊播放器',
     aliplayer: '阿里播放器',
+    artplayer: '藝術播放器',
+    oplayer: '歐耶播放器',
+    dplayer: '呆呆播放器',
+    nplayer: '玩家播放器',
     ckplayer: '超酷播放器',
     custom: '自訂（調用系統）',
     command: '系統命令',
@@ -283,8 +287,7 @@ export default {
     content1: '因不收集使用者資料，可選擇同步盤作為設定檔保存服務',
     content2: '內建 WebDAV 作為同步盤服務，推薦堅果雲',
     content3: '若開啟自動同步，每 5 分鐘同步一次',
-    webdev: {
-      // 原鍵名疑似為 webdav
+    webdev: { // 原鍵名疑似為 webdav
       title: '同步盤參數',
       check: '校驗',
       save: '儲存',
@@ -300,8 +303,7 @@ export default {
     syncToLocal: '雲端資料覆蓋本機',
     syncToLocalTip: '本機資料將被清除，確認操作嗎',
   },
-  thumbanilFfmpeg: {
-    // 原鍵名疑似 thumbnailFfmpeg
+  thumbanilFfmpeg: { // 原鍵名疑似 thumbnailFfmpeg
     haveFfmpeg: '檢測到 ffmpeg 模組已安裝',
     noFfmpeg: '未檢測到 ffmpeg 模組',
   },

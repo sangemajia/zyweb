@@ -1,8 +1,11 @@
 <template>
   <div class="container-header" :class="!active.macMaximize ? 'drag' : 'no-drag'">
-    <div class="left no-drag" :style="{ 'padding-left': platform === 'darwin' && !active.macMaximize ? '68px' : '0' }">
+    <div
+      class="left no-drag"
+      :style="{ 'padding-left': platform === 'darwin' && !active.macMaximize ? '68px' : '0' }"
+    >
       <div class="open-main-win" @click="openMainWinEvent">
-        <home-icon size="1em" />
+        <home-icon size="1em"/>
         <span class="tip-gotomain">{{ $t('pages.player.header.backMain') }}</span>
       </div>
     </div>
@@ -37,8 +40,8 @@ import SystemPin from '@/layouts/components/SystemPin.vue';
 const props = defineProps({
   title: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 });
 
 const active = ref({

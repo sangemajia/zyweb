@@ -1,33 +1,18 @@
 <template>
-  <div
-    class="search-bar"
-    v-if="route.name === 'FilmIndex' || route.name === 'IptvIndex' || route.name === 'AnalyzeIndex'"
-  >
+  <div class="search-bar" v-if="route.name === 'FilmIndex' || route.name === 'IptvIndex' || route.name === 'AnalyzeIndex'">
     <t-popup placement="bottom-right" :visible="active.popup" :on-visible-change="popupVisibleEvent">
-      <t-input
-        :placeholder="$t('pages.search.searchPlaceholder')"
-        class="search-input"
-        clearable
-        v-model="searchValue"
-        :on-enter="searchEvent"
-        :on-click="focusEvent"
-        @clear="searchEvent(searchValue)"
-      >
+      <t-input :placeholder="$t('pages.search.searchPlaceholder')" class="search-input" clearable v-model="searchValue"
+        :on-enter="searchEvent" :on-click="focusEvent" @clear="searchEvent(searchValue)">
         <template #label>
-          <t-select
-            auto-width
-            v-model="active.filmGroupType"
-            class="search-select"
-            v-if="activeRouteName === 'FilmIndex'"
-            @click.stop
-          >
+          <t-select auto-width v-model="active.filmGroupType" class="search-select"
+            v-if="activeRouteName === 'FilmIndex'" @click.stop>
             <t-option key="site" :label="$t('pages.search.site')" value="site" />
             <t-option key="group" :label="$t('pages.search.group')" value="group" />
             <t-option key="all" :label="$t('pages.search.all')" value="all" />
           </t-select>
         </template>
         <template #suffixIcon>
-          <search-icon @click="searchEvent(searchValue)" style="cursor: pointer" />
+          <search-icon @click="searchEvent(searchValue)" style="cursor: pointer;" />
         </template>
       </t-input>
       <template #content v-if="activeRouteName === 'FilmIndex' || activeRouteName === 'AnalyzeIndex'">
@@ -40,37 +25,22 @@
               </div>
             </div>
             <div class="history-content">
-              <t-tag
-                class="nav-item"
-                shape="round"
-                variant="outline"
-                v-for="(item, index) in searchList"
-                :key="index"
-                @click="searchEvent(item.videoName)"
-                >{{ item.videoName }}</t-tag
-              >
+              <t-tag class="nav-item" shape="round" variant="outline" v-for="(item, index) in searchList" :key="index"
+                @click="searchEvent(item.videoName)">{{ item.videoName }}</t-tag>
             </div>
           </div>
           <div class="hot">
             <div class="hot-nav">
-              <span
-                :class="['nav-item', item.key === active.flag ? 'nav-item-active' : '']"
-                v-for="item in hotConfig.hotOption"
-                :key="item.key"
-                @click="changeHotSource(item.key)"
-                >{{ item.name }}</span
-              >
+              <span :class="['nav-item', item.key === active.flag ? 'nav-item-active' : '']"
+                v-for="item in hotConfig.hotOption" :key="item.key" @click="changeHotSource(item.key)">{{ item.name
+                }}</span>
             </div>
             <div class="hot-content">
               <t-skeleton :row-col="rowCol" :loading="active.hotLoad"></t-skeleton>
               <div v-if="!active.hotLoad">
                 <div v-if="hotConfig.hotData.length !== 0" class="hot-data">
-                  <div
-                    v-for="(item, index) in hotConfig.hotData"
-                    :key="item.vod_id"
-                    class="rax-view-v2 hot-item"
-                    @click="searchEvent(item.vod_name)"
-                  >
+                  <div v-for="(item, index) in hotConfig.hotData" :key="item.vod_id" class="rax-view-v2 hot-item"
+                    @click="searchEvent(item.vod_name)">
                     <div class="normal-view" :class="[index in [0, 1, 2] ? `color-${index + 1}` : '']">
                       <div class="normal-index">{{ index + 1 }}</div>
                       <div class="normal-title no-warp">{{ item.vod_name }}</div>
@@ -91,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import moment from 'moment';
 import { DeleteIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
@@ -113,29 +83,28 @@ const active = ref({
   hotType: '',
   setLoad: false,
   hotLoad: true,
-  popup: false,
+  popup: false
 });
 const hotConfig = reactive({
   hotName: '',
   hotUrl: '',
-  hotClass: 'episode', // 仅酷云[旧]生效
+  hotClass: 'episode',  // 仅酷云[旧]生效
   hotSource: 1,
-  hotUpdateTime: dayjs().format('YYYY-MM-DD'),
+  hotUpdateTime: moment().format('YYYY-MM-DD'),
   hotData: [],
   hotOption: [],
 }) as any;
-const searchList = ref<any[]>([]);
+const searchList = ref<any []>([]);
 const searchValue = ref<string>('');
 const activeRouteName = computed(() => route.name);
 
 watch(
-  () => activeRouteName.value,
-  async (newVal) => {
+  () => activeRouteName.value, async (newVal) => {
     if (newVal === 'FilmIndex' && !active.value.setLoad) await getFilmSet();
     searchValue.value = '';
     active.value.popup = false;
     active.value.hotLoad = true;
-  },
+  }
 );
 
 onMounted(async () => {
@@ -147,7 +116,7 @@ const rowCol = [
   { type: 'text', width: '100%', height: '22px' },
   { type: 'text', width: '100%', height: '22px' },
   { type: 'text', width: '100%', height: '22px' },
-];
+]
 
 const focusEvent = async () => {
   if (activeRouteName.value === 'FilmIndex' || activeRouteName.value === 'AnalyzeIndex') {
@@ -161,34 +130,34 @@ const focusEvent = async () => {
 const getSearchHistory = async () => {
   const res = await fetchHistoryPage({ page: 1, pageSize: 5, type: ['search'] });
   if (res.hasOwnProperty('list')) searchList.value = res.list;
-};
+}
 
 // 清空搜索历史
 const clearSearchHistory = async () => {
   await delHistory({ type: 'search' });
   searchList.value = [];
-};
+}
 
 // 热播映射
 const hotTypeMappings = {
   komect: {
-    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
+    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
     hotSource: '电影',
   },
   douban: {
-    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
+    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
     hotSource: 'tv_hot',
   },
   enlightent: {
-    hotUpdateTime: () => dayjs().format('YYYY/MM/DD'),
+    hotUpdateTime: () => moment().format('YYYY/MM/DD'),
     hotSource: 'tv',
   },
   kuyun: {
-    hotUpdateTime: () => dayjs().format('YYYY-MM-DD'),
+    hotUpdateTime: () => moment().format('YYYY-MM-DD'),
     hotSource: 1,
   },
   kylive: {
-    hotUpdateTime: () => dayjs().format('YYYY-MM-DD'),
+    hotUpdateTime: () => moment().format('YYYY-MM-DD'),
     hotSource: 0,
   },
 };
@@ -241,7 +210,7 @@ const changeHotSource = (flag) => {
 const getHotList = async (retryCount = 1) => {
   try {
     const retryLimit = 4; // 重试次数 实际为 3 次
-    const date = dayjs().subtract(retryCount, 'days');
+    const date = moment().subtract(retryCount, 'days');
     const type = active.value.hotType;
     const dateFormat = type === 'enlightent' ? date.format('YYYY/MM/DD') : date.format('YYYY-MM-DD');
 
@@ -251,7 +220,7 @@ const getHotList = async (retryCount = 1) => {
         queryHotDoc = {
           date: dateFormat,
           type: 2,
-          plat: hotConfig.hotSource,
+          plat: hotConfig.hotSource
         };
         break;
       case 'enlightent':
@@ -259,24 +228,24 @@ const getHotList = async (retryCount = 1) => {
           date: dateFormat,
           sort: 'allHot',
           channelType: hotConfig.hotSource,
-          day: 1,
+          day: 1
         };
         break;
       case 'douban':
         queryHotDoc = {
           type: hotConfig.hotSource,
           limit: 20,
-          start: 0,
+          start: 0
         };
         break;
       case 'komect':
         queryHotDoc = {
           type: hotConfig.hotSource,
           limit: 20,
-          start: 1,
+          start: 1
         };
         break;
-    }
+    };
 
     const queryHotList = await fetchHotPage(queryHotDoc);
 
@@ -286,7 +255,7 @@ const getHotList = async (retryCount = 1) => {
       hotConfig.hotUpdateTime = dateFormat;
     } else {
       if (retryCount < retryLimit) {
-        await getHotList(retryCount + 1); // 递归请求
+        await getHotList(retryCount + 1);  // 递归请求
       } else {
         active.value.hotLoad = false;
       }
@@ -301,11 +270,11 @@ const getHotList = async (retryCount = 1) => {
 const searchEvent = async (item) => {
   searchValue.value = item;
   if (activeRouteName.value === 'FilmIndex' || activeRouteName.value === 'AnalyzeIndex') {
-    if (item && searchList.value.findIndex((doc) => doc.videoName === item) === -1) {
+    if (item && searchList.value.findIndex(doc => doc.videoName === item) === -1) {
       const doc = {
-        date: dayjs().unix(),
+        date: moment().unix(),
         videoName: item,
-        type: 'search',
+        type: 'search'
       };
       const searchListSize = searchList.value.length;
       if (searchListSize <= 5) {
@@ -313,7 +282,7 @@ const searchEvent = async (item) => {
       } else {
         searchList.value.unshift(doc);
         searchList.value.pop();
-      }
+      };
       addHistory(doc);
     }
   }
@@ -336,7 +305,7 @@ const popupVisibleEvent = (_, context) => {
   if (context.trigger === 'document') {
     active.value.popup = false;
   }
-};
+}
 
 // 监听设置变更
 const refreshHotConfig = async () => {
@@ -511,7 +480,7 @@ if (!isListenedRefreshSearchConfig) emitter.on('refreshSearchConfig', refreshSea
       font-weight: 500;
     }
 
-    &.t-is-focused .t-input__prefix > .t-icon {
+    &.t-is-focused .t-input__prefix>.t-icon {
       color: var(--td-text-color-placeholder);
     }
   }

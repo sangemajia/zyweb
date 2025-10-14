@@ -27,7 +27,9 @@ export default defineComponent({
     const componentRef = ref<HTMLElement | ComponentPublicInstance>();
 
     const element = computed<HTMLElement>(() =>
-      isComponentInstance(componentRef.value) ? componentRef.value.$el : componentRef.value,
+      isComponentInstance(componentRef.value)
+        ? componentRef.value.$el
+        : componentRef.value
     );
 
     const createResizeObserver = (target: HTMLElement) => {
@@ -70,7 +72,7 @@ export default defineComponent({
           {
             ref: componentRef,
           },
-          true,
+          true
         );
       }
 

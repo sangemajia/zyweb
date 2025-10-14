@@ -80,7 +80,7 @@ const props = defineProps({
       skipTimeInEnd: 30,
       playNextPreload: false,
       playNextEnabled: true,
-      skipAd: false,
+      skipAd: false
     },
   },
 });

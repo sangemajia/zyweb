@@ -12,38 +12,19 @@
           <div class="op card">
             <t-form :data="formData.sniffer">
               <t-form-item :label="$t('pages.lab.snifferPlay.snifferUrl')" name="url">
-                <t-input
-                  v-model="formData.sniffer.url"
-                  :placeholder="$t('pages.setting.placeholder.general')"
-                ></t-input>
+                <t-input v-model="formData.sniffer.url" :placeholder="$t('pages.setting.placeholder.general')"></t-input>
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.initScript')">
-                <t-textarea
-                  v-model="formData.sniffer.initScript"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                  :placeholder="$t('pages.setting.placeholder.general')"
-                />
+                <t-textarea v-model="formData.sniffer.initScript" :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="$t('pages.setting.placeholder.general')"/>
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.runScript')">
-                <t-textarea
-                  v-model="formData.sniffer.runScript"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                  :placeholder="$t('pages.setting.placeholder.general')"
-                />
+                <t-textarea v-model="formData.sniffer.runScript" :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="$t('pages.setting.placeholder.general')"/>
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.customRegex')">
-                <t-textarea
-                  v-model="formData.sniffer.customRegex"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                  :placeholder="$t('pages.setting.placeholder.general')"
-                />
+                <t-textarea v-model="formData.sniffer.customRegex" :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="$t('pages.setting.placeholder.general')"/>
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.snifferExclude')">
-                <t-textarea
-                  v-model="formData.sniffer.snifferExclude"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                  :placeholder="$t('pages.setting.placeholder.general')"
-                />
+                <t-textarea v-model="formData.sniffer.snifferExclude" :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="$t('pages.setting.placeholder.general')"/>
               </t-form-item>
             </t-form>
             <t-button theme="primary" block @click="sniiferEvent">{{ $t('pages.lab.snifferPlay.sniffer') }}</t-button>
@@ -64,11 +45,7 @@
                 <t-input v-model="formData.player.url" :placeholder="$t('pages.setting.placeholder.general')"></t-input>
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.headers')" name="headers">
-                <t-textarea
-                  v-model="formData.player.headers"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                  placeholder='{ "User-Agent": "Mozilla/5.0" }'
-                />
+                <t-textarea v-model="formData.player.headers" :autosize="{ minRows: 3, maxRows: 5 }" placeholder='{ "User-Agent": "Mozilla/5.0" }' />
               </t-form-item>
               <t-form-item :label="$t('pages.lab.snifferPlay.mediaType')" name="url">
                 <t-select v-model="formData.player.type">
@@ -81,27 +58,15 @@
                 </t-select>
               </t-form-item>
             </t-form>
-            <div style="display: flex; justify-content: space-around">
+            <div style="display: flex; justify-content: space-around;">
               <t-button theme="primary" block @click="playerPlayEvent">{{ $t('pages.lab.snifferPlay.play') }}</t-button>
-              <t-button variant="outline" block @click="playerClearEvent">{{
-                $t('pages.lab.snifferPlay.clear')
-              }}</t-button>
+              <t-button variant="outline" block @click="playerClearEvent">{{ $t('pages.lab.snifferPlay.clear') }}</t-button>
             </div>
           </div>
         </t-badge>
-        <t-badge
-          :count="$t('pages.lab.snifferPlay.preview')"
-          style="flex: 1"
-          color="var(--td-success-color)"
-          shape="round"
-        >
-          <div class="result card" style="height: 100%; width: 100%">
-            <div
-              ref="playerRef"
-              id="lab-mse"
-              class="player-container"
-              style="border-radius: var(--td-radius-default); overflow: hidden"
-            ></div>
+        <t-badge :count="$t('pages.lab.snifferPlay.preview')" style="flex: 1;" color="var(--td-success-color)" shape="round">
+          <div class="result card" style="height: 100%; width: 100%;">
+            <multi-player ref="playerRef" style="border-radius: var(--td-radius-default); overflow: hidden;" />
           </div>
         </t-badge>
       </div>
@@ -110,9 +75,91 @@
 </template>
 
 <script lang="ts" setup>
-import { useSnifferPlaySetup } from './snifferPlaySetup';
+import { ref, useTemplateRef } from 'vue';
+import { MessagePlugin } from 'tdesign-vue-next';
+import JSON5 from 'json5';
+import sniffer from '@/utils/sniffer';
+import { t } from '@/locales';
+import { usePlayStore } from '@/store';
+import { MultiPlayer, mediaUtils } from '@/components/player';
 
-const { formData, playerRef, sniiferEvent, playerPlayEvent, playerClearEvent } = useSnifferPlaySetup();
+const storePlayer = usePlayStore();
+
+const formData = ref({
+  sniffer: {
+    url: '',
+    ua: '',
+    snifferExclude: '',
+    customRegex: '',
+    initScript: '',
+    runScript: '',
+    result: '',
+  },
+  player: {
+    url: '',
+    headers: '',
+    type: 'auto',
+  }
+});
+const playerRef = useTemplateRef('playerRef');
+
+const sniiferEvent = async () => {
+  const { url, runScript, initScript, customRegex, snifferExclude } = formData.value.sniffer;
+  if (!url) {
+    MessagePlugin.warning(t('pages.lab.snifferPlay.message.snifferNoUrl'))
+    return;
+  };
+  const res = await sniffer(url, runScript, initScript, customRegex, snifferExclude);
+  if (res?.url) {
+    formData.value.sniffer.result = JSON5.stringify(res);
+    MessagePlugin.success(t('pages.setting.form.success'));
+  } else {
+    MessagePlugin.success(t('pages.setting.form.fail'));
+  };
+};
+
+const playerPlayEvent = async () => {
+  let { url, headers = '{}', type } = formData.value.player;
+  if (!headers) headers = '{}';
+  headers = Function('return (' + headers + ')')();
+
+  if (!url || !(/^(http:\/\/|https:\/\/)/.test(url) || url.includes('magnet:'))) {
+    MessagePlugin.warning(t('pages.lab.snifferPlay.message.playerNoUrl'));
+    return;
+  };
+
+  const playerMode = storePlayer.setting.playerMode;
+
+  if (playerMode.type === 'custom') {
+    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url });
+  } else {
+    let mediaType = type;
+    if (mediaType === 'auto') {
+      const checkType = await mediaUtils.checkMediaType(url, headers as Object);
+      if (checkType === 'unknown' && !checkType) {
+        MessagePlugin.warning(t('pages.lab.snifferPlay.message.mediaNoType'));
+        return;
+      }
+      mediaType = checkType as string;
+    };
+    if (playerRef.value) {
+      await playerRef.value.create({
+        url: url,
+        isLive: false,
+        headers: headers,
+        type: mediaType,
+        container: 'lab-mse'
+      }, playerMode.type);
+    }
+  }
+
+  MessagePlugin.success(t('pages.setting.form.success'));
+};
+
+const playerClearEvent = async () => {
+  if (!playerRef.value) return;
+  await playerRef.value.destroy();
+};
 </script>
 
 <style lang="less" scoped>
@@ -138,12 +185,11 @@ const { formData, playerRef, sniiferEvent, playerPlayEvent, playerClearEvent } =
       align-items: center;
 
       .title {
-        margin-right: 5px;
+        margin-right: 5px
       }
     }
 
-    .right-operation-container {
-    }
+    .right-operation-container { }
   }
 
   .content {
@@ -156,8 +202,7 @@ const { formData, playerRef, sniiferEvent, playerPlayEvent, playerClearEvent } =
     height: 100%;
     overflow: hidden;
 
-    .left,
-    .right {
+    .left, .right {
       width: 50%;
       overflow-y: auto;
       padding-top: var(--td-comp-paddingTB-m);
@@ -177,13 +222,14 @@ const { formData, playerRef, sniiferEvent, playerPlayEvent, playerClearEvent } =
       }
     }
 
+
     p.title {
       font-weight: 500;
       color: var(--td-text-color-primary);
       font-size: 16px;
 
       &::before {
-        content: '';
+        content: "";
         border: 1px solid var(--td-brand-color);
         height: 0.6rem;
         border-radius: var(--td-radius-default);

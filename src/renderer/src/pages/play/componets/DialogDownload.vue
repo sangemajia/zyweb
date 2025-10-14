@@ -1,50 +1,28 @@
 <template>
-  <t-dialog
-    v-model:visible="formVisible"
-    :header="$t('pages.player.download.title')"
-    width="508"
-    placement="center"
-    :confirm-btn="$t('pages.player.download.copy')"
-    :on-confirm="copyDownloadUrl"
-    :cancel-btn="null"
-  >
+  <t-dialog v-model:visible="formVisible" :header="$t('pages.player.download.title')" width="508" placement="center"
+    :confirm-btn="$t('pages.player.download.copy')" :on-confirm="copyDownloadUrl" :cancel-btn="null">
     <template #body>
       <div class="download-warp">
         <div class="source-warp">
-          <t-select
-            v-model="downloadSource"
-            :placeholder="$t('pages.player.download.soureceSelect')"
-            size="small"
-            style="width: 200px; display: inline-block"
-            @change="downloadSourceChange"
-          >
+          <t-select v-model="downloadSource" :placeholder="$t('pages.player.download.soureceSelect')" size="small"
+            style="width: 200px; display: inline-block" @change="downloadSourceChange">
             <t-option v-for="(_, key) in formData.season" :key="key" :value="key">{{ key }}</t-option>
           </t-select>
-          <t-button size="small" theme="default" @click="copyCurrentUrl">{{
-            $t('pages.player.download.copyCurrentUrl')
-          }}</t-button>
+          <t-button size="small" theme="default" @click="copyCurrentUrl">{{ $t('pages.player.download.copyCurrentUrl')
+            }}</t-button>
         </div>
         <div class="content-warp">
           <t-transfer v-model="downloadTarget" :data="downloadEpisodes">
             <template #title="props">
-              <div>
-                {{
-                  props.type === 'target'
-                    ? $t('pages.player.download.statusAwaitDownload')
-                    : $t('pages.player.download.statusRequireDownload')
-                }}
-              </div>
+              <div>{{ props.type === 'target' ? $t('pages.player.download.statusAwaitDownload') :
+                $t('pages.player.download.statusRequireDownload') }}</div>
             </template>
           </t-transfer>
         </div>
         <div class="tip-warp">
           <span>{{ $t('pages.player.download.recommendDownloaderTip') }}</span>
-          <t-link
-            theme="primary"
-            underline
-            href="https://github.com/HeiSir2014/M3U8-Downloader/releases/"
-            target="_blank"
-          >
+          <t-link theme="primary" underline href="https://github.com/HeiSir2014/M3U8-Downloader/releases/"
+            target="_blank">
             {{ $t('pages.player.download.recommendDownloaderName') }}
           </t-link>
         </div>
@@ -54,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core/useClipboard';
+import { useClipboard } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 
 import { t } from '@/locales';
-import { mediaUtils } from '@/components/player/src/utils/media';
+import { mediaUtils } from '@/components/player';
 
 const props = defineProps({
   visible: {
@@ -71,7 +49,7 @@ const props = defineProps({
     default: {
       season: {},
       current: '',
-    },
+    }
   },
 });
 const { isSupported, copy } = useClipboard();
@@ -234,7 +212,7 @@ const copyCurrentUrl = () => {
     border: var(--td-size-1) solid transparent;
   }
 
-  &__list-header + :not(.t-transfer__list--with-search) {
+  &__list-header+ :not(.t-transfer__list--with-search) {
     border-top: 1px solid var(--td-border-level-1-color);
   }
 

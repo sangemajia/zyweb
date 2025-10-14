@@ -1,5 +1,4 @@
 import {
-  HomeIcon,
   ExtensionIcon,
   MovieClapperIcon,
   Tv1Icon,
@@ -7,37 +6,18 @@ import {
   ViewInArIcon,
   DataDisplayIcon,
   Setting1Icon,
+  FillColor1Icon,
   PlayCircleStrokeIcon,
 } from 'tdesign-icons-vue-next';
 
-import Layout from '@/layouts/MainLayout.vue';
+import Layout from '@/layouts/index.vue';
 
 export default [
-  {
-    path: '/home',
-    name: 'home',
-    redirect: '/home/index',
-    component: Layout,
-    meta: {
-      title: {
-        zh_CN: '首页',
-        en_US: 'Home',
-      },
-      icon: HomeIcon,
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'HomeIndex',
-        component: () => import('@/pages/home/index.vue'),
-      },
-    ],
-  },
   {
     path: '/film',
     name: 'film',
     redirect: '/film/index',
-    component: MainLayout,
+    component: Layout,
     meta: {
       title: {
         zh_CN: '影视',
@@ -57,7 +37,7 @@ export default [
     path: '/iptv',
     name: 'iptv',
     redirect: '/iptv/index',
-    component: MainLayout,
+    component: Layout,
     meta: {
       title: {
         zh_CN: '电视',
@@ -77,7 +57,7 @@ export default [
     path: '/drive',
     name: 'drive',
     redirect: '/drive/index',
-    component: MainLayout,
+    component: Layout,
     meta: {
       title: {
         zh_CN: '网盘',
@@ -97,7 +77,6 @@ export default [
     path: '/play',
     name: 'play',
     redirect: '/play/index',
-    component: MainLayout,
     meta: {
       title: {
         zh_CN: '播放',
@@ -115,10 +94,10 @@ export default [
     ],
   },
   {
-    path: '/analyze',
+    path: '/analyze/',
     name: 'Analyze',
     redirect: '/analyze/index',
-    component: MainLayout,
+    component: Layout,
     meta: {
       title: {
         zh_CN: '解析',
@@ -138,7 +117,7 @@ export default [
     path: '/chase',
     name: 'Chase',
     redirect: '/chase/index',
-    component: MainLayout,
+    component: Layout,
     meta: {
       title: {
         zh_CN: '过刻',
@@ -157,7 +136,7 @@ export default [
   {
     path: '/setting',
     name: 'setting',
-    component: MainLayout,
+    component: Layout,
     redirect: '/setting/index',
     meta: {
       title: {
@@ -178,7 +157,7 @@ export default [
   {
     path: '/lab',
     name: 'lab',
-    component: MainLayout,
+    component: Layout,
     redirect: '/lab/index',
     meta: {
       title: {
@@ -193,6 +172,27 @@ export default [
         path: 'index',
         name: 'LabIndex',
         component: () => import('@/pages/lab/index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: Layout,
+    redirect: '/test/index',
+    meta: {
+      title: {
+        zh_CN: '测试',
+        en_US: 'Test',
+      },
+      icon: FillColor1Icon,
+      hidden: true,
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'TestIndex',
+        component: () => import('@/pages/test/index.vue'),
       },
     ],
   },

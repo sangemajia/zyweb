@@ -48,7 +48,11 @@ export enum PatchFlags {
   BAIL = -2,
 }
 
-export const getValueFromSlotsOrProps = (name: string, props?: Data, slots?: Slots) => {
+export const getValueFromSlotsOrProps = (
+  name: string,
+  props?: Data,
+  slots?: Slots
+) => {
   if (slots?.[name]) {
     return slots[name];
   }
@@ -58,7 +62,9 @@ export const getValueFromSlotsOrProps = (name: string, props?: Data, slots?: Slo
   return undefined;
 };
 
-export const isComponentInstance = (value: any): value is ComponentPublicInstance => {
+export const isComponentInstance = (
+  value: any
+): value is ComponentPublicInstance => {
   return value?.$ !== undefined;
 };
 
@@ -66,11 +72,17 @@ export const isElement = (vn: VNode) => {
   return Boolean(vn && vn.shapeFlag & ShapeFlags.ELEMENT);
 };
 
-export const isComponent = (vn: VNode, type?: VNodeTypes): type is Component => {
+export const isComponent = (
+  vn: VNode,
+  type?: VNodeTypes
+): type is Component => {
   return Boolean(vn && vn.shapeFlag & ShapeFlags.COMPONENT);
 };
 
-export const isText = (vn: VNode, children: VNode['children']): children is string => {
+export const isText = (
+  vn: VNode,
+  children: VNode['children']
+): children is string => {
   return Boolean(vn && vn.shapeFlag & ShapeFlags.TEXT_CHILDREN);
 };
 
@@ -78,15 +90,24 @@ export const isNamedComponent = (child: VNode, name: string) => {
   return isComponent(child, child.type) && child.type.name === name;
 };
 
-export const isTextChildren = (child: VNode, children: VNode['children']): children is string => {
+export const isTextChildren = (
+  child: VNode,
+  children: VNode['children']
+): children is string => {
   return Boolean(child && child.shapeFlag & 8);
 };
 
-export const isArrayChildren = (vn: VNode, children: VNode['children']): children is VNode[] => {
+export const isArrayChildren = (
+  vn: VNode,
+  children: VNode['children']
+): children is VNode[] => {
   return Boolean(vn && vn.shapeFlag & ShapeFlags.ARRAY_CHILDREN);
 };
 
-export const isSlotsChildren = (vn: VNode, children: VNode['children']): children is Slots => {
+export const isSlotsChildren = (
+  vn: VNode,
+  children: VNode['children']
+): children is Slots => {
   return Boolean(vn && vn.shapeFlag & ShapeFlags.SLOTS_CHILDREN);
 };
 
@@ -166,7 +187,9 @@ export const getChildrenTextOrSlot = (vn: VNode): string | Slot | undefined => {
   return undefined;
 };
 
-export const getFirstComponent = (children: VNode[] | undefined): VNode | undefined => {
+export const getFirstComponent = (
+  children: VNode[] | undefined
+): VNode | undefined => {
   if (!children) {
     return undefined;
   }
@@ -211,7 +234,11 @@ export const getComponentNumber = (vNodes: VNode[], componentName: string) => {
   return count;
 };
 
-export const foreachComponent = (children: VNode[], name: string, cb: (node: VNode) => void) => {
+export const foreachComponent = (
+  children: VNode[],
+  name: string,
+  cb: (node: VNode) => void
+) => {
   for (const item of children) {
     if (isComponent(item, item.type) && item.type.name === name) {
       cb(item);
@@ -240,7 +267,7 @@ export const getChildrenComponents = (
   children: VNode[],
   name: string,
   props?: Data | ((node: VNode, index: number) => Data),
-  startIndex = 0,
+  startIndex = 0
 ): VNode[] => {
   const result = [];
   for (const item of children) {
@@ -253,16 +280,23 @@ export const getChildrenComponents = (
         result.push(item);
       }
     } else if (isArrayChildren(item, item.children)) {
-      result.push(...getChildrenComponents(item.children, name, props, result.length));
+      result.push(
+        ...getChildrenComponents(item.children, name, props, result.length)
+      );
     } else if (isSlotsChildren(item, item.children)) {
       const defaultChildren = item.children.default?.() ?? [];
-      result.push(...getChildrenComponents(defaultChildren, name, props, result.length));
+      result.push(
+        ...getChildrenComponents(defaultChildren, name, props, result.length)
+      );
     }
   }
   return result;
 };
 
-export const mergeFirstChild = (children: VNode[] | undefined, extraProps: Data | ((vn: VNode) => Data)): boolean => {
+export const mergeFirstChild = (
+  children: VNode[] | undefined,
+  extraProps: Data | ((vn: VNode) => Data)
+): boolean => {
   if (children && children.length > 0) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
@@ -291,7 +325,9 @@ export const getChildrenArray = (vn: VNode): VNode[] | undefined => {
   return undefined;
 };
 
-export const getFirstElementFromVNode = (vn: VNode): HTMLElement | undefined => {
+export const getFirstElementFromVNode = (
+  vn: VNode
+): HTMLElement | undefined => {
   if (isElement(vn)) {
     return vn.el as HTMLElement;
   }
@@ -310,14 +346,18 @@ export const getFirstElementFromVNode = (vn: VNode): HTMLElement | undefined => 
   return undefined;
 };
 
-export const getFirstElementFromTemplateRef = (target: HTMLElement | ComponentPublicInstance | undefined) => {
+export const getFirstElementFromTemplateRef = (
+  target: HTMLElement | ComponentPublicInstance | undefined
+) => {
   if (isComponentInstance(target)) {
     return getFirstElementFromVNode(target.$.subTree);
   }
   return target;
 };
 
-export const getFirstElementFromChildren = (children: VNode[] | undefined): HTMLElement | undefined => {
+export const getFirstElementFromChildren = (
+  children: VNode[] | undefined
+): HTMLElement | undefined => {
   if (children && children.length > 0) {
     for (const child of children) {
       const element = getFirstElementFromVNode(child);
@@ -342,10 +382,17 @@ export const getRenderFunc = (content: RenderContent) => {
   return () => content;
 };
 
-export const getAllElements = (children: VNode[] | undefined, includeText = false) => {
+export const getAllElements = (
+  children: VNode[] | undefined,
+  includeText = false
+) => {
   const results: VNode[] = [];
   for (const item of children ?? []) {
-    if (isElement(item) || isComponent(item) || (includeText && isTextChildren(item, item.children))) {
+    if (
+      isElement(item) ||
+      isComponent(item) ||
+      (includeText && isTextChildren(item, item.children))
+    ) {
       results.push(item);
     } else if (isArrayChildren(item, item.children)) {
       results.push(...getAllElements(item.children, includeText));
@@ -398,7 +445,9 @@ export const resolveProps = (vn: VNode) => {
     const camelKey = toCamelCase(key);
     let resolveValue = rawValue;
     if (rawValue === '' || rawValue === toKebabCase(camelKey)) {
-      const type = isObject(options[camelKey]) ? options[camelKey].type : options[camelKey];
+      const type = isObject(options[camelKey])
+        ? options[camelKey].type
+        : options[camelKey];
       if (type === Boolean) {
         resolveValue = true;
       }
@@ -462,7 +511,10 @@ export const getComponentsFromVNode = (vn: VNode, name: string) => {
   return components;
 };
 
-export const getComponentsFromChildren = (children: VNode[] | undefined, name: string) => {
+export const getComponentsFromChildren = (
+  children: VNode[] | undefined,
+  name: string
+) => {
   const components: number[] = [];
 
   if (children && children.length > 0) {

@@ -1,6 +1,9 @@
 <template>
   <component :is="component" ref="wrapperRef" :class="classNames">
-    <div :class="[`${prefixCls}-pane`, `${prefixCls}-pane-first`]" :style="firstPaneStyles">
+    <div
+      :class="[`${prefixCls}-pane`, `${prefixCls}-pane-first`]"
+      :style="firstPaneStyles"
+    >
       <slot name="first"></slot>
     </div>
     <ResizeTrigger
@@ -23,7 +26,16 @@
   </component>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType, reactive, ref, toRefs, onMounted, nextTick } from 'vue';
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  nextTick,
+} from 'vue';
 import ResizeTrigger from './resize-trigger.vue';
 import useMergeState from './hooks/use-merge-state';
 import { prefix } from '@/config/global';
@@ -135,17 +147,17 @@ export default defineComponent({
      * @zh 开始拖拽之前触发
      * @en Triggered before dragging
      * */
-    moveStart: (ev: MouseEvent) => true,
+    'moveStart': (ev: MouseEvent) => true,
     /**
      * @zh 拖拽时触发
      * @en Triggered when dragging
      */
-    moving: (ev: MouseEvent) => true,
+    'moving': (ev: MouseEvent) => true,
     /**
      * @zh 拖拽结束之后触发
      * @en Triggered after dragging ends
      */
-    moveEnd: (ev: MouseEvent) => true,
+    'moveEnd': (ev: MouseEvent) => true,
     'update:size': (size: number | string) => true,
   },
   /**
@@ -178,7 +190,7 @@ export default defineComponent({
       defaultSize.value,
       reactive({
         value: propSize,
-      }),
+      })
     );
     const sizeConfig = computed(() => getSizeConfig(size.value));
     const isHorizontal = computed(() => direction.value === 'horizontal');
@@ -210,7 +222,9 @@ export default defineComponent({
 
     async function getContainerSize() {
       const getSize = () => {
-        return isHorizontal.value ? wrapperRef.value?.clientWidth : wrapperRef.value?.clientHeight || 0;
+        return isHorizontal.value
+          ? wrapperRef.value?.clientWidth
+          : wrapperRef.value?.clientHeight || 0;
       };
 
       if (!wrapperRef.value || getSize()) {
@@ -225,7 +239,9 @@ export default defineComponent({
         return;
       }
 
-      const newSize = sizeConfig.value.isPx ? `${newPxSize}px` : px2percent(newPxSize, containerSize);
+      const newSize = sizeConfig.value.isPx
+        ? `${newPxSize}px`
+        : px2percent(newPxSize, containerSize);
 
       if (size.value === newSize) return;
       setSize(newSize);
@@ -270,7 +286,10 @@ export default defineComponent({
         size: startSize,
         containerSize: startContainerSize,
       });
-      return getLegalPxSize(`${startPxSize + (endPosition - startPosition)}px`, startContainerSize);
+      return getLegalPxSize(
+        `${startPxSize + (endPosition - startPosition)}px`,
+        startContainerSize
+      );
     }
 
     // 移动中，更新 firstPane 的占位大小
@@ -317,7 +336,9 @@ export default defineComponent({
       on(window, 'mouseup', onMovingEnd);
       on(window, 'contextmenu', onMovingEnd);
 
-      document.body.style.cursor = isHorizontal.value ? 'col-resize' : 'row-resize';
+      document.body.style.cursor = isHorizontal.value
+        ? 'col-resize'
+        : 'row-resize';
     }
 
     function onTriggerResize(entry: ResizeObserverEntry) {

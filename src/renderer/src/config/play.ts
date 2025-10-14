@@ -3,7 +3,7 @@ export default {
   status: false,
   setting: {
     playerMode: {
-      type: 'zwplayer',
+      type: 'artplayer',
       external: '',
     },
     snifferMode: {

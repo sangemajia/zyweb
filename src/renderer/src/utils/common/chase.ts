@@ -8,11 +8,7 @@ import { addStar, delStar, putStar, findStar } from '@/api/star';
  * @param type 类型
  * @returns { status: boolean, data: any, code: number }
  */
-const fetchBingeData = async (
-  relateId: string,
-  videoId: number | string,
-  type: string | string[] = [],
-): Promise<{ status: boolean; data: any; code: number }> => {
+const fetchBingeData = async (relateId: string, videoId: number | string, type: string | string[] = []): Promise<{ status: boolean; data: any, code: number }> => {
   let data = {
     status: false,
     code: -1,
@@ -24,8 +20,8 @@ const fetchBingeData = async (
       videoType: '',
       videoRemarks: '',
       id: null,
-      type: 'film',
-    },
+      type: 'film'
+    }
   };
   try {
     if (typeof type === 'string') type = [type];
@@ -45,11 +41,7 @@ const fetchBingeData = async (
  * @param doc 操作数据
  * @returns { status: boolean, data: any, code: number }
  */
-const putBingeData = async (
-  action: string,
-  doc: any = {},
-  id: string | null = null,
-): Promise<{ status: boolean; data: any; code: number }> => {
+const putBingeData = async (action: string, doc: any = {}, id: string | null = null): Promise<{ status: boolean; data: any, code: number }> => {
   let data = {
     status: false,
     code: -1,
@@ -61,8 +53,8 @@ const putBingeData = async (
       videoType: '',
       videoRemarks: '',
       id: null,
-      type: 'film',
-    },
+      type: 'film'
+    }
   };
   try {
     let res = {};
@@ -89,11 +81,7 @@ const putBingeData = async (
  * @param type 类型
  * @returns { status: boolean, data: any, code: number }
  */
-const fetchHistoryData = async (
-  relateId: string,
-  videoId: number | string,
-  type: string | string[] = [],
-): Promise<{ status: boolean; data: any; code: number }> => {
+const fetchHistoryData = async (relateId: string, videoId: number | string, type: string | string[] = []): Promise<{ status: boolean, data: any, code: number }> => {
   let data = {
     status: false,
     code: -1,
@@ -112,7 +100,7 @@ const fetchHistoryData = async (
       duration: null,
       skipTimeInStart: 30,
       skipTimeInEnd: 30,
-    },
+    }
   };
 
   try {
@@ -133,11 +121,7 @@ const fetchHistoryData = async (
  * @param id 历史ID
  * @returns { status: boolean, data: any, code: number }
  */
-const putHistoryData = async (
-  action: string,
-  doc: any = {},
-  id: string | null = null,
-): Promise<{ status: boolean; data: any; code: number }> => {
+const putHistoryData = async (action: string, doc: any = {}, id: string | null = null): Promise<{ status: boolean, data: any, code: number }> => {
   let data = {
     status: false,
     code: -1,
@@ -156,7 +140,7 @@ const putHistoryData = async (
       duration: null,
       skipTimeInStart: 30,
       skipTimeInEnd: 30,
-    },
+    }
   };
 
   try {
@@ -177,4 +161,9 @@ const putHistoryData = async (
   }
 };
 
-export { fetchBingeData, putBingeData, fetchHistoryData, putHistoryData };
+export {
+  fetchBingeData,
+  putBingeData,
+  fetchHistoryData,
+  putHistoryData,
+}

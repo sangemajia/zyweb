@@ -35,24 +35,24 @@ const textLabel = computed(() => {
     lang: props.label.lang || '语言',
     copySuccess: props.label.copySuccess || '复制成功',
     copyError: props.label.copyError || '复制失败，请检查您的浏览器设置',
-  };
+  }
 });
 
 // 高亮代码块模板 必须一行
 const highlightBlock = (str: string, lang: string) => {
-  return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${textLabel.value.copy}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`;
+  return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${textLabel.value.copy}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`
 };
 
 // MarkdownIt 实例化配置
 const mdi = new MarkdownIt({
   linkify: true,
   highlight(code: string, language: string) {
-    const validLang = !!(language && hljs.getLanguage(language));
+    const validLang = !!(language && hljs.getLanguage(language))
     if (validLang) {
-      const lang = language ?? '';
-      return highlightBlock(hljs.highlight(code, { language: lang }).value, lang);
+      const lang = language ?? ''
+      return highlightBlock(hljs.highlight(code, { language: lang }).value, lang)
     }
-    return highlightBlock(hljs.highlightAuto(code).value, '');
+    return highlightBlock(hljs.highlightAuto(code).value, '')
   },
 });
 
@@ -91,11 +91,10 @@ const renderMarkdown = computed(() => {
 onMounted(bindCopyEvents);
 onUpdated(bindCopyEvents);
 
-watch(
-  () => props.text,
+watch(() => props.text,
   () => {
     bindCopyEvents();
-  },
+  }
 );
 </script>
 

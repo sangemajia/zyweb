@@ -23,10 +23,10 @@ const gotoSetting = () => {
     IptvIndex: 'iptvSource',
     DriveIndex: 'driveSource',
     AnalyzeIndex: 'analyzeSource',
-  };
+  }
   const defaultConfigSwitch = 'configBase'; // 设置一个默认值，用于处理不在 Match 中的 view_name
   const sysConfigSwitch = Match[view_name!] || defaultConfigSwitch;
   storeSetting.updateConfig({ sysConfigSwitch });
   router.push({ name: 'SettingIndex' });
-};
+}
 </script>

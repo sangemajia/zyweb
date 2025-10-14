@@ -25,13 +25,13 @@ import { ref, defineAsyncComponent, shallowRef } from 'vue';
 import { t } from '@/locales';
 
 const active = ref({
-  nav: 'encodeDecode',
+  nav: 'encodeDecode'
 });
 
 const componentMap = {
-  encodeDecode: defineAsyncComponent(() => import('./components/encodeDecode.vue')),
-  hashCalculation: defineAsyncComponent(() => import('./components/hashCalculation.vue')),
-  codeConversion: defineAsyncComponent(() => import('./components/codeConversion.vue')),
+  'encodeDecode': defineAsyncComponent(() => import('./components/encodeDecode.vue')),
+  'hashCalculation': defineAsyncComponent(() => import('./components/hashCalculation.vue')),
+  'codeConversion': defineAsyncComponent(() => import('./components/codeConversion.vue')),
 };
 
 const currentComponent = shallowRef(componentMap['encodeDecode']);
@@ -63,7 +63,7 @@ const handleOpChange = (key: string) => {
       align-items: center;
 
       .title {
-        margin-right: 5px;
+        margin-right: 5px
       }
     }
 

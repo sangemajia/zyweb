@@ -22,7 +22,7 @@ export const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
     title: t('pages.setting.drive.showAll'),
     align: 'center',
-    colKey: 'showAll',
+    colKey: 'showAll'
   },
   {
     title: t('pages.setting.table.header.status'),

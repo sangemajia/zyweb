@@ -3,5 +3,5 @@ export default {
   theme: 'light',
   brandTheme: '#85d46e',
   sysConfigSwitch: 'configBase',
-  timeout: 5000,
+  timeout: 5000
 };

@@ -2,15 +2,14 @@
   <div class="title-menu_titleMenuB" ref="titleMenuBRef">
     <div class="title-menu_firstMask" v-if="active.showFirstMask"></div>
     <div class="title-menu_superWrapper" ref="superWrapperRef">
-      <div
-        class="title-menu_superItem"
+      <div class="title-menu_superItem"
         v-for="(item, index) in uniqueList"
         :key="'type_' + item.type_id + '_index_' + index"
         :class="[tagFlag === item.type_id ? 'title-menu_active' : '']"
         @click="handleItemClick(item.type_id)"
       >
         <div class="title-menu_content">{{ item.type_name }}</div>
-        <div class="title-menu_border" style="cursor: pointer">
+        <div class="title-menu_border" style="cursor: pointer;">
           <div id="icon"></div>
           <div id="cover"></div>
           <div id="gradientBorder"></div>
@@ -19,7 +18,7 @@
     </div>
     <div class="title-menu_lastMask" v-if="active.showLastMask"></div>
     <div class="title-menu_menuWrapper" v-if="active.showMenuWrapper">
-      <t-dropdown theme="default" trigger="click" destroy-on-close>
+      <t-dropdown theme="default" trigger="click" destroy-on-close >
         <t-button theme="default" shape="square" variant="outline" class="menu_menu_btn">
           <caret-down-small-icon />
         </t-button>
@@ -41,7 +40,7 @@
 
 <script setup lang="ts">
 import './index.less';
-import uniqBy from 'lodash-es/uniqBy';
+import { uniqBy } from 'lodash-es';
 import { computed, ref, watch, useTemplateRef, onMounted } from 'vue';
 import { CaretDownSmallIcon } from 'tdesign-icons-vue-next';
 
@@ -71,9 +70,7 @@ const active = ref({
   transformValue: 0,
 });
 const tagFlag = ref(props.active);
-const uniqueList = computed(() =>
-  uniqBy(props.list, 'type_id').filter((item) => ![null, undefined, ''].includes(item.type_name)),
-);
+const uniqueList = computed(() => uniqBy(props.list, 'type_id').filter(item => ![null, undefined, ''].includes(item.type_name)));
 
 onMounted(() => {
   redrawEl();
@@ -81,7 +78,7 @@ onMounted(() => {
 
 const redrawEl = () => {
   let selectedIdx = -1;
-  selectedIdx = uniqueList.value.findIndex((item) => item.type_id === tagFlag.value);
+  selectedIdx = uniqueList.value.findIndex(item => item.type_id === tagFlag.value);
 
   const superRef = superWrapperRef.value;
   const titleRef = titleMenuBRef.value;
@@ -92,10 +89,10 @@ const redrawEl = () => {
       right: Math.floor(rect.right),
       bottom: Math.floor(rect.bottom),
       width: Math.floor(rect.width),
-      height: Math.floor(rect.height),
+      height: Math.floor(rect.height)
     });
-    const innerRect = rect(superRef.getBoundingClientRect()); // 内
-    const outerRect = rect(titleRef.getBoundingClientRect()); // 外
+    const innerRect = rect(superRef.getBoundingClientRect())  // 内
+    const outerRect = rect(titleRef.getBoundingClientRect())  // 外
     const isInnerWider = innerRect.width > outerRect.width; // 内 > 外
     if (isInnerWider !== active.value.showMenuWrapper) {
       active.value.showMenuWrapper = isInnerWider;
@@ -114,20 +111,15 @@ const redrawEl = () => {
       if (translateX > 0) {
         translateX = Math.min(0, active.value.transformValue + translateX);
       } else {
-        translateX =
-          active.value.transformValue === maxTranslateX
-            ? maxTranslateX
-            : Math.max(maxTranslateX, active.value.transformValue + translateX);
+        translateX = active.value.transformValue === maxTranslateX ? maxTranslateX : Math.max(maxTranslateX, active.value.transformValue + translateX);
       }
       const showFirstMask = translateX < 0;
       const showLastMask = innerRect.width > outerRect.width - translateX;
-      if (
-        !(
-          active.value.transformValue === translateX &&
-          active.value.showFirstMask === showFirstMask &&
-          active.value.showLastMask === showLastMask
-        )
-      ) {
+      if (!(
+        active.value.transformValue === translateX &&
+        active.value.showFirstMask === showFirstMask &&
+        active.value.showLastMask === showLastMask
+      )) {
         active.value.transformValue = translateX;
         active.value.showFirstMask = showFirstMask;
         active.value.showLastMask = showLastMask;
@@ -142,4 +134,5 @@ const handleItemClick = (key: string | number) => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+</style>

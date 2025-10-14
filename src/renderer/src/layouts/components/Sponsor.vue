@@ -11,11 +11,11 @@
             <div class="qrcode-container">
               <div class="qrcode-arrow"></div>
               <div class="qrcode_bg">
-                <img src="@/assets/pay/qr.png" class="qrcode" />
+                <img src="@/assets/pay/qr.png" class="qrcode">
               </div>
               <div class="scan_tips">
-                <img src="@/assets/pay/ali.webp" />
-                <img src="@/assets/pay/wechat.webp" />
+                <img src="@/assets/pay/ali.webp">
+                <img src="@/assets/pay/wechat.webp">
                 <span class="pay_desc">{{ $t('pages.sponsor.desc') }}</span>
               </div>
             </div>

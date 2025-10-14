@@ -21,7 +21,7 @@ const latin1ToUint8Array = (str: string): Uint8Array => {
   const len = str.length;
   const bytes = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
-    bytes[i] = str.charCodeAt(i) & 0xff; // mask to 1 byte
+    bytes[i] = str.charCodeAt(i) & 0xFF; // mask to 1 byte
   }
   return bytes;
 };
@@ -46,7 +46,7 @@ const uint8ArrayToLatin1 = (arr: Uint8Array): string => {
  * */
 const uint8ArrayToBase64 = (arr: Uint8Array): string => {
   let binary = '';
-  arr.forEach((byte) => (binary += String.fromCharCode(byte)));
+  arr.forEach(byte => binary += String.fromCharCode(byte));
   return btoa(binary);
 };
 
@@ -82,7 +82,7 @@ const hexToUint8Array = (hex: string): Uint8Array => {
  * @param {Uint8Array} arr - The Uint8Array to convert.
  * @returns {string} The hex string representation of the Uint8Array.
  * */
-const uint8ArrayToHex = (arr: Uint8Array): string => [...arr].map((b) => b.toString(16).padStart(2, '0')).join('');
+const uint8ArrayToHex = (arr: Uint8Array): string => [...arr].map(b => b.toString(16).padStart(2, '0')).join('');
 
 export {
   utf8ToUint8Array,
@@ -93,4 +93,4 @@ export {
   base64ToUint8Array,
   hexToUint8Array,
   uint8ArrayToHex,
-};
+}

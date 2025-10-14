@@ -37,7 +37,7 @@
           <div class="code-op">
             <div class="code-op-item">
               <div class="item source">
-                <reqHtml class="item source" v-model:data="form.req" @source="htmlSourceEvent" />
+                <reqHtml class="item source" v-model:data="form.req" @source="htmlSourceEvent"/>
               </div>
             </div>
             <div class="code-op-item">
@@ -79,7 +79,9 @@
                 <span class="desc"
                   >{{ $t('pages.lab.jsEdit.action.initStatus') }}:
                   {{
-                    form.init.auto ? $t('pages.lab.jsEdit.action.initAuto') : $t('pages.lab.jsEdit.action.initManual')
+                    form.init.auto
+                      ? $t('pages.lab.jsEdit.action.initAuto')
+                      : $t('pages.lab.jsEdit.action.initManual')
                   }}</span
                 >
               </div>
@@ -183,7 +185,9 @@
             <div class="nav-left">
               <t-radio-group variant="default-filled" size="small" v-model="form.nav" @change="changeNav()">
                 <t-radio-button value="debug">{{ $t('pages.lab.jsEdit.select.debug') }}</t-radio-button>
-                <t-radio-button value="source">{{ $t('pages.lab.jsEdit.select.source') }}</t-radio-button>
+                <t-radio-button value="source">{{
+                  $t('pages.lab.jsEdit.select.source')
+                }}</t-radio-button>
                 <t-radio-button value="rule">{{ $t('pages.lab.jsEdit.select.rule') }}</t-radio-button>
                 <t-radio-button value="log">{{ $t('pages.lab.jsEdit.select.log') }}</t-radio-button>
               </t-radio-group>
@@ -216,13 +220,19 @@
                 @change="sourceEvent()"
                 v-if="form.nav === 'source'"
               >
-                <t-radio-button value="format">{{ $t('pages.lab.jsEdit.select.format') }}</t-radio-button>
+                <t-radio-button value="format">{{
+                  $t('pages.lab.jsEdit.select.format')
+                }}</t-radio-button>
                 <t-radio-button value="reset">{{ $t('pages.lab.jsEdit.select.reset') }}</t-radio-button>
               </t-radio-group>
             </div>
           </div>
           <div class="log-text">
-            <code-editor v-model="form.content.text" :options="logEditConf" class="log-box" />
+            <code-editor
+              v-model="form.content.text"
+              :options="logEditConf"
+              class="log-box"
+            />
           </div>
         </div>
       </div>
@@ -231,7 +241,7 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import moment from 'moment';
 import jsBeautify from 'js-beautify';
 import JSON5 from 'json5';
 import { computed, ref, onMounted, watch } from 'vue';
@@ -244,20 +254,9 @@ import emitter from '@/utils/emitter';
 import { copyToClipboardApi } from '@/utils/tool';
 import { CodeEditor } from '@/components/code-editor';
 import { setT3Proxy } from '@/api/proxy';
-import { addSite, putSite } from '@/api/site';
+import { addSite, putSite } from '@/api/site'
 import { fetchJsEditPdfa, fetchJsEditPdfh, fetchJsEditMuban, fetchJsEditDebug } from '@/api/lab';
-import {
-  fetchCmsHome,
-  fetchCmsHomeVod,
-  fetchCmsDetail,
-  fetchCmsCategory,
-  fetchCmsPlay,
-  fetchCmsSearch,
-  fetchCmsInit,
-  fetchCmsRunMain,
-  putSiteDefault,
-  fetchCmsProxy,
-} from '@/api/site';
+import { fetchCmsHome, fetchCmsHomeVod, fetchCmsDetail, fetchCmsCategory, fetchCmsPlay, fetchCmsSearch, fetchCmsInit, fetchCmsRunMain, putSiteDefault, fetchCmsProxy } from '@/api/site';
 import reqHtml from '../reqHtml/index.vue';
 import drpySuggestions from './utils/drpy_suggestions';
 import drpyObjectInner from './utils/drpy_object_inner.ts?raw';
@@ -335,7 +334,7 @@ const codeEditConf = ref({
   roundedSelection: false,
   overviewRulerBorder: false,
   scrollBeyondLastLine: false,
-  fixedOverflowWidgets: true,
+  fixedOverflowWidgets: true
 });
 const logEditConf = ref({
   language: 'javascript',
@@ -350,7 +349,7 @@ const logEditConf = ref({
   minimap: {
     enabled: false,
   },
-  fixedOverflowWidgets: true,
+  fixedOverflowWidgets: true
 });
 const tmp = computed(() => {
   return {
@@ -380,14 +379,14 @@ watch(
   (val) => {
     codeEditConf.value.theme = val === 'light' ? 'vs' : 'vs-dark';
     logEditConf.value.theme = val === 'light' ? 'vs' : 'vs-dark';
-  },
+  }
 );
 watch(
   () => form.value.content.edit,
   () => {
-    const currentTime = dayjs().unix();
+    const currentTime = moment().unix();
     form.value.lastEditTime.edit = currentTime;
-  },
+  }
 );
 
 onMounted(() => {
@@ -416,11 +415,11 @@ const getDebugData = async () => {
       if (Array.isArray(siteRes) && siteRes.length > 0 && siteRes[0].hasOwnProperty('id')) {
         debugId.value = siteRes[0].id;
       } else return;
-    }
-  }
+    };
+  };
 };
 
-const getMuban = async () => {
+const getMuban = async  () => {
   const res = await fetchJsEditMuban();
   if (typeof res === 'object' && Object.keys(res).length > 0) {
     mubanData.value = res;
@@ -454,10 +453,10 @@ const confirmTemplate = () => {
 
 const importFileEvent = async () => {
   try {
-    const readFile = async (filePath: string) => {
+    const readFile = async(filePath: string) =>{
       const fs = remote.require('fs').promises;
       return await fs.readFile(filePath, 'utf-8');
-    };
+    }
 
     const { canceled, filePaths } = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
       title: 'Select a file to read',
@@ -474,7 +473,7 @@ const importFileEvent = async () => {
       const content = await readFile(filePath);
       form.value.content.edit = content;
       MessagePlugin.success(t('pages.setting.data.success'));
-    }
+    };
   } catch (err: any) {
     console.error(`[exportFileEvent][Error]:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
@@ -487,15 +486,12 @@ const exportFileEvent = async () => {
   if (!content) {
     MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
     return;
-  }
+  };
 
   const title = (() => {
     try {
       return (
-        content
-          .match(/title:(.*?),/)?.[1]
-          .replace(/['"]/g, '')
-          .trim() || 'source'
+        content.match(/title:(.*?),/)?.[1].replace(/['"]/g, '').trim() || 'source'
       );
     } catch {
       return 'source';
@@ -523,11 +519,11 @@ const exportFileEvent = async () => {
     if (!canceled && filePath) {
       await writeFile(filePath, content);
       MessagePlugin.success(t('pages.setting.data.success'));
-    }
+    };
   } catch (err: any) {
     console.error(`[exportFileEvent][Error]:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
-  }
+  };
 };
 
 const debugEvent = async () => {
@@ -536,7 +532,7 @@ const debugEvent = async () => {
     if (!content || content.trim().length === 0) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
       return;
-    }
+    };
     await putSite({ ids: [debugId.value], doc: { ext: content } });
     await putSiteDefault(debugId.value);
     emitter.emit('refreshFilmConfig');
@@ -553,16 +549,16 @@ const decodeEvent = async () => {
     if (!content || content.trim().length === 0) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
       return;
-    }
+    };
     if (!debugId.value) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoDebugId'));
       return;
-    }
+    };
 
     const res = await fetchCmsRunMain({
       func: `function main(str) {return getOriginalJs(str)}`,
       arg: content,
-      sourceId: debugId.value,
+      sourceId: debugId.value
     });
     form.value.content.edit = res;
     MessagePlugin.success(t('pages.setting.data.success'));
@@ -602,37 +598,37 @@ const changeNav = async (nav = '', action = '') => {
       break;
   }
 
+
   if (nav === 'log') {
     const content = form.value.content.edit;
     if (!content || content.trim().length === 0) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
       return;
-    }
+    };
     if (!debugId.value) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoDebugId'));
       return;
-    }
+    };
     const res = await fetchCmsRunMain({
-      func: 'function main() {return getLogRecord()}',
-      arg: '',
-      sourceId: debugId.value,
+      func: "function main() {return getLogRecord()}",
+      arg: "",
+      sourceId: debugId.value
     });
-    let logText = res
-      .map(([time, content]) => {
-        try {
-          content = JSON5.parse(content);
-          content = JSON.stringify(content, null, 2);
-        } catch {}
-        return `${time}: ${content}`;
-      })
-      .join('\n');
+    let logText = res.map(([time, content]) => {
+      try {
+        content = JSON5.parse(content);
+        content = JSON.stringify(content, null, 2);
+      } catch {}
+      return `${time}: ${content}`;
+    })
+    .join('\n');
     form.value.content[nav] = logText;
-  }
+  };
 
   const contentText =
-    typeof form.value.content[nav] === 'object'
-      ? JSON5.stringify(form.value.content[nav], null, 2)
-      : form.value.content[nav];
+      typeof form.value.content[nav] === 'object'
+        ? JSON5.stringify(form.value.content[nav], null, 2)
+        : form.value.content[nav];
   form.value.content.text = contentText;
 };
 
@@ -643,12 +639,12 @@ const performAction = async (type, requestData = {}) => {
     if (!content || content.trim().length === 0) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
       return;
-    }
+    };
     // 2. 判断是否存在debugid
     if (!debugId.value && type !== 'init') {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoDebugId'));
       return;
-    }
+    };
     // 3. 不存在泽获取
     if (!debugId.value && type === 'init') {
       const debugRes = await fetchJsEditDebug();
@@ -670,29 +666,29 @@ const performAction = async (type, requestData = {}) => {
           debugId.value = siteRes[0].id;
           await fetchCmsInit({ sourceId: siteRes[0].id, debug: true });
         } else return;
-      }
-    }
+      };
+    };
     // 4.自动初始化则上传并初始化
     if (type === 'init' || (form.value.lastEditTime.edit > form.value.lastEditTime.init && form.value.init.auto)) {
-      const currentTime = dayjs().unix();
+      const currentTime = moment().unix();
       form.value.lastEditTime.init = currentTime;
       await putSite({ ids: [debugId.value], doc: { ext: content } });
       if (type !== 'init') {
         await fetchCmsInit({ sourceId: debugId.value, debug: true });
-      }
-    }
-    const methodMap = {
-      init: fetchCmsInit,
-      home: fetchCmsHome,
-      homeVod: fetchCmsHomeVod,
-      detail: fetchCmsDetail,
-      category: fetchCmsCategory,
-      search: fetchCmsSearch,
-      play: fetchCmsPlay,
-      proxy: fetchCmsProxy,
-      log: fetchCmsRunMain,
+      };
     };
-    const res = await methodMap[type](Object.assign({}, requestData, { sourceId: debugId.value }));
+    const methodMap = {
+      'init': fetchCmsInit,
+      'home': fetchCmsHome,
+      'homeVod': fetchCmsHomeVod,
+      'detail': fetchCmsDetail,
+      'category': fetchCmsCategory,
+      'search': fetchCmsSearch,
+      'play': fetchCmsPlay,
+      'proxy': fetchCmsProxy,
+      'log': fetchCmsRunMain,
+    };
+    const res = await methodMap[type](Object.assign({}, requestData, {sourceId: debugId.value}));
     form.value.content.debug = res;
     form.value.action = type;
     changeNav('debug', type);
@@ -734,7 +730,7 @@ const actionRule = async (type) => {
 };
 
 const actionInit = async () => {
-  await performAction('init', { debug: true });
+  await performAction('init', { debug:true });
 };
 
 const actionHome = async () => {
@@ -768,7 +764,7 @@ const actionDetail = async () => {
   if (!ids) {
     MessagePlugin.warning(t('pages.lab.jsEdit.message.detailNoIds'));
     return;
-  }
+  };
 
   await performAction('detail', { id: ids });
 };
@@ -818,11 +814,11 @@ const actionProxy = async () => {
   }
 
   if (url && url.startsWith('http')) {
-    if (!url.startsWith(window.location.origin)) {
-      const formatUrl = `/proxy?do=js&url=${url}`;
+    if (!url.startsWith('http://127.0.0.1:9978/')) {
+      const formatUrl = `http://127.0.0.1:9978/proxy?do=js&url=${url}`;
       form.value.proxy.url = formatUrl;
       url = formatUrl;
-    }
+    };
     const formatUrl = new URL(url);
     const params = Object.fromEntries(formatUrl.searchParams.entries());
     await performAction('proxy', params);
@@ -841,15 +837,15 @@ const logEvent = async () => {
     if (!content || content.trim().length === 0) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoData'));
       return;
-    }
+    };
     if (!debugId.value) {
       MessagePlugin.warning(t('pages.lab.jsEdit.message.initNoDebugId'));
       return;
-    }
+    };
     await fetchCmsRunMain({
       func: "function main() { clearLogRecord(); return 'ok'}",
-      arg: '',
-      sourceId: debugId.value,
+      arg: "",
+      sourceId: debugId.value
     });
     form.value.content.log = '';
     form.value.content.text = '';
@@ -876,7 +872,7 @@ const proxyEvent = async () => {
       const formatUrl = new URL(url);
       const params = Object.fromEntries(formatUrl.searchParams.entries());
       await setT3Proxy({ text: jsonStr, url: params.url });
-    }
+    };
 
     MessagePlugin.info(`${t('pages.setting.data.success')}`);
   } catch (err) {
@@ -916,10 +912,7 @@ const handleOpChange = (type: string) => {
       active.value.template = true;
       break;
     case 'doc':
-      window.electron.ipcRenderer.send(
-        'open-url',
-        'https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7',
-      );
+      window.electron.ipcRenderer.send('open-url', 'https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7');
       break;
     case 'file':
       window.electron.ipcRenderer.send('open-path', 'file');
@@ -927,7 +920,7 @@ const handleOpChange = (type: string) => {
     case 'debug':
       debugEvent();
       break;
-  }
+  };
 };
 
 const htmlSourceEvent = (data: string) => {
@@ -1009,7 +1002,7 @@ const handleMonacoObject = (monaco) => {
         .t-select__wrap {
           width: fit-content;
           position: relative;
-          height: calc(var(--td-comp-size-m) -(var(--td-comp-paddingTB-xxs) * 2));
+          height: calc(var(--td-comp-size-m) -(var(--td-comp-paddingTB-xxs)* 2));
 
           .t-input--auto-width {
             min-width: 44px;
@@ -1030,7 +1023,7 @@ const handleMonacoObject = (monaco) => {
           }
         }
         .t-select__wrap::before {
-          content: '';
+          content: "";
           position: absolute;
           left: 0px;
           top: 50%;

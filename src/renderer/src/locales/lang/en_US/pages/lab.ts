@@ -231,8 +231,8 @@ export default {
       free: 'Free',
     },
     chat: {
-      modelChange: 'served by {model} model',
-    },
+      modelChange: 'served by {model} model'
+    }
   },
   dataCrypto: {
     nav: {

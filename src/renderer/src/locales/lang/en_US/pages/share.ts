@@ -7,6 +7,6 @@ export default {
   copyUrl: 'Copy',
   message: {
     copySuccess: 'Copy success, quickly share to friends!',
-    copyFail: "Env does't support copy, please manually copy the link!",
-  },
+    copyFail: "Env does't support copy, please manually copy the link!"
+  }
 };

@@ -1,14 +1,14 @@
 <template>
   <div class="player-show">
     <div v-if="playerStutus.status" class="box-flex">
-      <div class="mini-box">
+      <div class="mini-box" @click="focusPlayerWindowEvent">
         <div class="mini-box-video">
           <video-library-icon size="large" class="video" />
         </div>
         <div class="mini-box-title-warp" ref="marqueeContainerRef">
           <span class="mini-box-title" ref="marqueeTextRef">{{ playerStutus.title }}</span>
         </div>
-        <div class="mini-box-close" @click.stop="closePlayer">
+        <div class="mini-box-close" @click.stop="destroyPlayerWindowEvent">
           <close-icon size="large" class="close" />
         </div>
       </div>
@@ -19,11 +19,13 @@
 <script setup lang="ts">
 import { CloseIcon, VideoLibraryIcon } from 'tdesign-icons-vue-next';
 import { computed, watch, useTemplateRef, nextTick, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { t } from '@/locales';
 import { usePlayStore } from '@/store';
 
 const playerStore = usePlayStore();
+const router = useRouter();
 const marqueeContainerRef = useTemplateRef('marqueeContainerRef');
 const marqueeTextRef = useTemplateRef('marqueeTextRef');
 
@@ -31,26 +33,22 @@ const playerStutus = computed(() => {
   return {
     status: playerStore.status,
     // @ts-ignore
-    title:
-      playerStore.type === 'film'
-        ? playerStore.data.info.vod_name
-        : playerStore.data.info.name || t('pages.playShow.noPlayTitle'),
-  };
+    title: playerStore.type === 'film' ? playerStore.data.info.vod_name : playerStore.data.info.name || t('pages.playShow.noPlayTitle')
+  }
 });
 
-watch(
-  () => playerStutus.value.title,
+watch(() => playerStutus.value.title,
   async () => {
     await nextTick(() => {
       setMarqueeAnimation();
-    });
-  },
+    })
+  }
 );
 
 onMounted(async () => {
   await nextTick(() => {
     setMarqueeAnimation();
-  });
+  })
 });
 
 const setMarqueeAnimation = () => {
@@ -66,10 +64,15 @@ const setMarqueeAnimation = () => {
     // 设置动画持续时间
     marqueeTextRef.value.style.animationDuration = `${duration}s`;
   }
+}
+
+const focusPlayerWindowEvent = () => {
+  // Web版本直接跳转到播放页面
+  router.push('/play/index');
 };
 
-// Web版本中不适用窗口管理功能
-const closePlayer = () => {
+const destroyPlayerWindowEvent = () => {
+  // Web版本关闭播放状态
   playerStore.updateConfig({
     status: false,
   });
@@ -90,9 +93,11 @@ const closePlayer = () => {
       width: 140px;
       display: flex;
       align-items: center;
+      cursor: pointer;
 
       &-close,
       &-video {
+        cursor: pointer;
         text-align: center;
         display: flex;
         align-items: center;

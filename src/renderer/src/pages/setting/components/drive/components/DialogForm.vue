@@ -12,11 +12,7 @@
     <template #body>
       <t-form ref="formRef" :data="formData.data" :rules="RULES" :label-width="60">
         <t-form-item :label="$t('pages.setting.drive.name')" name="name">
-          <t-input
-            v-model="formData.data.name"
-            class="input-item"
-            :placeholder="$t('pages.setting.placeholder.general')"
-          />
+          <t-input v-model="formData.data.name" class="input-item" :placeholder="$t('pages.setting.placeholder.general')" />
         </t-form-item>
         <div class="key-group">
           <t-form-item :label="$t('pages.setting.site.key')" name="key" style="flex: 1">
@@ -25,32 +21,22 @@
           <t-button theme="default" @click="randomKeyEvent">{{ $t('pages.setting.random') }}</t-button>
         </div>
         <t-form-item :label="$t('pages.setting.drive.server')" name="server">
-          <t-input
-            v-model="formData.data.server"
-            class="input-item"
-            :placeholder="$t('pages.setting.placeholder.general')"
-          />
+          <t-input v-model="formData.data.server" class="input-item"
+            :placeholder="$t('pages.setting.placeholder.general')" />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.drive.showAll')" name="showAll">
-          <t-radio-group v-model="formData.data.showAll" variant="default-filled">
+          <t-radio-group v-model="formData.data.showAll" variant="default-filled" >
             <t-radio-button :value="true">{{ $t('pages.setting.drive.all') }}</t-radio-button>
             <t-radio-button :value="false">{{ $t('pages.setting.drive.video') }}</t-radio-button>
           </t-radio-group>
         </t-form-item>
         <t-form-item :label="$t('pages.setting.drive.startPage')" name="startPage">
-          <t-input
-            v-model="formData.data.startPage"
-            class="input-item"
-            :placeholder="$t('pages.setting.placeholder.startPage')"
-          />
+          <t-input v-model="formData.data.startPage" class="input-item"
+            :placeholder="$t('pages.setting.placeholder.startPage')" />
         </t-form-item>
         <t-form-item :label="$t('pages.setting.drive.params')" name="params">
-          <t-textarea
-            v-model="formData.data.params"
-            class="input-item input-textarea"
-            :placeholder="tip"
-            :autosize="{ minRows: 3, maxRows: 3 }"
-          />
+          <t-textarea v-model="formData.data.params" class="input-item input-textarea" :placeholder="tip"
+            :autosize="{ minRows: 3, maxRows: 3 }" />
         </t-form-item>
       </t-form>
     </template>
@@ -79,7 +65,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'add',
+    default: 'add'
   },
 });
 const formRef = useTemplateRef<FormInstanceFunctions>('formRef');
@@ -90,7 +76,7 @@ const formData = ref({
 });
 const formType = ref<string>(props.type);
 const tip = computed(() => {
-  return `{\n\t"${t('pages.setting.placeholder.paramsPath')}": { "password": "${t('pages.setting.placeholder.paramsPasswd')}" }\n}`;
+  return `{\n\t"${t('pages.setting.placeholder.paramsPath')}": { "password": "${t('pages.setting.placeholder.paramsPasswd')}" }\n}`
 });
 
 const emits = defineEmits(['update:visible', 'submit']);

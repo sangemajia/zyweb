@@ -41,7 +41,7 @@ watch(
   (newOptions) => {
     term.value && (term.value.options = JSON.parse(JSON.stringify(newOptions)));
   },
-  { deep: true },
+  { deep: true }
 );
 
 const init = async (onKeyCallback: (key: string) => void = () => {}) => {
@@ -50,7 +50,7 @@ const init = async (onKeyCallback: (key: string) => void = () => {}) => {
   if (term.value) {
     clear();
     return term.value;
-  }
+  };
 
   term.value = new Terminal({
     cursorBlink: true,
@@ -68,7 +68,7 @@ const init = async (onKeyCallback: (key: string) => void = () => {}) => {
   fitAddon.value.fit();
   term.value.focus();
 
-  term.value.onKey((e) => {
+  term.value.onKey(e => {
     const key = e.domEvent.keyCode === 13 ? '\n' : e.key;
     onKeyCallback(key);
   });
@@ -82,7 +82,11 @@ const init = async (onKeyCallback: (key: string) => void = () => {}) => {
   return term.value;
 };
 
-const write = (data: string | number | object, level: LogLevel | 'default' = 'default', ln = true) => {
+const write = (
+  data: string | number | object,
+  level: LogLevel | 'default' = 'default',
+  ln = true,
+) => {
   if (!term.value) return;
 
   let text = typeof data === 'object' ? JSON.stringify(data, null, 2) : data.toString();

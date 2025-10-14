@@ -3,16 +3,8 @@
     <t-button theme="default" shape="square" variant="text" @click="toggleDrawerAndHandlePlayer">
       <dvd-icon />
     </t-button>
-    <t-drawer
-      v-model:visible="isVisible.drawer"
-      show-in-attached-element
-      :footer="null"
-      :attach="`.${prefix}-content`"
-      :size-draggable="{ max: 920, min: 320 }"
-      @confirm="change"
-      @close="close"
-      size="320px"
-    >
+    <t-drawer v-model:visible="isVisible.drawer" show-in-attached-element :footer=null :attach="`.${prefix}-content`"
+      :size-draggable="{ max: 920, min: 320 }" @confirm="change" @close="close" size="320px">
       <div class="content">
         <div id="mse"></div>
         <div class="slide">
@@ -31,27 +23,49 @@ import '@/style/player/veplayer.css';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { DvdIcon, RefreshIcon } from 'tdesign-icons-vue-next';
 import { ref, reactive } from 'vue';
-import { ZwPlayer } from '@/components/player';
+import Player from 'xgplayer';
 
 import { fetchSettingDetail } from '@/api/setting';
 import { prefix } from '@/config/global';
 import { t } from '@/locales';
 
 const isVisible = reactive({
-  drawer: false,
+  drawer: false
 });
 const api = ref();
 const player = ref();
 const config = ref({
-  container: 'mse',
+  id: 'mse',
   url: '',
   autoplay: true,
-  isLive: false,
-  volume: 1,
-  muted: false,
-  playbackRate: 1,
-  startTime: 0,
-});
+  rotate: {
+    clockwise: false,
+    innerRotate: true,
+    index: 1
+  },
+  keyboard: {
+    keyCodeMap: {
+      'up': {
+        action: function () {
+          console.log('[justlook][keyboard]up fresh video')
+          change();
+        }
+      },
+      'down': {
+        action: function () {
+          console.log('[justlook][keyboard]down fresh video')
+          change();
+        }
+      }
+    }
+  },
+  dynamicBg: {
+    disable: false
+  },
+  ignores: ['cssFullscreen', 'playbackRate'],
+  height: '100%',
+  width: '100%'
+})
 
 const fetchDataAndSetPlayerConfig = async () => {
   const res = await fetchSettingDetail('defaultViewCasual');
@@ -63,14 +77,11 @@ const fetchDataAndSetPlayerConfig = async () => {
 
   api.value = res.value;
   config.value.url = res.value;
-};
+}
 
 const initializePlayer = () => {
-  if (player.value) {
-    player.value.destroy();
-  }
-  player.value = new ZwPlayer(config.value);
-};
+  player.value = new Player(config.value);
+}
 
 const toggleDrawerAndHandlePlayer = async () => {
   if (!isVisible.drawer) {
@@ -84,22 +95,20 @@ const toggleDrawerAndHandlePlayer = async () => {
     close();
     isVisible.drawer = false;
   }
-};
+}
 
 const close = () => {
   if (player.value) {
     player.value.destroy();
     player.value = null;
   }
-};
+}
 
 const change = () => {
   if (player.value) {
-    player.value.destroy();
-    config.value.url = api.value;
-    player.value = new ZwPlayer(config.value);
+    player.value.src = api.value;
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -127,7 +136,7 @@ const change = () => {
       background-color: #33343f;
       height: 40px;
       line-height: 40px;
-      opacity: 0.7;
+      opacity: .7;
       text-align: center;
       width: 32px;
 
@@ -143,6 +152,7 @@ const change = () => {
 
     .refresh {
       border-radius: var(--td-radius-round);
+
     }
   }
 }

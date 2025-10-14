@@ -4,5 +4,5 @@ export default {
   default: 'Default',
   delete: 'Delete',
   edit: 'Edit',
-  debug: 'Debug',
-};
+  debug: 'Debug'
+}

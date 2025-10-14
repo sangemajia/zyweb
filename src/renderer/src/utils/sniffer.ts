@@ -115,14 +115,7 @@ const sniffer = async (
 
   const type = storePlayer.setting.snifferMode.type;
   if (type === 'pie') {
-    const res = await snifferPie(
-      url,
-      runScript,
-      initScript,
-      format_rule(custom_regex),
-      format_rule(sniffer_exclude),
-      headers,
-    );
+    const res = await snifferPie(url, runScript, initScript, format_rule(custom_regex), format_rule(sniffer_exclude), headers);
     data.url = res['url'];
     data.headers = res['headers'];
   } else if (type === 'custom') {

@@ -1,49 +1,106 @@
 <template>
-  <div class="lab-page">
-    <h2>实验室页面</h2>
-    <p>这是实验室功能模块的Web版本。</p>
-
-    <div class="component-info">
-      <h3>组件信息</h3>
-      <p><strong>名称:</strong> 实验室组件</p>
-      <p><strong>描述:</strong> 用于测试新功能和实验性特性</p>
-      <p><strong>版本:</strong> 1.0.0</p>
-    </div>
-
-    <div class="features">
-      <h3>功能特性</h3>
-      <ul>
-        <li>新功能测试</li>
-        <li>实验性特性</li>
-        <li>开发者工具</li>
-        <li>调试面板</li>
-      </ul>
+  <div class="lab-container">
+    <common-nav :title="$t('pages.lab.name')" :list="settingSet.list" :active="settingSet.select" @change-key="changeConf" />
+    <div class="content">
+      <div class="container">
+        <keep-alive>
+          <component :is="currentComponent" class="content-wrapper"></component>
+        </keep-alive>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// 实验室页面组件
+import { computed, defineAsyncComponent, reactive, shallowRef } from 'vue';
+import { t } from '@/locales';
+import CommonNav from '@/components/common-nav/index.vue';
+
+// 异步加载组件，也可以直接导入组件
+const componentMap = {
+  'dataCrypto': defineAsyncComponent(() => import('./components/dataCrypto/index.vue')),
+  'fileDiff': defineAsyncComponent(() => import('./components/fileDiff/index.vue')),
+  'aiBrain': defineAsyncComponent(() => import('./components/aiBrain/index.vue')),
+  'jsEdit': defineAsyncComponent(() => import('./components/jsEdit/index.vue')),
+  'staticFilter': defineAsyncComponent(() => import('./components/staticFilter/index.vue')),
+  'snifferPlay': defineAsyncComponent(() => import('./components/snifferPlay/index.vue')),
+  'pluginCenter': defineAsyncComponent(() => import('./components/pluginCenter/index.vue')),
+};
+
+const currentComponent = shallowRef(componentMap['dataCrypto']);
+
+const settingNav = computed(() => {
+  return [
+    {
+      id: 'dataCrypto',
+      name: t('pages.lab.nav.dataCrypto')
+    },
+    {
+      id: 'fileDiff',
+      name: t('pages.lab.nav.fileDiff')
+    },
+    {
+      id: 'aiBrain',
+      name: t('pages.lab.nav.aiBrain')
+    }, {
+      id: 'jsEdit',
+      name: t('pages.lab.nav.jsEdit')
+    }, {
+      id: 'staticFilter',
+      name: t('pages.lab.nav.staticFilter')
+    }, {
+      id: 'snifferPlay',
+      name: t('pages.lab.nav.snifferPlay')
+    },
+    {
+      id: 'pluginCenter',
+      name: t('pages.lab.nav.pluginCenter')
+    }
+  ]
+});
+
+const settingSet = reactive({
+  select: 'dataCrypto',
+  list: settingNav
+});
+
+const changeConf = (key: string) => {
+  settingSet.select = key;
+  currentComponent.value = componentMap[key];
+};
 </script>
 
 <style lang="less" scoped>
-.lab-page {
-  padding: 20px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+.lab-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  flex: 1 1;
 
-.component-info,
-.features {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 3px;
-}
+  .content {
+    min-width: 750px;
+    position: relative;
+    padding: var(--td-pop-padding-l);
+    background-color: var(--td-bg-color-container);
+    border-radius: var(--td-radius-default);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 
-.features ul {
-  list-style-type: disc;
-  padding-left: 20px;
+    .container {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+
+      .content-wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+    }
+  }
 }
 </style>

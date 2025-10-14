@@ -1,49 +1,86 @@
 <template>
-  <div class="chase-page">
-    <h2>过刻页面</h2>
-    <p>这是过刻功能模块的Web版本。</p>
-
-    <div class="component-info">
-      <h3>组件信息</h3>
-      <p><strong>名称:</strong> 过刻组件</p>
-      <p><strong>描述:</strong> 用于记录和分享精彩时刻</p>
-      <p><strong>版本:</strong> 1.0.0</p>
-    </div>
-
-    <div class="features">
-      <h3>功能特性</h3>
-      <ul>
-        <li>时刻记录</li>
-        <li>内容分享</li>
-        <li>时间线浏览</li>
-        <li>标签管理</li>
-      </ul>
+  <div class="chase view-container">
+    <common-nav :title="$t('pages.chase.name')" :list="chaseNav" :active="active.nav" @change-key="changeChaseEvent" />
+    <div class="content">
+      <div class="container">
+        <transition name="fade" mode="out-in">
+          <keep-alive>
+            <component :is="componentMap[active.nav]" class="content-wrapper"></component>
+          </keep-alive>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// 过刻页面组件
+import { computed, defineAsyncComponent, reactive } from 'vue';
+
+import { t } from '@/locales';
+
+const componentMap = {
+  'binge': defineAsyncComponent(() => import('./components/binge/index.vue')),
+  'history': defineAsyncComponent(() => import('./components/history/index.vue')),
+};
+
+const active = reactive({
+  nav: 'history',
+});
+
+const chaseNav = computed(() => {
+  return [
+    {
+      id: 'history',
+      name: t('pages.chase.history.title')
+    }, {
+      id: 'binge',
+      name: t('pages.chase.binge.title')
+    }
+  ]
+});
+
+const changeChaseEvent = (item: string) => {
+  active.nav = item;
+};
 </script>
 
 <style lang="less" scoped>
-.chase-page {
-  padding: 20px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+.view-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
 
-.component-info,
-.features {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 3px;
-}
+  .content {
+    min-width: 750px;
+    position: relative;
+    padding: var(--td-pop-padding-l);
+    background-color: var(--td-bg-color-container);
+    border-radius: var(--td-radius-default);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
-.features ul {
-  list-style-type: disc;
-  padding-left: 20px;
+    .container {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+
+      .content-wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    }
+  }
+
+  &-dialog {
+    :deep(.t-dialog__body) {
+      text-align: center;
+    }
+  }
 }
 </style>

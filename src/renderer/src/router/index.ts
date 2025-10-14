@@ -7,7 +7,7 @@ const homepageModules = import.meta.glob('./modules/**/homepage.ts', { eager: tr
 const defaultRouterList: Array<any> = [
   {
     path: '/',
-    redirect: '/home/index',
+    redirect: '/film/index',
   },
 ];
 

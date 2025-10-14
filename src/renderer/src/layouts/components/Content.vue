@@ -1,23 +1,43 @@
 <template>
-  <div :class="`${prefix}-content-layout`">
-    <router-view v-slot="{ Component }">
-      <component :is="Component" v-if="Component" />
-      <div v-else>加载中...</div>
-    </router-view>
-  </div>
+  <router-view v-if="isRouterAlive" v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <keep-alive>
+        <component :is="Component" :key="activeRouteFullPath" :class="`${prefix}-component`" id="main-component" />
+      </keep-alive>
+    </transition>
+  </router-view>
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { prefix } from '@/config/global';
+import emitter from '@/utils/emitter';
+
+const activeRouteFullPath = computed(() => {
+  const router = useRouter();
+  return router.currentRoute.value.fullPath;
+});
+
+const isRouterAlive = ref(true);
+
+emitter.on('reloadComponent', () => {
+  console.info('[content][bus][refresh]');
+  isRouterAlive.value = false;
+  nextTick(() => {
+    isRouterAlive.value = true;
+  });
+});
 </script>
-
 <style lang="less" scoped>
-// 从zyplayer复制的样式
-@import '@/style/layout.less';
+.fade-leave-active,
+.fade-enter-active {
+  transition: opacity @anim-duration-slow @anim-time-fn-easing;
+}
 
-.@{starter-prefix}-content-layout {
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-  height: 100%;
-  overflow: auto;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

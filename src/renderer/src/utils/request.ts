@@ -3,15 +3,11 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 import { getPinia } from '@/utils/tool';
 
-// 基础URL配置
-// 在一体化部署模式下，前端和后端运行在同一域名下，使用相对路径
-// 在前后端分离部署模式下，使用环境变量配置的API地址
 const baseURL = String(
-  import.meta.env.DEV ? '/api' : '/api'
+  import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_URL_PREFIX}`,
 );
 const TIMEOUT = 5000;
 
-// 获取超时时间配置
 const getTimeout = (timeout: number | undefined | null) => {
   const baseTimeout = TIMEOUT;
 
@@ -27,17 +23,15 @@ const getTimeout = (timeout: number | undefined | null) => {
   return baseTimeout;
 };
 
-// 创建axios实例
 const service: AxiosInstance = axios.create({
   baseURL,
   timeout: TIMEOUT,
   headers: {
-    'Content-Type': 'application/json;charset=utf-8',
+    "Content-Type": "application/json;charset=utf-8",
   },
   withCredentials: false,
 });
 
-// 请求拦截器
 service.interceptors.request.use(
   // @ts-ignore
   (config: AxiosRequestConfig) => {
@@ -46,9 +40,8 @@ service.interceptors.request.use(
   (error: AxiosError) => {
     return Promise.reject(error);
   },
-);
+)
 
-// 响应拦截器
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
@@ -58,18 +51,16 @@ service.interceptors.response.use(
   },
 );
 
-// 基础请求函数
 const request = async (config: AxiosRequestConfig) => {
   config.timeout = getTimeout(config?.timeout);
   const res = await service.request(config);
   if (res.data.code === 0 && res.status === 200) {
     return res.data.data;
   } else {
-    throw new Error(res.data.msg || '请求失败');
+    throw new Error(res.data.msg);
   }
 };
 
-// 完整响应请求函数
 const requestComplete: any = async (config: AxiosRequestConfig) => {
   config.timeout = getTimeout(config?.timeout);
   const { status, data, headers } = await service.request(config);
@@ -80,7 +71,6 @@ const requestComplete: any = async (config: AxiosRequestConfig) => {
   };
 };
 
-// SSE请求函数
 const requestSse = (config) => {
   config.timeout = getTimeout(config?.timeout);
   const { success, fail, complete } = config?.options || {};
@@ -135,8 +125,4 @@ const requestSse = (config) => {
   });
 };
 
-export { 
-  request as default, 
-  requestComplete, 
-  requestSse
-};
+export { request as default, requestComplete, requestSse };

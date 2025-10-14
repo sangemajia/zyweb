@@ -39,7 +39,7 @@
 }
 
 .zy-content {
-  transition: padding 0.2s ease-in-out;
+  transition: padding .2s ease-in-out;
 
   .subject {
     width: 100%;
@@ -56,7 +56,7 @@
   .dock-show {
     display: none;
     transition: 0.15s ease-out;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, .4);
     border-radius: 8px 0 0 8px;
     width: 32px;
     height: 84px;
@@ -71,7 +71,7 @@
     cursor: pointer;
     &:hover {
       display: flex;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, .5);
     }
     .btn-icon {
       width: 24px;
@@ -313,6 +313,7 @@
     }
 
     .listbox {
+
       .nav {
         // margin-top: 6px;
       }
@@ -448,9 +449,7 @@
     }
   }
 
-  .iptv-anthology,
-  .drive-anthology,
-  .analyze-anthology {
+  .iptv-anthology, .drive-anthology, .analyze-anthology {
     height: calc(100% - 78px - 6px);
   }
 
@@ -479,13 +478,11 @@
           color: #2774f6;
         }
 
-        .playing,
-        .useing {
+        .playing, .useing {
           color: #f09736;
         }
 
-        .unplay,
-        .unuse {
+        .unplay, .unuse {
           color: var(--td-text-color-primary);
         }
       }
@@ -508,6 +505,7 @@
         font-weight: 500;
         cursor: pointer;
         padding: var(--td-comp-paddingTB-s) var(--td-comp-paddingLR-m);
+
 
         &:hover {
           background-color: var(--td-bg-content-hover-2);
@@ -588,8 +586,7 @@
         font-size: 14px;
       }
 
-      .case,
-      .background {
+      .case, .background {
         margin-top: 12px;
 
         .title {
@@ -662,10 +659,7 @@
           }
         }
 
-        .setting,
-        .sponsor,
-        .language,
-        .system-skin {
+        .setting, .sponsor, .language, .system-skin {
           display: none !important;
         }
       }
@@ -703,11 +697,10 @@
     height: 100% !important;
     width: 100% !important;
   }
-  .t-layout:hover .zy-header,
-  .zy-header:hover {
+  .t-layout:hover .zy-header, .zy-header:hover {
     opacity: 1;
     pointer-events: auto;
-    transition: 0.2s ease;
+    transition: .2s ease;
   }
   .zy-aside {
     display: none;

@@ -32,13 +32,13 @@ const storeSetting = useSettingStore();
 const themeIcons = {
   light: ModeLightIcon,
   dark: ModeDarkIcon,
-  auto: ContrastIcon,
+  auto: ContrastIcon
 };
 
 const currentIcon = computed(() => themeIcons[theme.value]);
 
 const setTheme = async (theme: 'light' | 'dark' | 'auto') => {
-  await putSetting({ key: 'theme', doc: theme });
+  await putSetting({ key: "theme", doc: theme });
   storeSetting.updateConfig({ mode: theme });
 };
 </script>
