@@ -188,43 +188,31 @@ const load = async ($state) => {
 };
 
 const handleFilmPlay = async (item) => {
-  const { videoName, videoImage, videoId, relateSite } = item;
-  await fetchCmsInit({ sourceId: relateSite.id });
-  const response = await fetchCmsDetail({ sourceId: relateSite.id, id: videoId });
-  const info = response?.list[0];
-  if (!info?.vod_name) info.vod_name = videoName;
-  if (!info?.vod_pic) info.vod_pic = videoImage;
-  if (!info?.vod_id) info.vod_id = videoId;
-  const doc = {
-    info: { ...info },
-    ext: { site: relateSite, setting: storePlayer.setting },
-  };
+  const { relateSite, videoId, videoName, videoImage } = item;
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    detailFormData.value = doc;
-    isVisible.detail = true;
-  } else {
-    storePlayer.updateConfig({ type: 'film', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
-  }
+  const res = await fetchFilmDetail({ ids: videoId, sourceId: relateSite.id });
+  const doc = {
+    info: { id: videoId, name: videoName, pic: videoImage },
+    ext: { site: relateSite, detail: res?.data?.[0] || {}, setting: storePlayer.setting },
+  };
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  storePlayer.updateConfig({ type: 'film', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
 };
 
 const handleIptvPlay = async (item) => {
   const { videoName, videoId, videoImage, relateSite } = item;
   const infoData = await fetchChannelDetail(videoId);
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: infoData.url });
-  } else {
-    const response = await fetchIptvActive();
-    const { epg, markIp, logo } = response["ext"];
-    const doc = {
-      info: { id: videoId, logo: videoImage, name: videoName, url: infoData.url, group: infoData.group },
-      ext: { epg, markIp, logo, site: relateSite, setting: storePlayer.setting },
-    };
-    storePlayer.updateConfig({ type: 'iptv', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
-  }
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  const response = await fetchIptvActive();
+  const { epg, markIp, logo } = response["ext"];
+  const doc = {
+    info: { id: videoId, logo: videoImage, name: videoName, url: infoData.url, group: infoData.group },
+    ext: { epg, markIp, logo, site: relateSite, setting: storePlayer.setting },
+  };
+  storePlayer.updateConfig({ type: 'iptv', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
 };
 
 const handleDrivePlay = async (item) => {
@@ -232,40 +220,34 @@ const handleDrivePlay = async (item) => {
   await putAlistInit({ sourceId: relateSite.id });
   const infoData = await fetchAlistFile({ path: base64.decode(videoId), sourceId: relateSite.id });
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: infoData.url });
-  } else {
-    const dirData = await fetchAlistDir({ path: siteSource, sourceId: relateSite.id });
-    const doc = {
-      info: {
-        id: videoId, name: videoName, url: infoData.url,
-        thumb: videoImage, remark: infoData.remark,  path: siteSource,
-      },
-      ext: { files: dirData?.list || [], site: relateSite }
-    };
-    storePlayer.updateConfig({ type: 'drive', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
-  }
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  const dirData = await fetchAlistDir({ path: siteSource, sourceId: relateSite.id });
+  const doc = {
+    info: {
+      id: videoId, name: videoName, url: infoData.url,
+      thumb: videoImage, remark: infoData.remark,  path: siteSource,
+    },
+    ext: { files: dirData?.list || [], site: relateSite }
+  };
+  storePlayer.updateConfig({ type: 'drive', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
 };
 
 const handleAnalyzePlay = async (item) => {
   const { relateSite, videoName, videoId } = item;
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    const response = await fetchAnalyzeHelper(`${relateSite.url}${videoId}`, relateSite.type);
-    if (!response.url) {
-      MessagePlugin.error(t('pages.analyze.message.error'));
-      return;
-    };
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: response.url });
-  } else {
-    const doc = {
-      info: { name: videoName, url: videoId },
-      ext: { site: relateSite, setting: storePlayer.setting },
-    };
-    storePlayer.updateConfig({ type: 'analyze', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  const response = await fetchAnalyzeHelper(`${relateSite.url}${videoId}`, relateSite.type);
+  if (!response.url) {
+    MessagePlugin.error(t('pages.analyze.message.error'));
+    return;
   };
+  const doc = {
+    info: { name: videoName, url: response.url },
+    ext: { site: relateSite, setting: storePlayer.setting },
+  };
+  storePlayer.updateConfig({ type: 'analyze', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
 };
 
 // 播放

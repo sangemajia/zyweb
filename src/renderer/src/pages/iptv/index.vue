@@ -279,35 +279,41 @@ const playEvent = async (item) => {
   try {
     const site: any = iptvConfig.value.default;
     const playerMode = storePlayer.getSetting.playerMode;
-    if (playerMode.type === 'custom') {
-      window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: item.url });
-      // 记录播放记录
-      const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = item;
-      const historyRes = await fetchHistoryData(site.key, vod_url, ['iptv']);
-      const doc = {
-        date: moment().unix(),
-        type: 'iptv',
-        relateId: site.key,
-        siteSource: type_name,
-        playEnd: false,
-        videoId: vod_id,
-        videoImage: vod_pic,
-        videoName: vod_name,
-        videoIndex: `${vod_name}$${vod_url}`,
-        watchTime: 0,
-        duration: 0,
-        skipTimeInStart: 0,
-        skipTimeInEnd: 0,
-      };
+    // Web应用中不支持外部播放器，直接使用内置播放器
+    const { epg, markIp, logo } = iptvConfig.value.ext;
+    storePlayer.updateConfig({
+      type: 'iptv',
+      status: true,
+      data: {
+        info: { ...item },
+        ext: { epg, markIp, logo, site, setting: storePlayer.setting },
+      },
+    });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+    // 记录播放记录
+    const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = item;
+    const historyRes = await fetchHistoryData(site.key, vod_url, ['iptv']);
+    const doc = {
+      date: moment().unix(),
+      type: 'iptv',
+      relateId: site.key,
+      siteSource: type_name,
+      playEnd: false,
+      videoId: vod_id,
+      videoImage: vod_pic,
+      videoName: vod_name,
+      videoIndex: `${vod_name}${vod_url}`,
+      watchTime: 0,
+      duration: 0,
+      skipTimeInStart: 0,
+      skipTimeInEnd: 0,
+    };
 
-      if (historyRes.code === 0 && historyRes.status) {
-        putHistoryData('put', doc, historyRes.data.id);
-      } else {
-        putHistoryData('add', doc, null);
-      }
+    if (historyRes.code === 0 && historyRes.status) {
+      putHistoryData('put', doc, historyRes.data.id);
     } else {
-      const { epg, markIp, logo } = iptvConfig.value.ext;
-      storePlayer.updateConfig({
+      putHistoryData('add', doc, null);
+    }
         type: 'iptv',
         status: true,
         data: {
@@ -315,7 +321,7 @@ const playEvent = async (item) => {
           ext: { epg, markIp, logo, site, setting: storePlayer.setting },
         },
       });
-      window.electron.ipcRenderer.send('open-win', { action: 'play' });
+      // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
     }
   } catch (err) {
     console.error(`[iptv][playEvent][error]`, err);
@@ -389,11 +395,24 @@ const generateThumbnail = async (pageIndex: number, pageSize: number) => {
 
   const updateThumbnail = async (item) => {
     try {
-      const res = await window.electron.ipcRenderer.invoke('ffmpeg-thumbnail', item.url, item.id);
-      if (res) {
-        const index = channelList.value.findIndex(channel => channel.id === res.key);
+      // Web应用中使用后端API生成缩略图
+      const response = await fetch('/api/v1/webbridge/ffmpeg/thumbnail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'thumbnail',
+          url: item.url,
+          id: item.id
+        })
+      });
+      
+      const res = await response.json();
+      if (res.code === 0 && res.data.result) {
+        const index = channelList.value.findIndex(channel => channel.id === res.data.params.id);
         if (index !== -1) {
-          channelList.value[index]["thumbnail"] = res.url;
+          channelList.value[index]["thumbnail"] = res.data.path;
         }
       }
     } catch (err) {

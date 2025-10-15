@@ -66,28 +66,28 @@ watch(
 
 const importFileEvent = async (type: string) => {
   try {
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showOpenDialog',
-      config: {
-        properties: ['openFile', 'showHiddenFiles'],
-        filters: [
-          { name: 'Text Files', extensions: ['txt'] },
-          { name: 'Json Files', extensions: ['json'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-      }
-    });
-    if (!res || res.canceled || !res.filePaths.length) return;
-
-    const fileContent = await window.electron.ipcRenderer.invoke('manage-file', {
-      action: 'read',
-      config: {
-        path: res.filePaths[0],
-      }
-    });
-
-    form.value[type] = fileContent || '';
-    MessagePlugin.success(t('pages.setting.data.success'));
+    // Web应用中使用input元素选择文件
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.txt,.json,*/*';
+    
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        form.value[type] = e.target?.result as string || '';
+        MessagePlugin.success(t('pages.setting.data.success'));
+      };
+      reader.onerror = (e) => {
+        console.error(`[importFileEvent] err:`, e);
+        MessagePlugin.error(`${t('pages.setting.data.fail')}: 文件读取失败`);
+      };
+      reader.readAsText(file);
+    };
+    
+    input.click();
   } catch (err: any) {
     console.error(`[importFileEvent] err:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);

@@ -504,22 +504,18 @@ const exportFileEvent = async () => {
   };
 
   try {
-    await window.electron.ipcRenderer.send('tmpdir-manage', 'make', 'file');
-    const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, `file/${title}.js`);
-    const { canceled, filePath } = await remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-      defaultPath,
-      filters: [
-        { name: 'JavaScript Files', extensions: ['js'] },
-        { name: 'Text Files', extensions: ['txt'] },
-        { name: 'All Files', extensions: ['*'] },
-      ],
-    });
-
-    if (!canceled && filePath) {
-      await writeFile(filePath, content);
-      MessagePlugin.success(t('pages.setting.data.success'));
-    };
+    // Web应用中使用Blob和下载链接导出文件
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title}.js`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    MessagePlugin.success(t('pages.setting.data.success'));
   } catch (err: any) {
     console.error(`[exportFileEvent][Error]:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
@@ -912,10 +908,12 @@ const handleOpChange = (type: string) => {
       active.value.template = true;
       break;
     case 'doc':
-      window.electron.ipcRenderer.send('open-url', 'https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7');
+      // Web应用中使用window.open打开链接
+      window.open('https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7', '_blank');
       break;
     case 'file':
-      window.electron.ipcRenderer.send('open-path', 'file');
+      // Web应用中不支持打开本地文件路径
+      MessagePlugin.info('Web应用不支持打开本地文件路径');
       break;
     case 'debug':
       debugEvent();

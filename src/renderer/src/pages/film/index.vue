@@ -503,7 +503,7 @@ const playEvent = async (item) => {
         status: true,
         data: doc,
       });
-      window.electron.ipcRenderer.send('open-win', { action: 'play' });
+      // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
     }
   } catch (err) {
     console.error(`[film][playEvent][error]`, err);

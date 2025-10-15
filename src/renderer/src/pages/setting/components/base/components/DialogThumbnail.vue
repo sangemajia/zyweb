@@ -64,9 +64,26 @@ watch(
 );
 
 const handleCheckFfmpeg = async () => {
-  const status = await window.electron.ipcRenderer.invoke('ffmpeg-check');
-  if (status) MessagePlugin.success(t('pages.setting.thumbanilFfmpeg.haveFfmpeg'));
-  else MessagePlugin.error(t('pages.setting.thumbanilFfmpeg.noFfmpeg'));
+  // Web应用中使用后端API检查FFmpeg
+  try {
+    const response = await fetch('/api/v1/webbridge/ffmpeg/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({})
+    });
+    
+    const result = await response.json();
+    if (result.code === 0 && result.data.result) {
+      MessagePlugin.success(t('pages.setting.thumbanilFfmpeg.haveFfmpeg'));
+    } else {
+      MessagePlugin.error(t('pages.setting.thumbanilFfmpeg.noFfmpeg'));
+    }
+  } catch (err) {
+    console.error('检查FFmpeg失败:', err);
+    MessagePlugin.error(t('pages.setting.thumbanilFfmpeg.noFfmpeg'));
+  }
 };
 </script>
 

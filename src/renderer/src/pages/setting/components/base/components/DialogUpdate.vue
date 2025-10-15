@@ -137,11 +137,14 @@ const resetConf = () => {
 };
 
 const handleInstallAfterDown = () => {
-  window.electron.ipcRenderer.send('quit-and-install');
+  // Web应用中不支持自动安装更新，提示用户手动下载
+  MessagePlugin.info('请手动下载最新版本');
+  handleOpenDownLink();
 };
 
 const handleOpenDownLink = () => {
-  window.electron.ipcRenderer.send('open-url', 'https://github.com/Hiram-Wong/ZyPlayer/releases/latest');
+  // Web应用中使用window.open打开链接
+  window.open('https://github.com/Hiram-Wong/ZyPlayer/releases/latest', '_blank');
 };
 
 const handleDownStart = () => {
@@ -151,63 +154,24 @@ const handleDownStart = () => {
 const handleReCheck = () => {
   resetConf();
   setupUpdateListeners();
-  window.electron.ipcRenderer.send('check-for-update');
+  // Web应用中不支持自动检查更新，提示用户手动检查
+  MessagePlugin.info('请访问GitHub页面检查更新');
+  handleOpenDownLink();
 };
 
 const setupUpdateListeners = () => {
   offIpcListeners();
-
-  window.electron.ipcRenderer.on('update-error', (_, res) => {
-    console.log(`[update-error] ${res.msg}`);
-    active.value.check = false;
-    updateInfo.value.errText = res.msg;
-  });
-
-  window.electron.ipcRenderer.on('update-available', (_, res) => {
-    console.log('[update-available]', res);
-    updateInfo.value = {
-      ...updateInfo.value,
-      available: res.data.available,
-      version: res.data.version,
-      releaseNotes: res.data.releaseNotes,
-    }
-    active.value.check = false;
-  });
-
-  window.electron.ipcRenderer.on('update-not-available', (_, res) => {
-    console.log('[update-not-available]', res);
-    updateInfo.value = {
-      ...updateInfo.value,
-      available: res.data.available,
-      version: res.data.version,
-      releaseNotes: res.data.releaseNotes,
-    }
-    active.value.check = false;
-  });
-
-  window.electron.ipcRenderer.on('download-progress', (_, res) => {
-    updateInfo.value.downProcess = res.data.percent;
-    active.value.downloaded = res.data.downloaded;
-    if (res.data.downloaded) active.value.download = false;
-  });
-
-  window.electron.ipcRenderer.on('update-downloaded', (_, res) => {
-    updateInfo.value.downProcess = res.data.percent;
-    active.value.downloaded = res.data.downloaded;
-    active.value.download = false;
-  });
+  // Web应用中不支持IPC更新检查，移除监听器
 };
 
 const onIpcDown = () => {
-  active.value.download = true;
-  window.electron.ipcRenderer.send('download-update');
+  // Web应用中不支持IPC下载更新
+  MessagePlugin.info('请手动下载更新');
+  handleOpenDownLink();
 };
 
 const offIpcListeners = () => {
-  const ipc = window.electron.ipcRenderer;
-  ['update-error', 'update-available', 'update-not-available', 'download-progress', 'update-downloaded'].forEach(event =>
-    ipc.removeAllListeners(event)
-  );
+  // Web应用中不需要移除IPC监听器
 };
 </script>
 

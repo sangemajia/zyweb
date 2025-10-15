@@ -133,21 +133,19 @@ const onReset: FormProps['onReset'] = () => {
 
 const uploadFileEvent = async () => {
   try {
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showOpenDialog',
-      config: {
-        properties: ['openFile', 'showHiddenFiles'],
-        filters: [
-          { name: 'M3u Files', extensions: ['m3u', 'm3u8','ts'] },
-          { name: 'Text Files', extensions: ['txt'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-      }
-    });
-    if (!res || res.canceled || !res.filePaths.length) return;
-
-    formData.value.data.url = res.filePaths[0] || '';
-    MessagePlugin.success(t('pages.setting.data.success'));
+    // Web应用中使用input元素选择文件
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.m3u,.m3u8,.ts,.txt,*/*';
+    
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      formData.value.data.url = file.name || '';
+      MessagePlugin.success(t('pages.setting.data.success'));
+    };
+    
+    input.click();
   } catch (err: any) {
     console.error(`[uploadFileEvent] err:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);

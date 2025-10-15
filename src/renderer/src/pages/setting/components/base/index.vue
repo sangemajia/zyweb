@@ -309,15 +309,10 @@ watch(() => [
 watch(
   () => formData.value.recordShortcut,
   async (val) => {
-    await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'unRegister', config: { name: 'boss' }});
-    if (!val) return;
-
-    const isAvailable = await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'isRegistered', config: { shortcut: val }});
-    if (isAvailable) {
+    // Web应用中不支持系统级快捷键注册
+    if (val) {
+      MessagePlugin.info('Web应用不支持系统级快捷键注册');
       formData.value.recordShortcut = '';
-      MessagePlugin.error(t('pages.setting.placeholder.shortcutErrRegistered'));
-    } else {
-      await window.electron.ipcRenderer.invoke('manage-boss-shortcut', { action: 'register', config: { shortcut: val, name: 'boss' }});
     }
   }
 );
@@ -342,36 +337,36 @@ const handleNetTimeout = (val: number) => {
 };
 
 // 网络代理
-const handleNetProxy = () => window.electron.ipcRenderer.send('open-proxy-setting');
+const handleNetProxy = () => {
+  // Web应用中不支持打开系统代理设置
+  MessagePlugin.info('Web应用不支持打开系统代理设置');
+};
 
 // 重启应用
 const handleReboot = () => {
   MessagePlugin.success(t('pages.setting.message.reboot'));
-  setTimeout(() => window.electron.ipcRenderer.send('reboot-app'), 1000);
+  // Web应用中使用页面刷新代替重启
+  setTimeout(() => window.location.reload(), 1000);
 };
 
-// 出厂恢复
-const handleResetFactory = () => {
-  const dialog = DialogPlugin({
-    body: t('pages.setting.dialog.restoreFactoryBody'),
-    header: t('pages.setting.dialog.restoreFactoryHeader'),
-    width: '320px',
-    confirmBtn: t('pages.setting.dialog.confirm'),
-    cancelBtn: t('pages.setting.dialog.cancel'),
-    placement: 'center',
-    closeBtn: '',
-    onConfirm: async () => {
-      await clearDb(["reset", "cache"]);
-      window.electron.ipcRenderer.send('clearCache');
-      dialog.hide();
-      handleReboot();
-    },
-    onClose: () => dialog.hide(),
-  });
+// 清理缓存
+const handleClearCache = async () => {
+  // Web应用中清理localStorage和sessionStorage
+  localStorage.clear();
+  sessionStorage.clear();
+  // 清理所有pinia存储
+  localStorage.removeItem('pinia');
+  MessagePlugin.success(t('pages.setting.message.clearCache'));
 };
 
 // 开机自启
-const handleSelefBoot = () => window.electron.ipcRenderer.send('toggle-selfBoot', formData.value.selfBoot);
+const handleSelefBoot = () => {
+  // Web应用中不支持系统自启动设置
+  if (formData.value.selfBoot) {
+    MessagePlugin.info('Web应用不支持系统自启动设置');
+    formData.value.selfBoot = false;
+  }
+};
 
 // 硬件加速
 const handleHardwareAcceleration = () => handleReboot();

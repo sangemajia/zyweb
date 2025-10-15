@@ -86,7 +86,8 @@ const onSubmit: FormProps['onSubmit'] = async () => {
     } else {
       const { data, type } = formData.value.data;
       emits('submit', { data, type });
-      window.electron.ipcRenderer.send('update-dns', data);
+      // Web应用中不支持更新DNS设置
+      MessagePlugin.info('DNS设置已保存，但Web应用不支持系统级DNS配置');
       formVisible.value = false;
     }
   });

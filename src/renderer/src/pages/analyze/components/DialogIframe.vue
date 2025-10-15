@@ -74,10 +74,13 @@ watch(
 
 onMounted(() => {
   // 监听主进场拦截的url
-  window.electron.ipcRenderer.on('blockUrl', async (_, url) => {
-    console.log(`blockUrl: ${url}`);
-    if (url !== 'about:blank') {
-      platformData.value.url = url;
+  // Web应用中使用postMessage机制处理iframe通信
+  window.addEventListener('message', async (event) => {
+    if (event.data.type === 'blockUrl') {
+      console.log(`blockUrl: ${event.data.url}`);
+      if (event.data.url !== 'about:blank') {
+        platformData.value.url = event.data.url;
+      }
     }
   });
 });

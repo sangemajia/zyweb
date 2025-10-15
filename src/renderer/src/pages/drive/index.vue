@@ -272,49 +272,45 @@ const playEvent = async (item) => {
     const site: any = driveConfig.value.default;
     const res = await fetchAlistFile({ path: item.path, sourceId: site.id });
     const playerMode = storePlayer.getSetting.playerMode;
-    if (playerMode.type === 'custom') {
-      window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: res.url });
-
-      // 记录播放记录
-      const historyRes = await fetchHistoryData(site.key, base64.encode(item.path), ['drive']);
-      const doc = {
-        date: moment().unix(),
-        type: 'drive',
-        relateId: site.key,
-        siteSource: breadcrumb.value?.at(-1)?.path,
-        playEnd: false,
-        videoId: base64.encode(item.path),
-        videoImage: item.thumb,
-        videoName: res.name,
-        videoIndex: `${res.name}$${res.url}`,
-        watchTime: 0,
-        duration: 0,
-        skipTimeInStart: 0,
-        skipTimeInEnd: 0,
-      };
-
-      if (historyRes.code === 0 && historyRes.status) {
-        putHistoryData('put', doc, historyRes.data.id);
-      } else {
-        putHistoryData('add', doc, null);
-      }
-    } else {
-      storePlayer.updateConfig({
-        type: 'drive',
-        status: true,
-        data: {
-          info: {
-            id: base64.encode(item.path),
-            name: res.name,
-            url: res.url,
-            thumb: item.thumb,
-            remark: res.remark,
-            path: breadcrumb.value?.at(-1)?.path,
-          },
-          ext: { files: driveContent.value, site: driveConfig.value.default }
+    // Web应用中不支持外部播放器，直接使用内置播放器
+    storePlayer.updateConfig({
+      type: 'drive',
+      status: true,
+      data: {
+        info: {
+          id: base64.encode(item.path),
+          name: res.name,
+          url: res.url,
+          thumb: item.thumb,
+          remark: res.remark,
+          path: breadcrumb.value?.at(-1)?.path,
         },
-      });
-      window.electron.ipcRenderer.send('open-win', { action: 'play' });
+        ext: { files: driveContent.value, site: driveConfig.value.default }
+      },
+    });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+    // 记录播放记录
+    const historyRes = await fetchHistoryData(site.key, base64.encode(item.path), ['drive']);
+    const doc = {
+      date: moment().unix(),
+      type: 'drive',
+      relateId: site.key,
+      siteSource: breadcrumb.value?.at(-1)?.path,
+      playEnd: false,
+      videoId: base64.encode(item.path),
+      videoImage: item.thumb,
+      videoName: res.name,
+      videoIndex: `${res.name}${res.url}`,
+      watchTime: 0,
+      duration: 0,
+      skipTimeInStart: 0,
+      skipTimeInEnd: 0,
+    };
+
+    if (historyRes.code === 0 && historyRes.status) {
+      putHistoryData('put', doc, historyRes.data.id);
+    } else {
+      putHistoryData('add', doc, null);
     }
   } catch (err) {
     console.error(`[film][playEvent][error]`, err);
