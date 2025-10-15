@@ -46,15 +46,11 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: `assets/chunk/[name]_[hash].js`, // 包的入口文件名称
           assetFileNames: `assets/static/[ext]/[name]_[hash].[ext]`, // 资源文件像 字体，图片等
           manualChunks: {
-            // 减少手动分块，只保留必要的
-            'video-decoder': ['dashjs', 'flv.js', 'hls.js', 'mpegts.js','shaka-player'],
+            // 进一步优化代码分割，减少内存使用
+            'video-decoder': ['dashjs', 'flv.js', 'hls.js', 'mpegts.js'],
             tdesign: ['tdesign-vue-next', 'tdesign-icons-vue-next'],
-            vue: [
-              'vue',
-              'vue-router',
-              'pinia',
-              'vue-i18n',
-            ],
+            vue: ['vue', 'vue-router'],
+            state: ['pinia', 'vue-i18n'],
           },
         },
         // 进一步减少内存使用

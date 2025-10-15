@@ -1,9 +1,8 @@
 <template>
-  <title-bar overlay class="system-controls" v-if="platform !== 'darwin'"></title-bar>
+  <div class="system-controls" v-if="platform !== 'darwin'"></div>
 </template>
 
 <script setup lang="ts">
-import '@electron-uikit/titlebar/renderer';
 import { platform } from '@/utils/tool';
 </script>
 
