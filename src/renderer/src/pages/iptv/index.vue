@@ -314,15 +314,7 @@ const playEvent = async (item) => {
     } else {
       putHistoryData('add', doc, null);
     }
-        type: 'iptv',
-        status: true,
-        data: {
-          info: { ...item },
-          ext: { epg, markIp, logo, site, setting: storePlayer.setting },
-        },
-      });
-      // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
-    }
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
   } catch (err) {
     console.error(`[iptv][playEvent][error]`, err);
     MessagePlugin.warning(t('pages.chase.reqError'));
