@@ -30,9 +30,15 @@ export default defineConfig(({ mode }) => {
       outDir: resolve(__dirname, 'dist/web'),
       emptyOutDir: true, // 打包时先清空上一次构建生成的目录
       sourcemap: false, // 关闭生成map文件 可以达到缩小打包体积
-      minify: false, // 关闭压缩
+      minify: 'terser', // 启用压缩
+      terserOptions: {
+        compress: {
+          drop_console: true, // 删除console语句
+          drop_debugger: true, // 删除debugger语句
+        },
+      },
       chunkSizeWarningLimit: 1000, // 打包后超过1kb的会单独打包
-      assetsInlineLimit: 2048, // 小于2kb的图片会转成base64
+      assetsInlineLimit: 1024, // 小于1kb的图片会转成base64
       rollupOptions: {
         input: resolve(__dirname, 'src/renderer/index.html'),
         output: {
