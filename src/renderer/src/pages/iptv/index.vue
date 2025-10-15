@@ -18,7 +18,7 @@
         <div class="content-wrapper" id="back-top">
           <t-row :gutter="[16, 4]" style="margin-left: -8px; margin-right: -8px">
             <t-col :md="3" :lg="3" :xl="2" :xxl="1" v-for="item in channelList" :key="item.id" class="card"
-              @click="playEvent(item)" @contextmenu="conButtonClick(item, $event)" @contextmenu.prevent>
+              @click="playEvent(item)">
               <div class="card-main">
                 <div v-show="iptvConfig.ext.delay && item.delay" class="card-delay-tag">
                   <span v-if="item.delay < 500" class="status-item success">{{ item.delay }}ms</span>
@@ -50,11 +50,7 @@
               </div>
             </t-col>
 
-            <context-menu :show="isVisible.contentMenu" :options="optionsComponent"
-              @close="isVisible.contentMenu = false">
-              <context-menu-item :label="$t('pages.iptv.contextMenu.copyChannel')" @click="copyChannelEvent" />
-              <context-menu-item :label="$t('pages.iptv.contextMenu.delChannel')" @click="delChannelEvent" />
-            </context-menu>
+            
           </t-row>
 
           <div class="infinite-loading">
@@ -69,7 +65,7 @@
               <template #error>{{ $t('pages.iptv.infiniteLoading.error') }}</template>
             </infinite-loading>
             <infinite-loading
-              v-else="isVisible.lazyload"
+              v-else
               class="infinite-loading-container"
             />
           </div>
@@ -83,11 +79,8 @@
 </template>
 
 <script setup lang="tsx">
-import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import 'v3-infinite-loading/lib/style.css';
 import lazyImg from '@/assets/lazy.png';
-
-import { ContextMenu, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import moment from 'moment';
 import PQueue from 'p-queue';
 import { MessagePlugin } from 'tdesign-vue-next';
@@ -165,16 +158,6 @@ const mode = computed(() => {
   return storeSetting.displayMode;
 });
 
-const optionsComponent = ref({
-  zIndex: 15,
-  width: 160,
-  x: 500,
-  y: 200,
-  theme: mode.value === 'light' ? 'default' : 'mac dark',
-});
-
-const channelItem = ref<any>(null);
-
 const delayQueue = new PQueue({ concurrency: 5 });
 const ipversionQueue = new PQueue({ concurrency: 5 });
 const thumbnailQueue = new PQueue({ concurrency: 5 });
@@ -241,7 +224,7 @@ const load = async ($state: { complete: () => void; loaded: () => void; error: (
     if (active.value.infiniteType === 'noData') {
       $state.complete();
       return;
-    };
+    }
 
     const resLength = await getChannel();
 
@@ -478,23 +461,6 @@ const changeConf = async (id: string) => {
   }
 };
 
-// 右键
-const conButtonClick = (item: any, { x, y }: any) => {
-  isVisible.contentMenu = true;
-  Object.assign(optionsComponent.value, { x, y });
-  channelItem.value = item;
-};
-
-// 删除
-const delChannelEvent = () => {
-  const index = channelList.value.indexOf(channelItem.value);
-  if (index > -1) {
-    channelList.value.splice(index, 1);
-    delChannel({ids: [channelItem.value.id]});
-  }
-  isVisible.contentMenu = false;
-};
-
 // 拷贝
 const copyToClipboard = async (content, successMessage, errorMessage) => {
   const res = await copyToClipboardApi(content);
@@ -503,13 +469,6 @@ const copyToClipboard = async (content, successMessage, errorMessage) => {
   } else {
     MessagePlugin.warning(errorMessage);
   }
-};
-const copyChannelEvent = async () => {
-  const successMessage = t('pages.iptv.message.setSuccess');
-  const errorMessage = t('pages.iptv.message.copyFail');
-  await copyToClipboard(channelItem.value.url, successMessage, errorMessage);
-
-  isVisible.contentMenu = false;
 };
 </script>
 
