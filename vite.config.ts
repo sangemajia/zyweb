@@ -82,7 +82,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       vueJsx(),
-      vueDevTools(),
+      // vueDevTools(), // 在生产构建中排除开发工具
       svgLoader(),
       AutoImport({
         resolvers: [
