@@ -13,7 +13,7 @@ import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 const CWD = process.cwd();
 
 // 设置Node.js内存限制
-process.env.NODE_OPTIONS = '--max-old-space-size=512';
+process.env.NODE_OPTIONS = '--max-old-space-size=512 --gc-interval=100';
 
 // see config at https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -57,6 +57,9 @@ export default defineConfig(({ mode }) => {
             ],
           },
         },
+        // 减少内存使用
+        maxParallelFileOps: 2,
+        cache: false,
       },
     },
     css: {
