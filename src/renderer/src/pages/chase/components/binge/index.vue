@@ -179,53 +179,46 @@ const handleFilmPlay = async (item) => {
     ext: { site: relateSite, setting: storePlayer.setting },
   };
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    detailFormData.value = doc;
-    isVisible.detail = true;
-  } else {
-    storePlayer.updateConfig({ type: 'film', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
-  }
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  storePlayer.updateConfig({ type: 'film', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
 };
 
 const handleIptvPlay = async (item) => {
   const { videoName, videoId, videoImage, relateSite } = item;
   const infoData = await fetchChannelDetail(videoId);
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: infoData.url });
-    // 记录播放记录
-    const historyRes = await fetchHistoryData(relateSite.key, videoId, ['iptv']);
-    const doc = {
-      date: moment().unix(),
-      type: 'iptv',
-      relateId: relateSite.key,
-      siteSource: infoData.group,
-      playEnd: false,
-      videoId: videoId,
-      videoImage: videoImage,
-      videoName: videoName,
-      videoIndex: `${videoName}$${infoData.url}`,
-      watchTime: 0,
-      duration: 0,
-      skipTimeInStart: 0,
-      skipTimeInEnd: 0,
-    };
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  const response = await fetchIptvActive();
+  const { epg, markIp, logo } = response["ext"];
+  const doc = {
+    info: { id: videoId, logo: videoImage, name: videoName, url: infoData.url, group: infoData.group },
+    ext: { epg, markIp, logo, site: relateSite, setting: storePlayer.setting },
+  };
+  storePlayer.updateConfig({ type: 'iptv', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+  // 记录播放记录
+  const historyRes = await fetchHistoryData(relateSite.key, videoId, ['iptv']);
+  const docHistory = {
+    date: moment().unix(),
+    type: 'iptv',
+    relateId: relateSite.key,
+    siteSource: infoData.group,
+    playEnd: false,
+    videoId: videoId,
+    videoImage: videoImage,
+    videoName: videoName,
+    videoIndex: `${videoName}${infoData.url}`,
+    watchTime: 0,
+    duration: 0,
+    skipTimeInStart: 0,
+    skipTimeInEnd: 0,
+  };
 
-    if (historyRes.code === 0 && historyRes.status) {
-      putHistoryData('put', doc, historyRes.data.id);
-    } else {
-      putHistoryData('add', doc, null);
-    }
+  if (historyRes.code === 0 && historyRes.status) {
+    putHistoryData('put', docHistory, historyRes.data.id);
   } else {
-    const response = await fetchIptvActive();
-    const { epg, markIp, logo } = response["ext"];
-    const doc = {
-      info: { id: videoId, logo: videoImage, name: videoName, url: infoData.url, group: infoData.group },
-      ext: { epg, markIp, logo, site: relateSite, setting: storePlayer.setting },
-    };
-    storePlayer.updateConfig({ type: 'iptv', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
+    putHistoryData('add', docHistory, null);
   }
 };
 
@@ -235,41 +228,38 @@ const handleDrivePlay = async (item) => {
   const infoData = await fetchAlistFile({ path: base64.decode(videoId), sourceId: relateSite.id });
   const dirData = await fetchAlistDir({ path: videoType, sourceId: relateSite.id });
   const playerMode = storePlayer.getSetting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: infoData.url });
-    // 记录播放记录
-    const historyRes = await fetchHistoryData(relateSite.key, videoId, ['drive']);
-    const doc = {
-      date: moment().unix(),
-      type: 'drive',
-      relateId: relateSite.key,
-      siteSource: videoType,
-      playEnd: false,
-      videoId: videoId,
-      videoImage: videoImage,
-      videoName: videoName,
-      videoIndex: `${videoName}$${infoData.url}`,
-      watchTime: 0,
-      duration: 0,
-      skipTimeInStart: 0,
-      skipTimeInEnd: 0,
-    };
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  const doc = {
+    info: {
+      id: videoId, name: videoName, url: infoData.url,
+      thumb: videoImage, remark: infoData.remark, path: videoType,
+    },
+    ext: { files: dirData?.list || [], site: relateSite }
+  };
+  storePlayer.updateConfig({ type: 'drive', status: true, data: doc });
+  // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+  // 记录播放记录
+  const historyRes = await fetchHistoryData(relateSite.key, videoId, ['drive']);
+  const docHistory = {
+    date: moment().unix(),
+    type: 'drive',
+    relateId: relateSite.key,
+    siteSource: videoType,
+    playEnd: false,
+    videoId: videoId,
+    videoImage: videoImage,
+    videoName: videoName,
+    videoIndex: `${videoName}${infoData.url}`,
+    watchTime: 0,
+    duration: 0,
+    skipTimeInStart: 0,
+    skipTimeInEnd: 0,
+  };
 
-    if (historyRes.code === 0 && historyRes.status) {
-      putHistoryData('put', doc, historyRes.data.id);
-    } else {
-      putHistoryData('add', doc, null);
-    }
+  if (historyRes.code === 0 && historyRes.status) {
+    putHistoryData('put', docHistory, historyRes.data.id);
   } else {
-    const doc = {
-      info: {
-        id: videoId, name: videoName, url: infoData.url,
-        thumb: videoImage, remark: infoData.remark,  path: videoType,
-      },
-      ext: { files: dirData?.list || [], site: relateSite }
-    };
-    storePlayer.updateConfig({ type: 'drive', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
+    putHistoryData('add', docHistory, null);
   }
 };
 
@@ -282,9 +272,15 @@ const handleAnalyzePlay = async (item) => {
       MessagePlugin.error(t('pages.analyze.message.error'));
       return;
     };
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: response.url });
-    const historyRes = await fetchHistoryData(relateSite.key, videoId, ['analyze']);
+    // Web应用中不支持外部播放器，直接使用内置播放器
     const doc = {
+      info: { name: videoName, url: response.url },
+      ext: { site: relateSite, setting: storePlayer.setting },
+    };
+    storePlayer.updateConfig({ type: 'analyze', status: true, data: doc });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+    const historyRes = await fetchHistoryData(relateSite.key, videoId, ['analyze']);
+    const docHistory = {
       date: moment().unix(),
       type: 'analyze',
       relateId: relateSite.key,
@@ -293,7 +289,7 @@ const handleAnalyzePlay = async (item) => {
       videoId: videoId,
       videoImage: '',
       videoName: videoName,
-      videoIndex: `${videoName}$${response.url}`,
+      videoIndex: `${videoName}${response.url}`,
       watchTime: 0,
       duration: 0,
       skipTimeInStart: 0,
@@ -301,9 +297,9 @@ const handleAnalyzePlay = async (item) => {
     };
 
     if (historyRes.code === 0 && historyRes.status) {
-      putHistoryData('put', doc, historyRes.data.id);
+      putHistoryData('put', docHistory, historyRes.data.id);
     } else {
-      putHistoryData('add', doc, null);
+      putHistoryData('add', docHistory, null);
     }
   } else {
     const doc = {
@@ -311,7 +307,7 @@ const handleAnalyzePlay = async (item) => {
       ext: { site: relateSite, setting: storePlayer.setting },
     };
     storePlayer.updateConfig({ type: 'analyze', status: true, data: doc });
-    window.electron.ipcRenderer.send('open-win', { action: 'play' });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
   };
 };
 

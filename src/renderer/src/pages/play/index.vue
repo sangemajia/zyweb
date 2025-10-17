@@ -129,12 +129,9 @@ const updatePlay = async (item) => {
   playerFormData.value = { ...playerFormData.value, ...item };
 
   const playerMode = storeConf.value.setting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: playerFormData.value.url });
-  } else {
-    await playerRef.value?.create({ ...playerFormData.value }, playerMode.type);
-    await playerRef.value?.onTimeUpdate();
-  }
+      // Web应用中不支持外部播放器，直接使用内置播放器
+      await playerRef.value?.create({ ...playerFormData.value }, playerMode.type);
+      await playerRef.value?.onTimeUpdate();
 };
 
 const updateBarrage = async (item) => {
@@ -155,14 +152,13 @@ const handleTimeUpdate = (time) => {
   processFormData.value = time;
 };
 
-window.electron.ipcRenderer.on('destroy-playerWindow', () => {
+// Web应用中不需要监听Electron IPC事件
+// 页面关闭时自动清理播放器状态
+window.addEventListener('beforeunload', () => {
   store.updateConfig({ status: false });
 });
 
-window.electron.ipcRenderer.on('media-control', async (_, status) => {
-  if (status) await playerRef.value?.play();
-  else await playerRef.value?.pause();
-});
+// Web应用中不支持外部媒体控制
 </script>
 
 <style lang="less" scoped>

@@ -197,32 +197,18 @@ const handleWebviewLoad = async (url: string) => {
   await webviewRef.value?.loadURL(url);
 
   const setupWebviewListeners = () => {
-    const webview = webviewRef.value;
-    if (!webview) return;
-
-    const webviewRoute = (event: { url: string }) => {
-      if (controlText.value === event.url) return;
-      controlText.value = event.url;
-      console.log('webviewRoute', event.url);
-    };
-
-    // 移除之前的监听器（避免重复注册）
-    webview.removeEventListener('did-navigate-in-page', webviewRoute);
-    // webview.removeEventListener('did-navigate', webviewRoute);
-    webview.removeEventListener('did-redirect-navigation', webviewRoute);
-
-    // 添加新的监听器
-    webview.addEventListener('did-navigate-in-page', webviewRoute);
-    // webview.addEventListener('did-navigate', webviewRoute);
-    webview.addEventListener('did-redirect-navigation', webviewRoute);
+    // Web应用中不需要清除IPC监听器
   };
 
   const setupIpcListeners = () => {
     // 只清除 blockUrl 监听器，防止其他 ipc 消息被误删
-    window.electron.ipcRenderer.removeAllListeners('blockUrl');
+    // Web应用中不需要IPC监听器
 
-    window.electron.ipcRenderer.on('blockUrl', async (_, blockedUrl: string) => {
-      handleWebviewLoad(blockedUrl);
+    // Web应用中使用postMessage机制处理iframe通信
+    window.addEventListener('message', async (event) => {
+      if (event.data.type === 'blockUrl') {
+        handleWebviewLoad(event.data.blockedUrl);
+      }
     });
   };
 
@@ -342,48 +328,39 @@ const playEvent = async (url: string) => {
     url = handleUrlHref(url);
 
     const playerMode = storePlayer.getSetting.playerMode;
-    if (playerMode.type === 'custom') {
-      const res = await fetchAnalyzeHelper(`${site.url}${url}`, site.type);
-      if (!res.url) {
-        MessagePlugin.error(t('pages.analyze.message.error'));
-        return;
-      };
-      window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: res.url });
-
-      // 记录播放记录
-      const historyRes = await fetchHistoryData(site.key, url, ['analyze']);
-      const doc = {
-        date: moment().unix(),
-        type: 'analyze',
-        relateId: site.key,
-        siteSource: '',
-        playEnd: false,
-        videoId: url,
-        videoImage: '',
-        videoName: title,
-        videoIndex: `${title}$${url}`,
-        watchTime: 0,
-        duration: 0,
-        skipTimeInStart: 0,
-        skipTimeInEnd: 0,
-      };
-
-      if (historyRes.code === 0 && historyRes.status) {
-        putHistoryData('put', doc, historyRes.data.id);
-      } else {
-        putHistoryData('add', doc, null);
-      }
-    } else {
-      storePlayer.updateConfig({
-        type: 'analyze',
-        status: true,
-        data: {
-          info: { url, name: title },
-          ext: { site, setting: storePlayer.setting },
-        },
-      });
-      window.electron.ipcRenderer.send('open-win', { action: 'play' });
+    // Web应用中不支持外部播放器，直接使用内置播放器
+    storePlayer.updateConfig({
+      type: 'analyze',
+      status: true,
+      data: {
+        info: { url, name: title },
+        ext: { site, setting: storePlayer.setting },
+      },
+    });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+    // 记录播放记录
+    const historyRes = await fetchHistoryData(site.key, url, ['analyze']);
+    const doc = {
+      date: moment().unix(),
+      type: 'analyze',
+      relateId: site.key,
+      siteSource: '',
+      playEnd: false,
+      videoId: url,
+      videoImage: '',
+      videoName: title,
+      videoIndex: `${title}${url}`,
+      watchTime: 0,
+      duration: 0,
+      skipTimeInStart: 0,
+      skipTimeInEnd: 0,
     };
+
+    if (historyRes.code === 0 && historyRes.status) {
+      putHistoryData('put', doc, historyRes.data.id);
+    } else {
+      putHistoryData('add', doc, null);
+    }
   } catch (err) {
     console.error(`[analyze][playEvent][error]`, err);
     MessagePlugin.warning(t('pages.chase.reqError'));

@@ -421,26 +421,26 @@ const importData = async (importType, importMode) => {
 // 文件事件
 const uploadFileEvent = async () => {
   try {
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showOpenDialog',
-      config: {
-        properties: ['openFile', 'showHiddenFiles'],
-        filters: [
-          { name: 'Json Files', extensions: ['json'] },
-          { name: 'Text Files', extensions: ['txt'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-      },
-    });
-    if (!res || res.canceled || !res.filePaths.length) return;
-    formData.value.completeConfig.url = res.filePaths[0] || '';
+    // Web应用中使用input元素选择文件
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.txt,*/*';
+    
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      formData.value.completeConfig.url = file.name || '';
+      // 保存文件引用以便后续使用
+      (window as any).selectedImportFile = file;
+    };
+    
+    input.click();
   } catch (err: any) {
     console.error(`[uploadFileEvent] err:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}:${err}`);
   }
 };
 
-// 导出
 const exportData = async () => {
   if (!Object.values(active.export).some(value => value)) {
     MessagePlugin.warning(t('pages.setting.data.noSelectData'));
@@ -452,28 +452,16 @@ const exportData = async () => {
   const str = JSON.stringify(dbData, null, 2);
 
   try {
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showSaveDialog',
-      config: {
-        defaultPath: `zyfun_config_${moment().format('YYYYMMDD_HHmmss')}.json`,
-        properties: ['showHiddenFiles'],
-        filters: [
-          { name: 'JSON Files', extensions: ['json'] }
-        ],
-      }
-    });
-    if (!res || res.canceled || !res.filePath) return;
-
-    const writeStatus = await window.electron.ipcRenderer.invoke('manage-file', {
-      action: 'write',
-      config: {
-        path: res.filePath,
-        content: str,
-      }
-    });
-
-    if (writeStatus) MessagePlugin.success(t('pages.setting.data.success'));
-    else MessagePlugin.error(t('pages.setting.data.fail'));
+    // Web应用中使用Blob和下载链接导出文件
+    const blob = new Blob([str], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `zyfun_config_${moment().format('YYYYMMDD_HHmmss')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   } catch (err: any) {
     console.error(`[exportData] err:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}:${err}`);
@@ -482,28 +470,35 @@ const exportData = async () => {
 
 // 获取 cache 大小
 const getCacheSize = async (): Promise<void> => {
-  const size = await window.electron.ipcRenderer.invoke('manage-session', { action: 'size' });
+  // Web应用中使用localStorage大小作为缓存大小估算
+  let size = 0;
+  for (const key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      size += localStorage[key].length;
+    }
+  }
   formData.value.size.cache = size;
 };
 
 // 删除 cache
 const delCache = async (): Promise<void> => {
-  await window.electron.ipcRenderer.invoke('manage-session', { action: 'clearCache' });
+  // Web应用中清理localStorage
+  localStorage.clear();
+  sessionStorage.clear();
+  // 清理所有pinia存储
+  localStorage.removeItem('pinia');
 };
 
 //  获取 thumbnail 文件夹大小
 const getThumbnailSize = async (): Promise<void> => {
-  const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-  const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, 'tmp/thumbnail');
-  const size = await window.electron.ipcRenderer.invoke('manage-file', { action: 'size', config: { path: defaultPath }});
-  formData.value.size.thumbnail = size;
+  // Web应用中不支持获取文件夹大小，返回0
+  formData.value.size.thumbnail = 0;
 };
 
 // 删除 thumbnail 文件夹
 const delThumbnail = async (): Promise<void> => {
-  const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-  const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, 'tmp/thumbnail');
-  await window.electron.ipcRenderer.invoke('manage-file', { action: 'rm', config: { path: defaultPath }});
+  // Web应用中不支持删除文件夹
+  MessagePlugin.info('Web应用不支持缩略图文件夹操作');
 };
 
 // 清理缓存

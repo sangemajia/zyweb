@@ -64,17 +64,20 @@ onMounted(() => {
 
 // 打开主窗口
 const openMainWinEvent = () => {
-  window.electron.ipcRenderer.send('open-win', { action: 'main' });
+  // Web应用中使用路由跳转而不是打开新窗口
+  window.location.hash = '#/';
 };
 
 // 全屏事件 mac修复状态栏 css 用
 const onFullscreenEvent = () => {
+  // Web应用中不需要监听Electron全屏事件
   const handleFullScreen = (isFullScreen: boolean) => {
     active.value.macMaximize = isFullScreen;
   };
 
-  window.electron.ipcRenderer.on('fullscreen', (_, isFullScreen) => {
-    handleFullScreen(isFullScreen);
+  // 使用Web标准API监听全屏变化
+  document.addEventListener('fullscreenchange', () => {
+    handleFullScreen(!!document.fullscreenElement);
   });
 };
 

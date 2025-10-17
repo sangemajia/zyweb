@@ -13,7 +13,7 @@ import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 const CWD = process.cwd();
 
 // 设置Node.js内存限制
-process.env.NODE_OPTIONS = '--max-old-space-size=512';
+process.env.NODE_OPTIONS = '--max-old-space-size=2048 --gc-interval=100';
 
 // see config at https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -30,9 +30,15 @@ export default defineConfig(({ mode }) => {
       outDir: resolve(__dirname, 'dist/web'),
       emptyOutDir: true, // 打包时先清空上一次构建生成的目录
       sourcemap: false, // 关闭生成map文件 可以达到缩小打包体积
-      minify: false, // 关闭压缩
+      minify: 'terser', // 启用压缩
+      terserOptions: {
+        compress: {
+          drop_console: true, // 删除console语句
+          drop_debugger: true, // 删除debugger语句
+        },
+      },
       chunkSizeWarningLimit: 1000, // 打包后超过1kb的会单独打包
-      assetsInlineLimit: 2048, // 小于2kb的图片会转成base64
+      assetsInlineLimit: 1024, // 小于1kb的图片会转成base64
       rollupOptions: {
         input: resolve(__dirname, 'src/renderer/index.html'),
         output: {
@@ -40,18 +46,20 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: `assets/chunk/[name]_[hash].js`, // 包的入口文件名称
           assetFileNames: `assets/static/[ext]/[name]_[hash].[ext]`, // 资源文件像 字体，图片等
           manualChunks: {
-            // 减少手动分块，只保留必要的
-            'video-decoder': ['dashjs', 'flv.js', 'hls.js', 'mpegts.js','shaka-player'],
+            // 进一步优化代码分割，减少内存使用
+            'video-decoder': ['dashjs', 'flv.js', 'hls.js', 'mpegts.js'],
             tdesign: ['tdesign-vue-next', 'tdesign-icons-vue-next'],
-            vue: [
-              'vue',
-              'vue-router',
-              'pinia',
-              'vue-i18n',
-            ],
+            vue: ['vue', 'vue-router'],
+            state: ['pinia', 'vue-i18n'],
           },
         },
+        // 进一步减少内存使用
+        maxParallelFileOps: 1,
+        cache: false,
       },
+      // 进一步减少内存使用
+      cssCodeSplit: true,
+      reportCompressedSize: false,
     },
     css: {
       preprocessorOptions: {
@@ -73,7 +81,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       vueJsx(),
-      vueDevTools(),
+      // vueDevTools(), // 在生产构建中排除开发工具
       svgLoader(),
       AutoImport({
         resolvers: [

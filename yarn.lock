@@ -393,18 +393,6 @@
   resolved "https://registry.npmmirror.com/@esbuild/win32-x64/-/win32-x64-0.25.10.tgz#e4b3e255a1b4aea84f6e1d2ae0b73f826c3785bd"
   integrity sha512-9KpxSVFCu0iK1owoez6aC/s/EdUQLDN3adTxGCqxMVhrPDj6bt5dbrHDXUuq+Bs2vATFBBrQS5vdQ/Ed2P+nbw==
 
-"@imengyu/vue-scroll-rect@^0.1.4":
-  version "0.1.7"
-  resolved "https://registry.npmmirror.com/@imengyu/vue-scroll-rect/-/vue-scroll-rect-0.1.7.tgz#c72344f6c0094e2230e584a7919b9e19e4de97ae"
-  integrity sha512-a1ysL8LV2iFcHzMJ6tlrqr8JKtYIBrb1U3XcbjNmhponENUSbRvxs4b1sJd5sXdCFIIkDydwQM/SjVhfT7uBUw==
-
-"@imengyu/vue3-context-menu@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.npmmirror.com/@imengyu/vue3-context-menu/-/vue3-context-menu-1.5.2.tgz#4f5fa1c12a4b004d0ce6e004a6b717c30053e1bb"
-  integrity sha512-JtM9y4JKsqwpsLQnK38Fm3DqV5ZwIs/HksxQYHU6yUuuWScdr5C+NTF16J0KxmSbMHOTwVTMwJCBkwcC1X6y1w==
-  dependencies:
-    "@imengyu/vue-scroll-rect" "^0.1.4"
-
 "@intlify/core-base@11.1.12":
   version "11.1.12"
   resolved "https://registry.npmmirror.com/@intlify/core-base/-/core-base-11.1.12.tgz#e02529021a4e69f8a1adcca5ce61963c71cd72ba"
@@ -621,62 +609,6 @@
   version "4.52.4"
   resolved "https://registry.npmmirror.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.52.4.tgz#5b2dd648a960b8fa00d76f2cc4eea2f03daa80f4"
   integrity sha512-bf9PtUa0u8IXDVxzRToFQKsNCRz9qLYfR/MpECxl4mRoWYjAeFjgxj1XdZr2M/GNVpT05p+LgQOHopYDlUu6/w==
-
-"@se-oss/deasync-darwin-arm64@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-darwin-arm64/-/deasync-darwin-arm64-1.0.1.tgz#4fa435a33bc6b4d644ec36204f1b7521ce4f7097"
-  integrity sha512-0YWmIDEGQfW3GGopmZHhfA6mamsG0HFKZhmBzHVyFiMKkJts8kpQwGbGrWlK8eOAoPCihOsG6tCotYR3p7HZaQ==
-
-"@se-oss/deasync-darwin-x64@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-darwin-x64/-/deasync-darwin-x64-1.0.1.tgz#b80dcb457666ebb3749805af57f2e5e7f78ba7ea"
-  integrity sha512-r3FRTLIXqGqOb1DjTLW3YhO/Dd1vA2qRLP0Ym3Wmk3yMv6c/nm15zg6UVoXbgBu8cjbvcsI/OfbHPdErmjMWsw==
-
-"@se-oss/deasync-linux-arm64-gnu@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-linux-arm64-gnu/-/deasync-linux-arm64-gnu-1.0.1.tgz#2e7c9ae6ecb580e6dacb97affc092c5738006407"
-  integrity sha512-657uRew7fZAx663Li03ilLV2lN09Dqb/NxawlDu8kKmboK1BLitHJRS+taiT5oFZqyIDrU45tlQKfCrW0p0sYA==
-
-"@se-oss/deasync-linux-arm64-musl@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-linux-arm64-musl/-/deasync-linux-arm64-musl-1.0.1.tgz#9fdf2a3450af2aaaaea4d7843d4a7d14c9874c6a"
-  integrity sha512-IE3fIQPIJtko4lx9sRam+Zz0P4xbpAPJgDCHaz6k9cP1yUvVI179B4IZRnFx0GyjyQpm0KhHoIGHJc4KUmA81Q==
-
-"@se-oss/deasync-linux-x64-gnu@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-linux-x64-gnu/-/deasync-linux-x64-gnu-1.0.1.tgz#1e61f7034fc18a44bdb99431893d57c89db202bd"
-  integrity sha512-XQl7etZESGIjIraCyxfAey8ZTIJUB4dUFU3rPR/xLVn9bKpZGlJLIms0z3hoHX9mipO+Cqo53vK4IVm6A7U/ww==
-
-"@se-oss/deasync-linux-x64-musl@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-linux-x64-musl/-/deasync-linux-x64-musl-1.0.1.tgz#44f278f1c83fef2512d724b315488de46f220531"
-  integrity sha512-vWgFAZlqImqMV6jhCWV7C9wcCS1eb1ajhlKduBRPfyUxxkoObe+EqTG2BKJAuafxp3/KS1aUsIMJma9mhwFvow==
-
-"@se-oss/deasync-win32-arm64-msvc@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-win32-arm64-msvc/-/deasync-win32-arm64-msvc-1.0.1.tgz#a2bd4374aef4d80202e6f98805b35d32dcfe95e8"
-  integrity sha512-yk7lEE7Zd8GX7o6CuUbg3HnnmUhBx4tgfn5ff3eoq05CgBO6Z3ZtL4l+utAe1cxcFaXPhyvcgnHYyA4OF544tg==
-
-"@se-oss/deasync-win32-x64-msvc@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync-win32-x64-msvc/-/deasync-win32-x64-msvc-1.0.1.tgz#a2fb75346ab9bb7ac25874e3486d2a1f4c1a20ae"
-  integrity sha512-ixizmuLGRPGyAesWUNWVzVOsvuunNb/qMqU8SmjfLR/vVgzdQEkSHFf+fkX9GXPN6FDv+DAz5uskTzhjUyCXFA==
-
-"@se-oss/deasync@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/@se-oss/deasync/-/deasync-1.0.1.tgz#18301ef127366e2bda5f2ebb10670dde16d8e326"
-  integrity sha512-Ha7P/xCNxOuH72BNdLRWs4TT8rsMMrERnHtfKWBeTWu+UFW9OBTrRgfZJOlbAAQFR0l4Q30cpAn8CuR7PXWcPg==
-  dependencies:
-    type-fest "^4.37.0"
-  optionalDependencies:
-    "@se-oss/deasync-darwin-arm64" "1.0.1"
-    "@se-oss/deasync-darwin-x64" "1.0.1"
-    "@se-oss/deasync-linux-arm64-gnu" "1.0.1"
-    "@se-oss/deasync-linux-arm64-musl" "1.0.1"
-    "@se-oss/deasync-linux-x64-gnu" "1.0.1"
-    "@se-oss/deasync-linux-x64-musl" "1.0.1"
-    "@se-oss/deasync-win32-arm64-msvc" "1.0.1"
-    "@se-oss/deasync-win32-x64-msvc" "1.0.1"
 
 "@sec-ant/readable-stream@^0.4.1":
   version "0.4.1"
@@ -1571,11 +1503,6 @@ he@^1.2.0:
   resolved "https://registry.npmmirror.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-highlight.js@^11.11.1:
-  version "11.11.1"
-  resolved "https://registry.npmmirror.com/highlight.js/-/highlight.js-11.11.1.tgz#fca06fa0e5aeecf6c4d437239135fabc15213585"
-  integrity sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==
-
 hls.js@^1.6.13:
   version "1.6.13"
   resolved "https://registry.npmmirror.com/hls.js/-/hls.js-1.6.13.tgz#fcf2823f17aaf9127b9011ef135cae5d2520ab75"
@@ -1820,14 +1747,6 @@ make-dir@^2.1.0:
     pify "^4.0.1"
     semver "^5.6.0"
 
-markdown-it-mathjax3@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.npmmirror.com/markdown-it-mathjax3/-/markdown-it-mathjax3-5.2.0.tgz#dbb3e0d059a3673339162d1d468ba52f3c5d7720"
-  integrity sha512-R+XAy5/7vSGuhG9Z0/cJm6zKxOzStcScfSKVwoarh4nBra+v1KClvbALr/xFTEe9iQhwfQM4SJnO68LXL+btMA==
-  dependencies:
-    "@se-oss/deasync" "^1.0.1"
-    mathxyjax3 "^0.8.3"
-
 markdown-it@^14.1.0:
   version "14.1.0"
   resolved "https://registry.npmmirror.com/markdown-it/-/markdown-it-14.1.0.tgz#3c3c5992883c633db4714ccb4d7b5935d98b7d45"
@@ -1844,11 +1763,6 @@ math-intrinsics@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmmirror.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
-
-mathxyjax3@^0.8.3:
-  version "0.8.3"
-  resolved "https://registry.npmmirror.com/mathxyjax3/-/mathxyjax3-0.8.3.tgz#e505008b2c15f0f6608590c93a882a791635c1a4"
-  integrity sha512-eXjFaiyQsTdVOeTFoFaFJ/r1FITpB1f9c5MW4FETfcoVV/+xa5SD9pS05AwugzL/gNuDtWXrTOSmoD2e0Du+UA==
 
 mdn-data@2.0.28:
   version "2.0.28"
@@ -2205,11 +2119,6 @@ semver@^6.3.1:
   resolved "https://registry.npmmirror.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-shaka-player@^4.16.3:
-  version "4.16.4"
-  resolved "https://registry.npmmirror.com/shaka-player/-/shaka-player-4.16.4.tgz#4666998d89b97a6418154b568c14610e8975885c"
-  integrity sha512-jlsmZzR5sPpUUS+6G9wCZJjv0hqaP52xQSw4w+in9hfw+kOI44X/vx+YcsKNKlYixxFvPd+XBgtZJunjNP3xOg==
-
 shebang-command@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmmirror.com/shebang-command/-/shebang-command-2.0.0.tgz#ccd0af4f8835fbdc265b82461aaf0c36663f34ea"
@@ -2271,7 +2180,7 @@ speakingurl@^14.0.1:
   resolved "https://registry.npmmirror.com/speakingurl/-/speakingurl-14.0.1.tgz#f37ec8ddc4ab98e9600c1c9ec324a8c48d772a53"
   integrity sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==
 
-splitpanes@^4.0.4:
+splitpanes@4.0.4:
   version "4.0.4"
   resolved "https://registry.npmmirror.com/splitpanes/-/splitpanes-4.0.4.tgz#e8dfbbef4e93853ea336dc43f903e20946b42c1d"
   integrity sha512-RbysugZhjbCw5fgplvk3hOXr41stahQDtZhHVkhnnJI6H4wlGDhM2kIpbehy7v92duy9GnMa8zIhHigIV1TWtg==
@@ -2373,11 +2282,6 @@ tslib@^2.3.0:
   version "2.8.1"
   resolved "https://registry.npmmirror.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
-
-type-fest@^4.37.0:
-  version "4.41.0"
-  resolved "https://registry.npmmirror.com/type-fest/-/type-fest-4.41.0.tgz#6ae1c8e5731273c2bf1f58ad39cbae2c91a46c58"
-  integrity sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==
 
 typescript@^5.9.3:
   version "5.9.3"
@@ -2486,7 +2390,7 @@ uuid@^13.0.0:
   resolved "https://registry.npmmirror.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
   integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
 
-v3-infinite-loading@^1.3.2:
+v3-infinite-loading@1.3.2:
   version "1.3.2"
   resolved "https://registry.npmmirror.com/v3-infinite-loading/-/v3-infinite-loading-1.3.2.tgz#c95c8031ac648997b667bb580dba5f0301fb3597"
   integrity sha512-2Bg8X8nqd9tKEOJdITABtuX2BMSYo/t+eZOAD+9/xz0fGyGDclglmWjo9Zs4dr/T63liO7EniBAunBesM2QhBA==

@@ -19,20 +19,25 @@ const snifferPie = async (
   };
 
   try {
-    const res = await window.electron.ipcRenderer.invoke('sniffer-media', {
-      url,
-      run_script,
-      init_script,
-      custom_regex,
-      sniffer_exclude,
-      headers,
+    // Web应用中使用后端API进行媒体嗅探
+    const res = await request({
+      url: '/v1/webbridge/sniffer/media',
+      method: 'POST',
+      data: {
+        url,
+        run_script,
+        init_script,
+        custom_regex,
+        sniffer_exclude,
+        headers,
+      },
     });
 
     if (res.code === 0) {
-      data.url = res.data.url;
-      data.headers = res.data.headers;
+      data.url = res.data.result.url;
+      data.headers = res.data.result.headers || {};
       console.log(`[sniffer][pie][return]: pie嗅探流程返回链接:${JSON.stringify(data)}`);
-    } else if (res.code === -1) {
+    } else {
       console.log(`[sniffer][pie][error]: pie嗅探流程错误:${res.msg}`);
     }
   } catch (err: any) {

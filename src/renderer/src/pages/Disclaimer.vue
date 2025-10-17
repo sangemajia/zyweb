@@ -71,8 +71,9 @@ const updateAgreementMask = async (status: Boolean) => {
 const cancelDisclaimer = () => {
   updateAgreementMask(false);
   MessagePlugin.warning({ content: t('pages.md.privacyPolicy.quitTip'), duration: 5000 });
+  // Web应用中使用window.close关闭页面
   setTimeout(() => {
-    window.electron.ipcRenderer.send('quit-app');
+    window.close();
   }, 5000);
 };
 </script>

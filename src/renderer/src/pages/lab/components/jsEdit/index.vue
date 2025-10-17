@@ -465,29 +465,70 @@ onActivated(() => {
 
 // common
 const utilsReadFile = async(filePath: string) =>{
-  return await window.electron.ipcRenderer.invoke('manage-file', { action: 'read', config: { path: filePath }});
+  // Web应用中使用fetch API读取文件
+  try {
+    const response = await fetch(`/api/v1/webbridge/file/manage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'read',
+        config: { path: filePath }
+      })
+    });
+    
+    const result = await response.json();
+    if (result.code === 0) {
+      return result.data.result;
+    } else {
+      throw new Error(result.msg);
+    }
+  } catch (err) {
+    console.error('读取文件失败:', err);
+    throw err;
+  }
 };
 
 const utilsWriteFile = async (filePath: string, content: string) => {
-  return await window.electron.ipcRenderer.invoke('manage-file', { action: 'write', config: { path: filePath, content: content }});
+  // Web应用中使用fetch API写入文件
+  try {
+    const response = await fetch(`/api/v1/webbridge/file/manage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'write',
+        config: { path: filePath, content: content }
+      })
+    });
+    
+    const result = await response.json();
+    if (result.code === 0) {
+      return result.data.result;
+    } else {
+      throw new Error(result.msg);
+    }
+  } catch (err) {
+    console.error('写入文件失败:', err);
+    throw err;
+  }
 };
 
 const utilsT3JsBasePath = async () => {
-  const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-  const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, `file/drpy_dzlive/drpy_js/`);
-  return defaultPath;
+  // Web应用中使用固定的路径
+  return '/file/drpy_dzlive/drpy_js/';
 };
 
 const utilsT3PyBasePath = async () => {
-  const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-  const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, `file/py/`);
-  return defaultPath;
+  // Web应用中使用固定的路径
+  return '/file/py/';
 };
 
 const utilsT4BasePath = async () => {
-  const userDataPath = await window.electron.ipcRenderer.invoke('get-app-path', 'userData');
-  const defaultPath = await window.electron.ipcRenderer.invoke('path-join', userDataPath, `plugin/drpy-node/js/`);
-  return defaultPath;
+  // Web应用中使用固定的路径
+  return '/plugin/drpy-node/js/';
 };
 
 const utilsBasePath = async () => {
@@ -544,7 +585,7 @@ const utilsDecode = async (content: string) => {
 const utilsReadT3JsFile = async () =>{
   try {
     const basePath = await utilsT3JsBasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.js`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.js`);
     const content = await utilsReadFile(defaultPath);
     return content;
   } catch (err) {
@@ -556,7 +597,7 @@ const utilsReadT3JsFile = async () =>{
 const utilsReadT3PyFile = async () =>{
   try {
     const basePath = await utilsT3PyBasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.py`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.py`);
     const content = await utilsReadFile(defaultPath);
     return content;
   } catch (err) {
@@ -568,7 +609,7 @@ const utilsReadT3PyFile = async () =>{
 const utilsReadT4File = async () =>{
   try {
     const basePath = await utilsT4BasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.js`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.js`);
     const content = await utilsReadFile(defaultPath);
     return content;
   } catch (err) {
@@ -591,7 +632,7 @@ const utilsRead = async () => {
 const utilsWriteT3JsFile = async (val: string) =>{
   try {
     const basePath = await utilsT3JsBasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.js`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.js`);
     await utilsWriteFile(defaultPath, val);
     return true;
   } catch (err) {
@@ -603,7 +644,7 @@ const utilsWriteT3JsFile = async (val: string) =>{
 const utilsWriteT3PyFile = async (val: string) =>{
   try {
     const basePath = await utilsT3PyBasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.py`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.py`);
     await utilsWriteFile(defaultPath, val);
     return true;
   } catch (err) {
@@ -615,7 +656,7 @@ const utilsWriteT3PyFile = async (val: string) =>{
 const utilsWriteT4File = async (val: string) =>{
   try {
     const basePath = await utilsT4BasePath();
-    const defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `debug.js`);
+    const defaultPath = await utilsJoinPath(basePath, `debug.js`);
     await utilsWriteFile(defaultPath, val);
     return true;
   } catch (err) {
@@ -826,27 +867,33 @@ const confirmTemplate = () => {
 
 const handleImportFile = async () => {
   try {
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showOpenDialog',
-      config: {
-        properties: ['openFile', 'showHiddenFiles'],
-        filters: [
-          { name: 'JavaScript Files', extensions: ['js'] },
-          { name: 'Py Files', extensions: ['py'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-      }
-    });
-    if (!res || res.canceled || !res.filePaths.length) return;
-
-    const fileContent = await window.electron.ipcRenderer.invoke('manage-file', {
-      action: 'read',
-      config: {
-        path: res.filePaths[0],
-      }
-    });
-
-    form.value.content.js = fileContent || '';
+    // Web应用中使用input元素选择文件
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.js,.py,*/*';
+    
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        form.value.content.js = e.target?.result as string || '';
+        MessagePlugin.success(t('pages.setting.data.success'));
+      };
+      reader.onerror = (e) => {
+        console.error(`[handleImportFile] err:`, e);
+        MessagePlugin.error(`${t('pages.setting.data.fail')}: 文件读取失败`);
+      };
+      reader.readAsText(file);
+    };
+    
+    input.click();
+  } catch (err: any) {
+    console.error(`[handleImportFile] err:`, err);
+    MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
+  }
+};
     MessagePlugin.success(t('pages.setting.data.success'));
   } catch (err: any) {
     console.error(`[handleImportFile] err:`, err);
@@ -866,35 +913,29 @@ const handleExportFile = async () => {
     const basePath = await utilsBasePath();
     let defaultPath = '';
     if (form.value.init.mode === 't3py') {
-      defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `source.py`);
+      defaultPath = await utilsJoinPath(basePath, `source.py`);
     } else {
       const title = content.match(/title:(.*?),/)?.[1]?.replace(/['"]/g, '')?.trim() || 'source';
-      defaultPath = await window.electron.ipcRenderer.invoke('path-join', basePath, `${title}.js`);
+      defaultPath = await utilsJoinPath(basePath, `${title}.js`);
     }
 
-    const res = await window.electron.ipcRenderer.invoke('manage-dialog', {
-      action: 'showSaveDialog',
-      config: {
-        defaultPath: defaultPath,
-        properties: ['showHiddenFiles'],
-      }
-    });
-    if (!res || res.canceled || !res.filePath) return;
+    // Web应用中使用Blob和下载链接导出文件
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const fileName = defaultPath.split('/').pop() || 'source.js';
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
-    const writeStatus = await window.electron.ipcRenderer.invoke('manage-file', {
-      action: 'write',
-      config: {
-        path: res.filePath,
-        content: content,
-      }
-    });
-
-    if (writeStatus) MessagePlugin.success(t('pages.setting.data.success'));
-    else MessagePlugin.error(t('pages.setting.data.fail'));
+    MessagePlugin.success(t('pages.setting.data.success'));
   } catch (err: any) {
     console.error(`[handleExportFile] err:`, err);
     MessagePlugin.error(`${t('pages.setting.data.fail')}: ${err.message}`);
-  };
+  }
 };
 
 const handleDebug = async () => {
@@ -940,7 +981,8 @@ const handleOpChange = (type: string) => {
       active.value.template = true;
       break;
     case 'doc':
-      window.electron.ipcRenderer.send('open-url', 'https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7');
+      // Web应用中使用window.open打开链接
+      window.open('https://github.com/Hiram-Wong/ZyPlayer/wiki/%E5%86%99%E6%BA%90%E5%B7%A5%E5%85%B7', '_blank');
       break;
     case 'debug':
       handleDebug();
@@ -953,7 +995,8 @@ const handleOpFileChange = (type: string) => {
 
   switch (type) {
     case 'file':
-      window.electron.ipcRenderer.send('open-path', 'file');
+      // Web应用中不支持打开本地文件路径
+      MessagePlugin.info('Web应用不支持打开本地文件路径');
       break;
     case 'import':
       handleImportFile();
@@ -1368,32 +1411,16 @@ const handleWebviewLoad = (url: string) => {
   webviewRef.value?.loadURL(url);
 
   const setupWebviewListeners = () => {
-    const webview = webviewRef.value;
-    if (!webview) return;
-
-    const webviewRoute = (event: { url: string }) => {
-      if (controlText.value === event.url) return;
-      controlText.value = event.url;
-      console.log('webviewRoute', event.url);
-    };
-
-    // 移除之前的监听器（避免重复注册）
-    webview.removeEventListener('did-navigate-in-page', webviewRoute);
-    // webview.removeEventListener('did-navigate', webviewRoute);
-    webview.removeEventListener('did-redirect-navigation', webviewRoute);
-
-    // 添加新的监听器
-    webview.addEventListener('did-navigate-in-page', webviewRoute);
-    // webview.addEventListener('did-navigate', webviewRoute);
-    webview.addEventListener('did-redirect-navigation', webviewRoute);
+    // Web应用中不需要清除IPC监听器
   };
 
   const setupIpcListeners = () => {
     // 只清除 blockUrl 监听器，防止其他 ipc 消息被误删
-    window.electron.ipcRenderer.removeAllListeners('blockUrl');
-
-    window.electron.ipcRenderer.on('blockUrl', async (_, blockedUrl: string) => {
-      handleWebviewLoad(blockedUrl);
+    // Web应用中使用postMessage机制处理iframe通信
+    window.addEventListener('message', async (event) => {
+      if (event.data.type === 'blockUrl') {
+        handleWebviewLoad(event.data.blockedUrl);
+      }
     });
   };
 

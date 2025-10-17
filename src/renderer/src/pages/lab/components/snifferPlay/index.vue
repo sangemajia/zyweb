@@ -130,27 +130,24 @@ const playerPlayEvent = async () => {
 
   const playerMode = storePlayer.setting.playerMode;
 
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url });
-  } else {
-    let mediaType = type;
-    if (mediaType === 'auto') {
-      const checkType = await mediaUtils.checkMediaType(url, headers as Object);
-      if (checkType === 'unknown' && !checkType) {
-        MessagePlugin.warning(t('pages.lab.snifferPlay.message.mediaNoType'));
-        return;
-      }
-      mediaType = checkType as string;
-    };
-    if (playerRef.value) {
-      await playerRef.value.create({
-        url: url,
-        isLive: false,
-        headers: headers,
-        type: mediaType,
-        container: 'lab-mse'
-      }, playerMode.type);
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  let mediaType = type;
+  if (mediaType === 'auto') {
+    const checkType = await mediaUtils.checkMediaType(url, headers as Object);
+    if (checkType === 'unknown' && !checkType) {
+      MessagePlugin.warning(t('pages.lab.snifferPlay.message.mediaNoType'));
+      return;
     }
+    mediaType = checkType as string;
+  };
+  if (playerRef.value) {
+    await playerRef.value.create({
+      url: url,
+      isLive: false,
+      headers: headers,
+      type: mediaType,
+      container: 'lab-mse'
+    }, playerMode.type);
   }
 
   MessagePlugin.success(t('pages.setting.form.success'));

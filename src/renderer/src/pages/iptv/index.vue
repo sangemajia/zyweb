@@ -18,7 +18,7 @@
         <div class="content-wrapper" id="back-top">
           <t-row :gutter="[16, 4]" style="margin-left: -8px; margin-right: -8px">
             <t-col :md="3" :lg="3" :xl="2" :xxl="1" v-for="item in channelList" :key="item.id" class="card"
-              @click="playEvent(item)" @contextmenu="conButtonClick(item, $event)" @contextmenu.prevent>
+              @click="playEvent(item)">
               <div class="card-main">
                 <div v-show="iptvConfig.ext.delay && item.delay" class="card-delay-tag">
                   <span v-if="item.delay < 500" class="status-item success">{{ item.delay }}ms</span>
@@ -50,11 +50,7 @@
               </div>
             </t-col>
 
-            <context-menu :show="isVisible.contentMenu" :options="optionsComponent"
-              @close="isVisible.contentMenu = false">
-              <context-menu-item :label="$t('pages.iptv.contextMenu.copyChannel')" @click="copyChannelEvent" />
-              <context-menu-item :label="$t('pages.iptv.contextMenu.delChannel')" @click="delChannelEvent" />
-            </context-menu>
+            
           </t-row>
 
           <div class="infinite-loading">
@@ -69,7 +65,7 @@
               <template #error>{{ $t('pages.iptv.infiniteLoading.error') }}</template>
             </infinite-loading>
             <infinite-loading
-              v-else="isVisible.lazyload"
+              v-else
               class="infinite-loading-container"
             />
           </div>
@@ -83,11 +79,8 @@
 </template>
 
 <script setup lang="tsx">
-import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import 'v3-infinite-loading/lib/style.css';
 import lazyImg from '@/assets/lazy.png';
-
-import { ContextMenu, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import moment from 'moment';
 import PQueue from 'p-queue';
 import { MessagePlugin } from 'tdesign-vue-next';
@@ -165,16 +158,6 @@ const mode = computed(() => {
   return storeSetting.displayMode;
 });
 
-const optionsComponent = ref({
-  zIndex: 15,
-  width: 160,
-  x: 500,
-  y: 200,
-  theme: mode.value === 'light' ? 'default' : 'mac dark',
-});
-
-const channelItem = ref<any>(null);
-
 const delayQueue = new PQueue({ concurrency: 5 });
 const ipversionQueue = new PQueue({ concurrency: 5 });
 const thumbnailQueue = new PQueue({ concurrency: 5 });
@@ -241,7 +224,7 @@ const load = async ($state: { complete: () => void; loaded: () => void; error: (
     if (active.value.infiniteType === 'noData') {
       $state.complete();
       return;
-    };
+    }
 
     const resLength = await getChannel();
 
@@ -279,44 +262,42 @@ const playEvent = async (item) => {
   try {
     const site: any = iptvConfig.value.default;
     const playerMode = storePlayer.getSetting.playerMode;
-    if (playerMode.type === 'custom') {
-      window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: item.url });
-      // 记录播放记录
-      const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = item;
-      const historyRes = await fetchHistoryData(site.key, vod_url, ['iptv']);
-      const doc = {
-        date: moment().unix(),
-        type: 'iptv',
-        relateId: site.key,
-        siteSource: type_name,
-        playEnd: false,
-        videoId: vod_id,
-        videoImage: vod_pic,
-        videoName: vod_name,
-        videoIndex: `${vod_name}$${vod_url}`,
-        watchTime: 0,
-        duration: 0,
-        skipTimeInStart: 0,
-        skipTimeInEnd: 0,
-      };
+    // Web应用中不支持外部播放器，直接使用内置播放器
+    const { epg, markIp, logo } = iptvConfig.value.ext;
+    storePlayer.updateConfig({
+      type: 'iptv',
+      status: true,
+      data: {
+        info: { ...item },
+        ext: { epg, markIp, logo, site, setting: storePlayer.setting },
+      },
+    });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
+    // 记录播放记录
+    const { id: vod_id, logo: vod_pic, name: vod_name, url: vod_url, group: type_name } = item;
+    const historyRes = await fetchHistoryData(site.key, vod_url, ['iptv']);
+    const doc = {
+      date: moment().unix(),
+      type: 'iptv',
+      relateId: site.key,
+      siteSource: type_name,
+      playEnd: false,
+      videoId: vod_id,
+      videoImage: vod_pic,
+      videoName: vod_name,
+      videoIndex: `${vod_name}${vod_url}`,
+      watchTime: 0,
+      duration: 0,
+      skipTimeInStart: 0,
+      skipTimeInEnd: 0,
+    };
 
-      if (historyRes.code === 0 && historyRes.status) {
-        putHistoryData('put', doc, historyRes.data.id);
-      } else {
-        putHistoryData('add', doc, null);
-      }
+    if (historyRes.code === 0 && historyRes.status) {
+      putHistoryData('put', doc, historyRes.data.id);
     } else {
-      const { epg, markIp, logo } = iptvConfig.value.ext;
-      storePlayer.updateConfig({
-        type: 'iptv',
-        status: true,
-        data: {
-          info: { ...item },
-          ext: { epg, markIp, logo, site, setting: storePlayer.setting },
-        },
-      });
-      window.electron.ipcRenderer.send('open-win', { action: 'play' });
+      putHistoryData('add', doc, null);
     }
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
   } catch (err) {
     console.error(`[iptv][playEvent][error]`, err);
     MessagePlugin.warning(t('pages.chase.reqError'));
@@ -389,11 +370,24 @@ const generateThumbnail = async (pageIndex: number, pageSize: number) => {
 
   const updateThumbnail = async (item) => {
     try {
-      const res = await window.electron.ipcRenderer.invoke('ffmpeg-thumbnail', item.url, item.id);
-      if (res) {
-        const index = channelList.value.findIndex(channel => channel.id === res.key);
+      // Web应用中使用后端API生成缩略图
+      const response = await fetch('/api/v1/webbridge/ffmpeg/thumbnail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'thumbnail',
+          url: item.url,
+          id: item.id
+        })
+      });
+      
+      const res = await response.json();
+      if (res.code === 0 && res.data.result) {
+        const index = channelList.value.findIndex(channel => channel.id === res.data.params.id);
         if (index !== -1) {
-          channelList.value[index]["thumbnail"] = res.url;
+          channelList.value[index]["thumbnail"] = res.data.path;
         }
       }
     } catch (err) {
@@ -467,23 +461,6 @@ const changeConf = async (id: string) => {
   }
 };
 
-// 右键
-const conButtonClick = (item: any, { x, y }: any) => {
-  isVisible.contentMenu = true;
-  Object.assign(optionsComponent.value, { x, y });
-  channelItem.value = item;
-};
-
-// 删除
-const delChannelEvent = () => {
-  const index = channelList.value.indexOf(channelItem.value);
-  if (index > -1) {
-    channelList.value.splice(index, 1);
-    delChannel({ids: [channelItem.value.id]});
-  }
-  isVisible.contentMenu = false;
-};
-
 // 拷贝
 const copyToClipboard = async (content, successMessage, errorMessage) => {
   const res = await copyToClipboardApi(content);
@@ -492,13 +469,6 @@ const copyToClipboard = async (content, successMessage, errorMessage) => {
   } else {
     MessagePlugin.warning(errorMessage);
   }
-};
-const copyChannelEvent = async () => {
-  const successMessage = t('pages.iptv.message.setSuccess');
-  const errorMessage = t('pages.iptv.message.copyFail');
-  await copyToClipboard(channelItem.value.url, successMessage, errorMessage);
-
-  isVisible.contentMenu = false;
 };
 </script>
 

@@ -238,7 +238,8 @@ const handleOpChange = (type: string) => {
 
 const handleOpenUrl = (url: string) => {
   if (!/^(https?:\/\/)/.test(url)) return;
-  window.electron.ipcRenderer.send('open-url', url);
+  // Web应用中使用window.open打开链接
+  window.open(url, '_blank');
 };
 
 const handleAiModel = (val: string) => {

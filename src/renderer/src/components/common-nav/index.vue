@@ -36,7 +36,7 @@
           >
             <t-list-item v-for="(item, index) in listData" :key="index" :class="[activeData === item.id ? 'is-active' : '']">
               <t-tooltip :content="item.name" destroy-on-close>
-                <t-list-item-meta :description="item.name" @click="handleItemClick(item.id)" @contextmenu="conButtonClick(item, $event)" />
+                <t-list-item-meta :description="item.name" @click="handleItemClick(item.id)" />
               </t-tooltip>
             </t-list-item>
           </t-list>
@@ -90,8 +90,6 @@
 
 <script setup lang="ts">
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
-
-import { ContextMenu, ContextMenuItem, ContextMenuSeparator, ContextMenuGroup } from '@imengyu/vue3-context-menu';
 import { onClickOutside } from '@vueuse/core';
 import { ListInstanceFunctions } from 'tdesign-vue-next';
 import { DataSearchIcon, SearchIcon } from 'tdesign-icons-vue-next';
@@ -153,13 +151,7 @@ const active = ref({
 const mode = computed(() => {
   return storeSetting.displayMode;
 });
-const optionsComponent = ref({
-  zIndex: 15,
-  width: 160,
-  x: 500,
-  y: 200,
-  theme: mode.value === 'light' ? 'default' : 'mac dark',
-});
+
 
 const emit = defineEmits(['changeKey', 'contextMenu']);
 
@@ -197,11 +189,7 @@ if (props.search) {
   })
 }
 
-const conButtonClick = (item: any, { x, y }: any) => {
-  active.value.contentMenu = true;
-  Object.assign(optionsComponent.value, { x, y });
-  emit('contextMenu', { ...item });
-};
+
 
 const handleItemClick = (key: string | number) => {
   console.log(`[common-nav] active key: ${key}`);
@@ -227,7 +215,8 @@ const handleScroll = () => {
 
 const handleOpenUrl = (url: string) => {
   if (!/^(https?:\/\/)/.test(url)) return;
-  window.electron.ipcRenderer.send('open-url', url);
+  // Web应用中使用window.open打开链接
+  window.open(url, '_blank');
 };
 </script>
 

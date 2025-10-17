@@ -231,7 +231,16 @@ const callPlay = async (item) => {
   const response = await playHelper(url, extConf.value.site, active.value.flimSource, analyzeType, false);
   if (response?.url) {
     const { playerMode } = extConf.value.setting;
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: response.url });
+    // Web应用中不支持外部播放器，直接使用内置播放器
+    storePlayer.updateConfig({
+      type: 'film',
+      status: true,
+      data: {
+        info: { ...detailFormData.value.info, url: response.url },
+        ext: extConf.value
+      },
+    });
+    // 在Web应用中，我们不需要打开新窗口，路由会自动切换到播放页面
     putHistory();
   };
 };

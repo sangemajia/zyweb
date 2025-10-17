@@ -19,6 +19,7 @@ declare module 'vue' {
     Split: typeof import('./src/components/split/index.vue')['default']
     Table: typeof import('./src/components/common-setting/table/index.vue')['default']
     TagNav: typeof import('./src/components/tag-nav/index.vue')['default']
+    TConfigProvider: typeof import('tdesign-vue-next')['ConfigProvider']
     Terminal: typeof import('./src/components/terminal/index.vue')['default']
     TitleMenu: typeof import('./src/components/title-menu/index.vue')['default']
   }

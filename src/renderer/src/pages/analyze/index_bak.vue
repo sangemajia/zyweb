@@ -182,13 +182,10 @@ const getVideoInfo = async (url: string, title: string) => {
   playFormData.value.url = analyzeRes.url;
   playFormData.value.headers = analyzeRes.headers;
   const playerMode = storePlayer.setting.playerMode;
-  if (playerMode.type === 'custom') {
-    window.electron.ipcRenderer.invoke('call-player', { path: playerMode.external, url: playFormData.value.url });
-  } else {
-    if (playerRef.value) {
-      await playerRef.value.create(playFormData.value, playerMode.type);
-    };
-  }
+  // Web应用中不支持外部播放器，直接使用内置播放器
+  if (playerRef.value) {
+    await playerRef.value.create(playFormData.value, playerMode.type);
+  };
 
   // 5.记录播放记录
   const res = await findHistory({ relateId: active.value.nav, videoId: url });

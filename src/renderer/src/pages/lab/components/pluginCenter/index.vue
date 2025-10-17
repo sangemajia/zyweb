@@ -209,7 +209,8 @@ const handleItemClick = async(name: string) => {
 };
 
 const handleGoDir = async() => {
-  window.electron.ipcRenderer.send('open-path', 'plugin');
+  // Web应用中不支持打开本地文件路径
+  MessagePlugin.info('Web应用不支持打开本地文件路径');
 }
 
 const handleOpenDevtool = () => {

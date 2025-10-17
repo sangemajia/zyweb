@@ -1,6 +1,4 @@
 // 通用声明
-import { HTMLTitleBarElementAttributes } from '@electron-uikit/titlebar/renderer';
-
 export {};
 
 // Vue
